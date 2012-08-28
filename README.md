@@ -1,4 +1,4 @@
 c4sh_preorder
 =============
 
-The Modern Way of ordering pizza.
+This is a stub for the preorder repository. Actual code will be released shortly.
