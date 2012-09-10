@@ -1,0 +1,190 @@
+{% extends "base/base.html" %}
+{% load i18n %}
+
+{% block content %}
+      {% include "base/hero.html" %}
+
+      <div class="row">
+        {% include "base/admin_subnav.html" %}
+       
+        {% if review_preorders %}
+        	<div class="span9">
+        		<form method="post" action="{% url admin-import-csv %}">
+	        	{% csrf_token %}        			        		
+        		<table class="table table-striped table-bordered table-condensed">
+        			<tr>
+        				<th style="width:45px;">#</th>
+        				<th>{% trans "Hash"%}</th>
+        				<th>{% trans "Name"%}</th>
+        				<th>{% trans "Date"%}</th>
+        				<th>{% trans "Tickets"%}</th>
+        				<th>{% trans "Value"%}</th>
+        				<th style="width:150px">{% trans "Additional information"%}</th>
+        			</tr>
+
+        			{% for p in review_preorders %}
+        			<tr>
+        				<td><input type="checkbox" value="{{p.pk}}" checked name="markAsPaid" /><br />{{forloop.counter}}.</td>
+        				<td>{{p}}</td>
+        				<td>{{p.name}}</td>
+        				<td>{{p.time|date:"Y-m-d"}}<br />
+        					{{p.time|date:"H:i:s"}}</td>
+        				<td>
+        					{% for t in p.get_tickets %}
+        						{{t.amount}}x {{t.t.name}}<br />
+        					{% endfor %}
+        				</td>
+        				<td>
+							{% for v in p.get_sale_amount %}
+								{{v.total|floatformat:2}} {{v.currency}}
+							{% endfor %}
+        				</td>
+					<td>
+						{{p.additional_info}}
+						{% if p.additional_info and not p.get_user.email %}
+							<br />
+						{% endif %}
+						{% if not p.get_user.email %}
+							<i class="icon-exclamation-sign"></i> No email address set
+						{% endif %}
+					</td>        				
+        			</tr>
+        			{% endfor %}
+        		</table>
+
+        			<button type="submit" name="mark" value="1" class="btn btn-primary">{% trans "Mark as paid"%}</button>
+        		</form>
+        	</div>
+        {% else %}
+	        {% if not csv_data %}
+	        <div class="span4">
+	        		<form class="well" enctype="multipart/form-data" method="post" action="{% url admin-import-csv %}">
+	        			{% csrf_token %}
+
+						<div class="control-group {% if form.csv_file.errors %}error{% endif %}">
+							<label class="control-label" for="csv_file">{% trans "CSV File"%}</label>
+							<div class="controls">
+								<input type="file" name="csv_file" id="csv_file" />
+		   						{% for e in form.csv_file.errors %}
+									<span class="help-inline">{{e}}</span>
+		   						{% endfor %}
+		        			</div>
+		        		</div>
+						<div class="control-group {% if form.delimiter.errors %}error{% endif %}">
+							<label class="control-label" for="delimiter">{% trans "Delimiter"%}</label>
+							<div class="controls">
+								<input type="text" value="{{form.delimiter.value|default:";"}}" name="delimiter" id="delimiter" />
+		   						{% for e in form.delimiter.errors %}
+									<span class="help-inline">{{e}}</span>
+		   						{% endfor %}
+		        			</div>
+		        		</div>	  
+						<button type="submit" class="btn">{% trans "Upload and proceed.."%}</button>	
+	        		</form>
+	        </div>
+
+	        <div class="span5">
+        	{% if marked_as_paid %}
+        			<h2>{% trans "Congratulations!"%}</h2>
+        			<div class="alert alert-success alert-block">
+        				{{marked_as_paid}} {% trans "preorder(s) have been parked as paid."%}<br />{{emails_sent}} {% trans "notification email(s) have been sent." %}
+        			</div>
+        		{% endif %}	        	
+	        	<div class="alert alert-info alert-block">
+	  				Here be documentation and stuff..
+				</div>
+	        </div>
+
+	        {% else %}
+
+	        <div class="span5">
+	        	<h3>{% trans "Successful matches"%}</h3>
+				<form enctype="multipart/form-data" method="post" action="{% url admin-import-csv %}">
+	        	{% csrf_token %}        	
+				<table class="table table-striped table-bordered table-condensed" id="successful_matches">
+					<tr>
+						<th style="width:35px"></th>
+						<th style="width:70px">{% trans "Preorder"%}</th>
+						<th style="width:50px">{% trans "Entry date"%}</th>
+						<th style="width:50px">{% trans "Value"%}</th>
+						<th style="width:80px">{% trans "Inv. value"%}</th>
+						<th style="width:10px"></th>
+					</tr>
+					{% for m in matches_success %}
+						<tr>
+							<td>{% if m.status == "ok" %}
+									<input name="preorder" type="checkbox" value="{{m.preorder.pk}}" {% if m.value_ok %}checked{% endif %} />
+									<i class="icon-ok"></i>
+								{% else %}
+									<input disabled type="checkbox" value="" />
+									<i class="icon-exclamation-sign"></i>
+								{% endif %}</td>
+							<td>{{m.preorder}}</td>
+							<td>{{m.csv_data.0}}</td>
+							<td {% if not m.value_ok %}style="background-color:red"{% endif %}>{{m.csv_data.6|floatformat:2}}</td>
+							<td>
+								{% for v in m.invoice_value %}
+									{{v.total|floatformat:2}} {{v.currency}}
+								{% endfor %}
+							</td>
+							<td><a href="javascript:void(0);" onclick="$(this).parent().parent().next().toggle();if($(this).find('i').attr('class') == 'icon-zoom-in'){$(this).find('i').removeClass('icon-zoom-in');$(this).find('i').addClass('icon-zoom-out')}else{$(this).find('i').removeClass('icon-zoom-out');$(this).find('i').addClass('icon-zoom-in')}" title="Show raw data" alt="Show raw data"><i class="icon-zoom-in"></i></a></td>
+						</tr>
+						<tr class="details" style="display:none;">
+							<td colspan="10">
+								{% if m.status_message %}
+								<div class="alert alert-info" style="margin:5px;">
+									{{m.status_message}}
+								</div>
+								{% endif %}
+								<pre>{{m.csv_data}}</pre>
+							</td>
+						</tr>
+					{% endfor %}
+	        	</table>
+	        	<input type="hidden" name="review" value="1" />
+	        	<button type="submit" class="btn">{% trans "Review successful matches.."%}</button>
+	        	</form>
+	        </div>
+
+	        <div class="span5">
+	        	<h3>{% trans "Unsuccessful matches"%}</h3>
+				<table class="table table-striped table-bordered table-condensed">
+					<tr>
+						<th style="width:90px">{% trans "Reference"%}</th>
+						<th style="width:70px">{% trans "Entry date"%}</th>
+						<th style="width:50px">{% trans "Value"%}</th>
+						<th style="width:10px"></th>
+					</tr>
+					{% for m in matches_failure %}
+						<tr>
+							<td>{{m.3}}</td>
+							<td class="entry_date">{{m.0}}</td>
+							<td class="value">{{m.6}}</td>
+							<td><a href="javascript:void(0);" onclick="$(this).parent().parent().next().toggle();if($(this).find('i').attr('class') == 'icon-zoom-in'){$(this).find('i').removeClass('icon-zoom-in');$(this).find('i').addClass('icon-zoom-out')}else{$(this).find('i').removeClass('icon-zoom-out');$(this).find('i').addClass('icon-zoom-in')}" title="Show raw data" alt="Show raw data"><i class="icon-zoom-in"></i></a></td>
+						</tr>
+						<tr style="display:none;">
+							<td colspan="1">
+								<pre>{{m}}</pre>
+							</td>
+							<td colspan="3">
+								<form action="javascript:void(0)" onsubmit="updateMatches(this)">
+								<!-- {{m.3}} -->
+								<label for="assign">{% trans "Assign to:"%}</label>
+								<select style="width:125px" name="assign">
+									<option value="">{% trans "Select.."%}</option>
+									{% for p in alternative_preorders %}
+										<option value="{{p.pk}}">{{p}} ({{p.name}}, {{p.time|date:"d.m.Y h:i:s"}})</option>
+									{% endfor %} 
+								</select>
+								<button type="submit" class="btn">{% trans "Update match"%}</button>
+								</form>
+							</td>
+						</tr>
+					{% endfor %}
+	        	</table>
+	        </div>
+
+	        {% endif %}  
+	    {% endif %}  
+      </div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base/base.html" %}
+{% load i18n %}
+
+{% block content %}
+      <div class="row">
+        {% if signup_success %}
+        <div class="span6">
+          <h2>{% trans "Thank you!"%}</h2>
+          <div class="alert alert-success">
+            {% trans "Your account has been created and you are now able to login."%}
+          </div>
+        </div>
+        <div class="span6">
+          <h2>{% trans "Login"%}</h2>
+          {% include "base/form_login.html" %}
+        </div>
+        {% else %}
+        <div class="span12">
+            <h2>{% trans "Sign up"%}</h2>
+            <p>{% blocktrans with event=settings.EVENT_NAME_SHORT %}In order to preorder tickets for {{event}}, you need to signup.{% endblocktrans %}</p>
+            {% include "base/form_signup.html" %}
+        </div>        
+        {% endif %}
+      </div>
+{% endblock %}

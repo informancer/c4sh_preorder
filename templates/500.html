@@ -1,0 +1,8 @@
+{% extends "base/base.html" %}
+{% load i18n %}
+{% block content %}
+  <div class="alert alert-block alert-error">
+  <h4 class="alert-heading">{% trans "500"%}</h4>
+	{% trans "Unfortunately, the application has thrown an error. We have been notified." %}
+  </div>
+{% endblock %}

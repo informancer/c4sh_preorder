@@ -1,0 +1,34 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+      {% include "base/hero.html" %}
+
+	<div class="row">
+        {% include "base/admin_subnav.html" %}
+    
+    	<div class="span7">
+    		{% include "base/admin_subnav_statistics.html" %}
+
+
+        	<table class="table table-striped table-bordered">
+        		<tr>
+        			<th>Ticket type</th>
+        			<th>Preordered</th>
+        			<th>Paid</th>
+        			<th>% Preordered</th>
+        			<th>% Paid</th>
+        		</tr>
+
+        		{% for t in tickets %}
+        			<tr>
+        				<td>{{t}}</td>
+        				<td>{{t.stats_preordered}}</td>
+        				<td>{{t.stats_paid}}</td>
+        				<td>{{t.stats_percentage|floatformat:2}}%</td>
+        				<td>{{t.stats_paid_percentage|floatformat:2}}%</td>
+        			</tr>
+        		{% endfor %}
+        	</table>
+        </div>
+      </div>
+{% endblock %}

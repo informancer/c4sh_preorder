@@ -1,0 +1,50 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+      {% include "base/hero.html" %}
+
+	<div class="row">
+        {% include "base/admin_subnav.html" %}
+    
+    	<div class="span7">
+    		{% include "base/admin_subnav_statistics.html" %}
+
+
+                <div id="chart_tickets"></div>
+
+        </div>
+      </div>
+{% endblock %}
+
+{% block javascript %}
+<!--[if lt IE 9]>
+<script language="javascript" type="text/javascript" src="{{settings.MEDIA_URL}}plot/src/excanvas.js"></script>
+<![endif]-->
+<script language="javascript" type="text/javascript" src="{{settings.MEDIA_URL}}plot/src/jquery.jqplot.js"></script>
+<link rel="stylesheet" type="text/css" href="{{settings.MEDIA_URL}}plot/src/jquery.jqplot.css" />
+<script type="text/javascript" src="{{settings.MEDIA_URL}}plot/src/plugins/jqplot.pieRenderer.js"></script>
+
+<script type="text/javascript">
+        $(document).ready(function(){
+                var data = [
+                        {% for t in tickets %}
+                        ['{{t}}', {{t.stats_preordered}}],
+                        {% endfor %}
+                    ];
+                var plot1 = jQuery.jqplot ('chart_tickets', [data], 
+                { 
+                        title: 'Tickets preordered',
+                        seriesDefaults: {
+                                // Make this a pie chart.
+                                renderer: jQuery.jqplot.PieRenderer, 
+                                rendererOptions: {
+                                        // Put data labels on the pie slices.
+                                        // By default, labels show the percentage of the slice.
+                                        showDataLabels: true
+                                }
+                        }, 
+                        legend: { show:true, location: 'e' }
+                });
+        });
+</script>
+{% endblock %}

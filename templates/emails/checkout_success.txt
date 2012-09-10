@@ -1,0 +1,23 @@
+{% load i18n %}
+{% blocktrans with user as u %}
+Hello {{u}},
+
+thank you for your preorder!
+{% endblocktrans %}
+
+{% trans "Amount" %}  {% trans "Ticket type" %}             {% trans "Price per Ticket" %}
+================================================
+{% for p in preorder.get_tickets %}
+{{p.amount}}       {{p.t.name}}                     {{p.t.price}} {{p.t.currency}} 
+{% endfor %}
+------------------------------------------------
+                                Total: {% for total in preorder.get_sale_amount %}{{total.total}} {{total.currency}}{%endfor %}
+
+{% blocktrans %}
+Please do not forget to pay for your tickets until {{payment_until}}
+{% endblocktrans %}
+{% trans "Please transfer the total amount (see above) to:"%}
+
+{{payment_details}}
+
+{% trans "Reference:"%} {{payment_prefix}}-{{preorder.get_reference_hash}}

@@ -1,0 +1,110 @@
+{% extends "base/base.html" %}
+{% load multiply i18n %}
+
+{% block content %}
+      {% include "base/hero.html" %}
+
+      <div class="row">
+        <div class="span12">
+          {% if quota %}
+            <h2>{% trans "Preorder tickets"%}</h2>
+
+            <table class="table table-striped table-bordered">
+              <tr>
+                <th>{% trans "Ticket type"%}</th>
+                <th>{% trans "Price"%}</th>
+                <th style="width:135px"></th>
+              </tr>
+
+              {% for q in quota %}
+                <tr>
+                  <td style="vertical-align:middle;">{{q.ticket.name}}</td>
+                  <td style="vertical-align:middle;">{{q.ticket.price}} {{q.ticket.currency}} {% trans "(incl. tax)"%}</td>
+                  <td style="text-align:right;">
+                    <form class="form-search" style="margin:0" action="{% url cart-add %}" method="post">
+                      {% csrf_token %}
+                      <input type="hidden" value="{{q.quota.pk}}" name="quota" />
+                      <input type="text" class="input" style="width:25px;" name="amount" value="1">
+                      <button type="submit" class="btn-success btn">{% trans "Add to cart"%}</button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </table>
+<p>F&uuml;r Kinder unter 12 Jahre ist der Eintritt frei.
+Als Sch&uuml;ler gelten alle mit Sch&uuml;lerausweis I. Das bedeutet, dass nur "echte" Sch&uuml;ler diese Tickets erhalten. Berufssch&uuml;ler, Studierende und andere sind von der Erm&auml;&szlig;igung ausgenommen.</p>
+          {% else %}
+            <h2>{% trans "Sorry! Ticket quota exceeded."%}</h2>
+            <div class="alert alert-warning">
+             {% trans "We're sorry, but we have no more tickets left. Please wait for the next quota update."%}
+            </div>
+          {% endif %}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="span12">
+            {% if cart %}
+              <h2>Your cart</h2>
+
+              <table class="table table-striped table-bordered">
+                <tr>
+                  <th style="width:50px">{% trans "Amount"%}</th>
+                  <th>{% trans "Ticket type"%}</th>
+                  <th>{% trans "Price per ticket"%}</th>
+                  <th>{% trans "Total price"%}</th>
+                  <th style="width:150px"></th>
+                </tr>
+
+                {% for c in cart %}
+                  <tr>
+                    <td style="vertical-align:middle;">{{c.amount}}x</td>
+                    <td style="vertical-align:middle;">{{c.quota.ticket}}</td>
+                    <td style="vertical-align:middle;">{{c.quota.ticket.price}} {{c.quota.ticket.currency}} {% trans "(incl. tax)"%}</td>
+                    <td style="vertical-align:middle;">{{c.quota.ticket.price|multiply:c.amount|floatformat:2}} {{c.quota.ticket.currency}} {% trans "(incl. tax)"%}</td>
+                    <td style="text-align:right;">
+                      <form class="form-search" style="margin:0;float:left;" action="{% url cart-amend %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" value="{{c.quota.pk}}" name="quota" />
+                        <input type="text" class="input" style="width:25px;" name="amount" value="{{c.amount}}">
+                        <button type="submit" class="btn-primary btn">{% trans "Edit"%}</button>
+                      </form>
+                      <form class="form-search" style="margin:0;float:right;" action="{% url cart-delete %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" value="{{c.quota.pk}}" name="quota" />
+                        <button type="submit" class="btn-danger btn">{% trans "Delete"%}</button>
+                      </form>                      
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="3">
+                      {% trans "Your cart is empty. :-("%}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </table>
+              <form action="{% url checkout %}" method="get" style="float:right;">
+                <button type="submit" class="btn btn-success"><i class="icon-shopping-cart icon-white"></i> {% trans "Proceed to checkout"%}</button>
+              </form>
+            {% endif %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="span4">
+          <h3>Golden Token</h3>
+          {% if not cart %}
+            <form class="well form-search" method="POST" action="{% url redeem-token %}">
+              {% csrf_token %}
+              <input name="token" type="text" class="input-medium" placeholder="{% trans "Token"%}">
+              <button type="submit" class="btn btn-primary">{% trans "Redeem"%}</button>
+            </form>
+          {% else %}
+            <div class="alert alert-info">
+              {% trans "Clear your cart in order to redeem a token. Any account can either redeem a token or place a regular preorder."%}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+{% endblock %}

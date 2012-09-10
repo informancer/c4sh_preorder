@@ -1,0 +1,63 @@
+{% extends "base/base.html" %}
+{% load multiply get_index tax_calc i18n %}
+
+{% block content %}
+      {% include "base/hero.html" %}
+
+      <div class="row">
+        <div class="span12">
+          {% if cart %}
+            <h2>{% trans "Your cart" %}</h2>
+
+            <table class="table table-striped table-bordered">
+              <tr>
+                <th style="width:50px">{% trans "Amount"%}</th>
+                <th>{% trans "Ticket type"%}</th>
+                <th style="width:200px">{% trans "Price per ticket"%}</th>
+                <th style="width:200px">{% trans "Price"%}</th>
+              </tr>
+
+              {% for c in cart %}
+                <tr>
+                  <td style="vertical-align:middle;">{{c.amount}}x</td>
+                  <td style="vertical-align:middle;">{{c.quota.ticket.name}}</td>
+                  <td style="vertical-align:middle;">{{c.quota.ticket.price|floatformat:2}} {{c.quota.ticket.currency}} (incl. {{c.quota.ticket.tax_rate}}% tax)<br />
+                  <span style="font-size:x-small">{{c.quota.ticket.price|tax_calc:c.quota.ticket.tax_rate|floatformat:2}} {{c.quota.ticket.currency}} (excl. {{c.quota.ticket.tax_rate}}% tax)</span></td>
+                  <td style="vertical-align:middle;">{{c.quota.ticket.price|multiply:c.amount|floatformat:2}} {{c.quota.ticket.currency}} (incl. {{c.quota.ticket.tax_rate}}% tax)<br />
+                  <span style="font-size:x-small">{{c.quota.ticket.price|multiply:c.amount|tax_calc:c.quota.ticket.tax_rate|floatformat:2}} {{c.quota.ticket.currency}} (excl. {{c.quota.ticket.tax_rate}}% tax)</span></td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="3">
+                    {% trans "Your cart is empty. :-("%}"
+                  </td>
+                </tr>
+              {% endfor %}
+
+              {% for t in totals %}
+                <tr>
+                  <th colspan="3" style="vertical-align:top;text-align:right">Total</th>
+                  <th>
+                    {{t.total|floatformat:2}} {{t.currency}}<br />
+                    {% for tax in t.taxes %}
+                      <span style="font-size:x-small">{% blocktrans with tax_rate=tax.rate%}incl. {{tax_rate}}% taxes:{%endblocktrans%} {{tax.amount|floatformat:2}} {{t.currency}}</span><br />
+                    {% endfor %}
+                
+                  </th>
+                </tr>
+              {% endfor %}                
+            </table>
+            <form action="{% url order %}" method="POST" style="float:right;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-success"><i class="icon-ok icon-white"></i> {% trans "Preorder these tickets"%}</button>
+            </form>
+
+          {% else %}
+            <h2>{% trans "Your cart is empty."%}</h2>
+            <div class="alert alert-warning">
+             {% trans "Well.. your cart is empty. What do you want to checkout then?"%}
+            </div>
+          {% endif %}
+         </div>        
+      </div>
+{% endblock %}

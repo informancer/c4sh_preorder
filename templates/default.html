@@ -1,0 +1,24 @@
+{% extends "base/base.html" %}
+{% load i18n %}
+
+{% block content %}
+      {% include "base/hero.html" %}
+
+      <div class="row">
+      {% if not request.user.is_authenticated %}
+        <div class="span6">
+           <h2>{% trans "Login" %}</h2>
+           <p>{% trans "Already got an account? Please login to preorder tickets or view your ticket's payment status."%}</p>
+
+           {% include "base/form_login.html" %}
+         </div>
+         <div class="span6">
+           <h2>{% trans "Sign up"%}</h2>
+           <p>{% blocktrans with event=settings.EVENT_NAME_SHORT%}In order to preorder tickets for {{event}}, you need to signup.{% endblocktrans %}</p>
+           
+           {% include "base/form_signup.html" %}
+         </div>        
+        {% else %}
+        {% endif %}
+      </div>
+{% endblock %}

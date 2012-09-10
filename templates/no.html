@@ -1,0 +1,14 @@
+{% extends "base/base.html" %}
+{% load i18n %}
+{% block content %}
+	{% include "base/hero.html" %}
+
+	<div class="row">
+		<div class="span12">	
+			<div class="alert alert-block alert-error">
+				<h1 class="alert-heading">{% trans "Sorry!"%}</h1>
+				<p>{% trans "The venue is sold out!" %}</p>
+			</div>
+		</div>
+	</div>
+{% endblock %}

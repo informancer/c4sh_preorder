@@ -1,0 +1,503 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-02-29 15:05+0100\n"
+"PO-Revision-Date: 2012-02-29 15:09+0100\n"
+"Last-Translator: \n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: preorder/admin_views.py:97
+#, python-format
+msgid "This preorder has already been marked as paid via %(via)s on %(time)s."
+msgstr "Diese Vorbestellung wurde bereits am %(time)s per %(via)s bezahlt."
+
+#: preorder/app_views.py:81
+#, python-format
+msgid "Quota for ticket %s not found or exceeded."
+msgstr "Es sind keine Tickets (%s) mehr verfügbar."
+
+#: preorder/app_views.py:91
+#, python-format
+msgid "Your selected amount %(amount)d of %(ticket)s is no longer available."
+msgstr "Du kannst leider nicht mehr %(amount)d mal %(ticket)s bestellen."
+
+#: preorder/app_views.py:103
+msgid "Thanks for your preorder!"
+msgstr "Danke für Deine Vorbestellung!"
+
+#: preorder/app_views.py:147
+#: preorder/app_views.py:183
+msgid "Got unexpected post data - please try again."
+msgstr "Interner Fehler, bitte noch einmal probieren."
+
+#: preorder/app_views.py:150
+#: preorder/app_views.py:186
+msgid "You are expected to enter digits.. Nothing else."
+msgstr "Bitte nur Ganzzahlen eingeben."
+
+#: preorder/app_views.py:156
+#: preorder/app_views.py:192
+msgid "Quota not found or exceeded."
+msgstr "Es sind keine Tickets mehr verfügbar."
+
+#: preorder/app_views.py:172
+#: preorder/app_views.py:205
+#, python-format
+msgid "Your selected amount %(amount)d of %(ticket)s is not available."
+msgstr "Du kannst leider nicht %(amount)d mal %(ticket)s bestellen."
+
+#: preorder/app_views.py:239
+#, python-format
+msgid "The ticket %s does no longer exist. Your token has not been redeemed. Please contact support."
+msgstr "Das Ticket %s existiert nicht länger. Das Token wurde nicht eingelöst. Bitte kontaktiere den Support."
+
+#: preorder/app_views.py:259
+msgid "Your token has been successfully redeemed."
+msgstr "Das Token wurde erfolgreich eingelöst."
+
+#: preorder/app_views.py:302
+#, python-format
+msgid "Your email address has been changed to <tt>%s</tt>!"
+msgstr "Deine E-Mail-Adrese wurde auf <tt>%s</tt> geändert."
+
+#: preorder/app_views.py:310
+msgid "Your password has been changed!"
+msgstr "Dein Passwort wurde erfolgreich geändert."
+
+#: preorder/forms.py:13
+msgid "This username has already been taken."
+msgstr "Der Benutzername ist bereits vergeben."
+
+#: preorder/forms.py:24
+msgid "This token has already been redeemed."
+msgstr "Das Token wurde bereits eingelöst."
+
+#: preorder/forms.py:26
+msgid "This token does not exist."
+msgstr "Das Token existiert nicht."
+
+#: preorder/forms.py:55
+msgid "The two password fields didn't match."
+msgstr "Die beiden Passwörter stimmen nicht überein."
+
+#: preorder/forms.py:57
+msgid "Your password has to be at least 8 characters long."
+msgstr "Dein Passwort muss mindestens 8 Zeichen lang sein."
+
+#: preorder/forms.py:59
+msgid "Your password needs to contain at least one number and one character."
+msgstr "Das Passwort muss mindestens eine Zahl und einen Buchstaben enthalten."
+
+#: preorder/forms.py:61
+msgid "This is not your current password."
+msgstr "Dein aktuelles Passwort ist nicht korrekt."
+
+#: templates/account.html:14
+msgid "Hello, "
+msgstr "Hallo,"
+
+#: templates/account.html:19
+msgid "Email address"
+msgstr "E-Mail-Adresse"
+
+#: templates/account.html:20
+msgid "An email address is required for preorder status update notifications."
+msgstr "Falls Du eine E-Mail bekommen möchtest, wenn Deine Bestellung bearbeitet wird, benötigen wir Deine E-Mail-Adresse."
+
+#: templates/account.html:24
+msgid "Save email address"
+msgstr "E-Mail-Adresse speichern"
+
+#: templates/account.html:47
+#: templates/base/form_login.html:11
+#: templates/base/form_signup.html:20
+msgid "Password"
+msgstr "Passwort"
+
+#: templates/account.html:48
+msgid "Change your login password using this form."
+msgstr "Hier kannst Du Dein Passwort ändern."
+
+#: templates/account.html:52
+msgid "Save new password"
+msgstr "Passwort ändern"
+
+#: templates/buy.html:10
+msgid "Preorder tickets"
+msgstr "Tickets vorbestellen"
+
+#: templates/buy.html:14
+#: templates/buy.html.py:51
+#: templates/checkout.html:15
+#: templates/tickets.html:59
+msgid "Ticket type"
+msgstr "Ticket-Typ"
+
+#: templates/buy.html:15
+#: templates/checkout.html:17
+#: templates/tickets.html:61
+msgid "Price"
+msgstr "Preis"
+
+#: templates/buy.html:22
+#: templates/buy.html.py:61
+#: templates/buy.html.py:62
+msgid "(incl. tax)"
+msgstr "(inkl. MwSt.)"
+
+#: templates/buy.html:28
+msgid "Add to cart"
+msgstr "In den Einkaufwagen"
+
+#: templates/buy.html:35
+msgid "Sorry! <s>Disk</s>Ticket quota exceeded."
+msgstr "Sorry! Keine Tickets mehr da."
+
+#: templates/buy.html:37
+msgid "We're sorry, but we have no more tickets left. Please wait for the next quota update."
+msgstr "Das aktuelle Ticketkontingent ist ausverkauft."
+
+#: templates/buy.html:50
+#: templates/checkout.html:14
+#: templates/tickets.html:58
+msgid "Amount"
+msgstr "Menge"
+
+#: templates/buy.html:52
+#: templates/checkout.html:16
+#: templates/tickets.html:60
+msgid "Price per ticket"
+msgstr "Preis pro Ticket"
+
+#: templates/buy.html:53
+msgid "Total price"
+msgstr "Summe"
+
+#: templates/buy.html:68
+msgid "Edit"
+msgstr "Ändern"
+
+#: templates/buy.html:73
+msgid "Delete"
+msgstr "Löschen"
+
+#: templates/buy.html:80
+#: templates/checkout.html:32
+msgid "Your cart is empty. :-("
+msgstr "Dein Einkaufswagen ist leer."
+
+#: templates/buy.html:86
+msgid "Proceed to checkout"
+msgstr "Bestellen"
+
+#: templates/buy.html:98
+msgid "Token"
+msgstr "Token"
+
+#: templates/buy.html:99
+msgid "Redeem"
+msgstr "Einlösen"
+
+#: templates/buy.html:103
+msgid "Clear your cart in order to redeem a token. Any account can either redeem a token or place a regular preorder."
+msgstr "Du musst deinen Einkaufswagen löschen, wenn du ein Token einlösen willst. Jeder Account kann entweder ein Token einlösen oder eine normale Vorbestellung starten."
+
+#: templates/checkout.html:10
+msgid "Your cart"
+msgstr "Einkaufswagen"
+
+#: templates/checkout.html:43
+#, python-format
+msgid "incl. %(tax_rate)s%% taxes:"
+msgstr "inkl. %(tax_rate)s%% MwSt.:"
+
+#: templates/checkout.html:52
+msgid "Preorder these tickets"
+msgstr "Tickets vorbestellen"
+
+#: templates/checkout.html:56
+msgid "Your cart is empty."
+msgstr "Dein Einkaufswagen ist leer."
+
+#: templates/checkout.html:58
+msgid "Well.. your cart is empty. What do you want to checkout then?"
+msgstr "Dein Einkaufswagen ist leer."
+
+#: templates/default.html:10
+#: templates/signup.html:14
+#: templates/base/form_login.html:12
+msgid "Login"
+msgstr "Login"
+
+#: templates/default.html:11
+msgid "Already got an account? Please login to preorder tickets or view your ticket's payment status."
+msgstr "Falls Du schon einen Account hast, kannst Du Dich hier einloggen, um Dein Ticket abzurufen."
+
+#: templates/default.html:16
+#: templates/signup.html:19
+msgid "Sign up"
+msgstr "Registrieren"
+
+#: templates/default.html:17
+#: templates/signup.html:20
+#, python-format
+msgid "In order to preorder tickets for %(event)s, you need to signup."
+msgstr "Du musst Dich anmelden, um Tickets für %(event)s vorzubestellen."
+
+#: templates/no.html:9
+msgid "Sorry!"
+msgstr "Sorry!"
+
+#: templates/no.html:10
+msgid "The venue is sold out!"
+msgstr "Die Veranstaltung ist ausverkauft!"
+
+#: templates/signup.html:8
+msgid "Thank you!"
+msgstr "Danke!"
+
+#: templates/signup.html:10
+msgid "Your account has been created and you are now able to login."
+msgstr "Dein Account wurde erfolgreich erstellt. Du kannst Dich jetzt einloggen."
+
+#: templates/tickets.html:11
+msgid "Payment information"
+msgstr "Informationen zur Bezahlung"
+
+#: templates/tickets.html:13
+msgid "Thanks for your preorder. Please transfer the total amount (see right) to:"
+msgstr "Danke für Deine Bestellung. Bitte überweise die Summe (siehe rechts) an:"
+
+#: templates/tickets.html:16
+msgid "Here be payment information after you preordered tickets."
+msgstr "Hier findest Du die Zahlungsinformationen, sobald Du vorbestellt hast."
+
+#: templates/tickets.html:21
+msgid "Your preorders"
+msgstr "Deine Vorbestellungen"
+
+#: templates/tickets.html:25
+msgid "Payment required"
+msgstr "Bezahlung notwendig"
+
+#: templates/tickets.html:26
+msgid "Paid?"
+msgstr "Bezahlt?"
+
+#: templates/tickets.html:38
+msgid "Yes"
+msgstr "Ja"
+
+#: templates/tickets.html:38
+msgid "No"
+msgstr "Nein"
+
+#: templates/tickets.html:43
+#: templates/tickets.html.py:45
+msgid "Print invoice"
+msgstr "Rechnung drucken"
+
+#: templates/tickets.html:48
+#: templates/tickets.html.py:50
+msgid "Print tickets"
+msgstr "Tickets drucken"
+
+#: templates/tickets.html:85
+msgid "Total"
+msgstr "Summe"
+
+#: templates/tickets.html:106
+msgid "You have no preorders yet."
+msgstr "Du hast keine Vorbestellung."
+
+#: templates/admin/import_csv.html:17
+msgid "Hash"
+msgstr "Hash"
+
+#: templates/admin/import_csv.html:18
+msgid "Name"
+msgstr "Name"
+
+#: templates/admin/import_csv.html:19
+msgid "Date"
+msgstr "Datum"
+
+#: templates/admin/import_csv.html:20
+msgid "Tickets"
+msgstr "Tickets"
+
+#: templates/admin/import_csv.html:21
+#: templates/admin/import_csv.html:101
+#: templates/admin/import_csv.html:147
+msgid "Value"
+msgstr "Wert"
+
+#: templates/admin/import_csv.html:22
+msgid "Additional information"
+msgstr "Weitere Informationen"
+
+#: templates/admin/import_csv.html:47
+msgid "Mark as paid"
+msgstr "Als bezahlt markieren"
+
+#: templates/admin/import_csv.html:57
+msgid "CSV File"
+msgstr "CSV-Datei"
+
+#: templates/admin/import_csv.html:66
+msgid "Delimiter"
+msgstr "Trennzeichen"
+
+#: templates/admin/import_csv.html:74
+msgid "Upload and proceed.."
+msgstr "Hochladen und fortsetzen"
+
+#: templates/admin/import_csv.html:80
+msgid "Congratulations!"
+msgstr "Glückwunsch!"
+
+#: templates/admin/import_csv.html:82
+msgid "preorder(s) have been parked as paid."
+msgstr "Vorbestellung(en) wurden als bezahlt markiert."
+
+#: templates/admin/import_csv.html:93
+msgid "Successful matches"
+msgstr "Erfolgreiche Streichhölzer"
+
+#: templates/admin/import_csv.html:99
+msgid "Preorder"
+msgstr "Vorbestellung"
+
+#: templates/admin/import_csv.html:100
+#: templates/admin/import_csv.html:146
+msgid "Entry date"
+msgstr "Eingangsdatum"
+
+#: templates/admin/import_csv.html:102
+msgid "Inv. value"
+msgstr "Rech.-Wert"
+
+#: templates/admin/import_csv.html:137
+msgid "Review successful matches.."
+msgstr "Erfolgreiche Streichhölzer wiedervorlegen"
+
+#: templates/admin/import_csv.html:142
+msgid "Unsuccessful matches"
+msgstr "Erfolglose Steichhölzer"
+
+#: templates/admin/import_csv.html:145
+msgid "Reference"
+msgstr "Referenz"
+
+#: templates/admin/import_csv.html:164
+msgid "Assign to:"
+msgstr "Zuweisen zu:"
+
+#: templates/admin/import_csv.html:166
+msgid "Select.."
+msgstr "Auswählen"
+
+#: templates/admin/import_csv.html:171
+msgid "Update match"
+msgstr "Streichholz aktualisieren"
+
+#: templates/base/admin_subnav.html:5
+msgid "Overview"
+msgstr "Übersicht"
+
+#: templates/base/admin_subnav.html:6
+msgid "Import CSV"
+msgstr "CSV importieren"
+
+#: templates/base/base.html:37
+msgid "Preorder Tickets"
+msgstr "Tickets vorbestellen"
+
+#: templates/base/base.html:38
+msgid "My Tickets"
+msgstr "Meine Tickets"
+
+#: templates/base/base.html:39
+msgid "Contact"
+msgstr "Kontakt"
+
+#: templates/base/base.html:41
+msgid "Admin"
+msgstr "Admin"
+
+#: templates/base/base.html:46
+msgid "Logged in as"
+msgstr "Eingeloggt als"
+
+#: templates/base/form_login.html:4
+msgid "Your login attempt has failed. Please try again or contact our support."
+msgstr "Login fehlgeschlagen. Bei Problemen wende Dich an unseren Support."
+
+#: templates/base/form_login.html:10
+#: templates/base/form_signup.html:5
+msgid "Username"
+msgstr "Username"
+
+#: templates/base/form_login.html:13
+msgid "Forgot your password?"
+msgstr "Passwort vergessen?"
+
+#: templates/base/form_signup.html:35
+msgid "Email"
+msgstr "E-Mail"
+
+#: templates/base/form_signup.html:46
+msgid "Optional. Required for status notifications."
+msgstr "Optional (für Status-Updates)"
+
+#: templates/base/form_signup.html:51
+msgid "Signup"
+msgstr "Registrieren"
+
+#: templates/base/password_reset.html:9
+#: templates/base/password_reset_form.html:9
+msgid "Password reset"
+msgstr "Passwort zurücksetzen"
+
+#: templates/base/password_reset.html:16
+#: templates/base/password_reset_form.html:16
+msgid "Proceed.."
+msgstr "Weiter.."
+
+#: templates/base/password_reset.html:21
+#: templates/base/password_reset_form.html:21
+msgid "Your attempt has failed. Please try again or contact our support."
+msgstr "Aktion fehlgeschlagen. Bei Problemen wende Dich an unseren Support."
+
+#: templates/base/password_reset_complete.html:9
+msgid "Password reset complete"
+msgstr "Passwort wurde zurückgesetzt"
+
+#: templates/base/password_reset_confirm.html:9
+msgid "Password reset successful"
+msgstr "Passwort erfolgreich zurückgesetzt"
+
+#: templates/base/password_reset_confirm.html:11
+msgid "We've e-mailed you instructions for setting your password to the e-mail address you submitted. You should be receiving it shortly."
+msgstr "Wir haben wir eine E-Mail mit Anweisungen zum Passwort-Reset geschickt."
+
+#~ msgid ""
+#~ "You already preordered tickets. Every account is only eligible to "
+#~ "preorder once. View your tickets "
+#~ msgstr ""
+#~ "Du hast bereits Tickets vorbestellt. Jeder Account kann nur ein mal "
+#~ "vorbestellen. "
+
+#~ msgid "here"
+#~ msgstr "Zu Deiner Bestellung"

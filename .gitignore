@@ -1,0 +1,6 @@
+*.pyc
+*.AppleDouble
+*:2e*
+*.sqlite3
+event_*.py
+settings.py
