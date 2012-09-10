@@ -103,6 +103,10 @@ def order_view(request):
 
 			for i in range(1, amount+1):
 				position = PreorderPosition(preorder=preorder, ticket=quota.ticket)
+
+				from uuid import uuid4
+				position.uuid = str(uuid4())
+
 				position.save()
 
 				quota.sold+=1
