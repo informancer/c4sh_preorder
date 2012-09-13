@@ -19,6 +19,10 @@ EVENT_NAME_UNIX = 'sigint12'
 # Official name of your event
 EVENT_NAME = 'SIGINT12'
 
+#Official logo for your event, located inside STATIC_ROOT. Will be used for PDF output of tickets and stuff
+EVENT_LOGO = 'sigint12.png'
+
+
 # Postal address of host (for invoices)
 EVENT_INVOICE_ADDRESS = "Chaos Computer Club\nVeranstaltungsgesellschaft mbH\n" + \
  "Postfach 31337\n" + \

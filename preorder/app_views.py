@@ -357,8 +357,8 @@ def print_tickets_view(request, preorder_id, secret):
 	"""pdf.add_page()
 
 	# print logo
-	pdf.image('%ssigint-logo.png' % (settings.STATIC_ROOT), 280, 10, 1000*0.3, 580*0.3)
-	pdf.set_font('Arial','B',20)
+	pdf.image('%s%s' % (settings.STATIC_ROOT,settings.EVENT_LOGO), 280, 10, 1000*0.3, 580*0.3)   
+    pdf.set_font('Arial','B',20)
 	pdf.text(20,50,"%s Overview" % settings.EVENT_NAME_SHORT)
 	pdf.set_font('Arial','B',10)
 	pdf.text(20,70,"These are your presale's positions. This is not an invoice.")
@@ -424,8 +424,8 @@ def print_tickets_view(request, preorder_id, secret):
 		ticket = position.ticket
 
 		# print logo
-		pdf.image('%ssigint-logo.png' % (settings.STATIC_ROOT), 280, 10, 1000*0.3, 580*0.3)
-		pdf.set_font('Arial','B',50)
+		pdf.image('%s%s' % (settings.STATIC_ROOT,settings.EVENT_LOGO), 280, 10, 1000*0.3, 580*0.3)
+        pdf.set_font('Arial','B',50)
 		pdf.text(20,60,"%s" % settings.EVENT_NAME_SHORT)
 
 		pdf.set_font('Arial','B',20)
@@ -491,8 +491,8 @@ def print_tickets_view(request, preorder_id, secret):
 
 		# print human readable ticket code
 		pdf.set_font('Arial','',10)
-		pdf.text(330, 545, 'Payment reference: SIGINT-%s' % preorder.unique_secret[:10])
-		pdf.text(330, 555, '%s' % preorder.unique_secret)
+		pdf.text(330, 545, 'Payment reference: %s-%s' % (settings.EVENT_NAME, preorder.unique_secret[:10]))
+        pdf.text(330, 555, '%s' % preorder.unique_secret)
 		pdf.text(330, 565, '%s' % position.uuid)
 
 		# print invoice information
@@ -522,8 +522,8 @@ def print_tickets_view(request, preorder_id, secret):
 		#pdf.text(10, 830, '%s' % settings.EVENT_INVOICE_ADDRESS)
 
 	response = HttpResponse(mimetype="application/pdf")
-	response['Content-Disposition'] = 'inline; filename=%s-%s.pdf' % ('SIGINT', preorder.unique_secret[:10])
-	#response['Content-Length'] = in_memory.tell()
+	response['Content-Disposition'] = 'inline; filename=%s-%s.pdf' % (settings.EVENT_NAME, preorder.unique_secret[:10])
+    #response['Content-Length'] = in_memory.tell()
 	response.write(pdf.output('', 'S'))
 
 	# delete qrcode
