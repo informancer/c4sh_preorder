@@ -425,7 +425,7 @@ def print_tickets_view(request, preorder_id, secret):
 
 		# print logo
 		pdf.image('%s%s' % (settings.STATIC_ROOT,settings.EVENT_LOGO), 280, 10, 1000*0.3, 580*0.3)
-        pdf.set_font('Arial','B',50)
+		pdf.set_font('Arial','B',50)
 		pdf.text(20,60,"%s" % settings.EVENT_NAME_SHORT)
 
 		pdf.set_font('Arial','B',20)
@@ -492,7 +492,7 @@ def print_tickets_view(request, preorder_id, secret):
 		# print human readable ticket code
 		pdf.set_font('Arial','',10)
 		pdf.text(330, 545, 'Payment reference: %s-%s' % (settings.EVENT_NAME, preorder.unique_secret[:10]))
-        pdf.text(330, 555, '%s' % preorder.unique_secret)
+		pdf.text(330, 555, '%s' % preorder.unique_secret)
 		pdf.text(330, 565, '%s' % position.uuid)
 
 		# print invoice information
