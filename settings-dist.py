@@ -135,7 +135,8 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'c4sh_preorder.preorder',
-    'captcha'
+    'captcha',
+    'south'
 )
 
 # See http://docs.djangoproject.com/en/dev/topics/logging for
