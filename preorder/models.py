@@ -53,6 +53,10 @@ class CustomPreorderTicket(PreorderTicket):
 	def stats_percentage(self):
 		return float(self.stats_preordered()) / float(PreorderPosition.objects.all().count()) * 100
 
+class Tshirt(CustomPreorderTicket):
+	size = models.CharField(verbose_name="T-Shirt Size", max_length=3)
+	type = models.CharField(verbose_name="T-Shirt Type (girly, etc.)", max_length=255)
+
 class PreorderPosition(PreorderPosition):
 	pass
 

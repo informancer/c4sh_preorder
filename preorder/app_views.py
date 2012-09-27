@@ -42,10 +42,19 @@ def default_view(request):
 		nav = 'buy'
 		quota_raw = PreorderQuota.objects.filter(Q(sold__lt=F('quota')), Q(ticket__active=True), Q(ticket__deleted=False))
 		quota = []
+		tshirt_quota = []
 
 		for q in quota_raw:
 			if len([item for item in quota if item['ticket'] == q.ticket]) == 0:
-				quota.append({'quota': q, 'ticket': q.ticket})
+
+				try:
+					tshirt = Tshirt.objects.get(pk=q.ticket.pk)
+					tshirt_quota.append({'quota': q, 'tshirt': tshirt})
+					continue
+				except Tshirt.DoesNotExist:
+					ticket = q.ticket
+
+				quota.append({'quota': q, 'ticket': ticket})
 
 		cart = get_cart(request.session.get('cart', False))
 		return render_to_response('buy.html', locals(), context_instance=RequestContext(request))
@@ -166,7 +175,7 @@ def checkout_view(request):
 def cart_view(request, action):
 	quota_id = request.POST.get('quota')
 	amount = request.POST.get('amount')
-		
+
 	if action == "add":
 		try:
 			if not quota_id or not amount or int(amount) < 0:
