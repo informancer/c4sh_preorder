@@ -35,6 +35,16 @@ class SignupForm(forms.Form):
 	email = forms.EmailField(required=False)
 	captcha = CaptchaField()
 
+	class Meta:
+		model = User
+
+	def clean_email(self):
+		email = self.cleaned_data.get('email')
+		username = self.cleaned_data.get('username')
+		if email and User.objects.filter(email=email).exclude(username=username).count():
+			raise forms.ValidationError(u'Email addresses must be unique.')
+		return email
+
 class EmailForm(forms.Form):
 	email = forms.EmailField(required=True)
 
@@ -52,7 +62,7 @@ class PasswordForm(forms.Form):
 
 	def clean(self):
 		cleaned_data = self.cleaned_data
-  		if 'new_password1' in cleaned_data and 'new_password2' in cleaned_data:
+		if 'new_password1' in cleaned_data and 'new_password2' in cleaned_data:
 			if cleaned_data.get('new_password1') != cleaned_data.get('new_password2'):
 				raise forms.ValidationError(_("The two password fields didn't match."))
 			if len(cleaned_data.get('new_password1')) < 8:
