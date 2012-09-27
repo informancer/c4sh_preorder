@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime, os, socket, re, datetime, random, hashlib
 from django.core import serializers
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.http import Http404, HttpResponseServerError, HttpResponseRedirect, HttpResponse, HttpResponseNotFound
@@ -42,10 +42,19 @@ def default_view(request):
 		nav = 'buy'
 		quota_raw = PreorderQuota.objects.filter(Q(sold__lt=F('quota')), Q(ticket__active=True), Q(ticket__deleted=False))
 		quota = []
+		tshirt_quota = []
 
 		for q in quota_raw:
 			if len([item for item in quota if item['ticket'] == q.ticket]) == 0:
-				quota.append({'quota': q, 'ticket': q.ticket})
+
+				try:
+					tshirt = Tshirt.objects.get(pk=q.ticket.pk)
+					tshirt_quota.append({'quota': q, 'tshirt': tshirt})
+					continue
+				except Tshirt.DoesNotExist:
+					ticket = q.ticket
+
+				quota.append({'quota': q, 'ticket': ticket})
 
 		cart = get_cart(request.session.get('cart', False))
 		return render_to_response('buy.html', locals(), context_instance=RequestContext(request))
@@ -166,7 +175,7 @@ def checkout_view(request):
 def cart_view(request, action):
 	quota_id = request.POST.get('quota')
 	amount = request.POST.get('amount')
-		
+
 	if action == "add":
 		try:
 			if not quota_id or not amount or int(amount) < 0:
@@ -339,11 +348,16 @@ def account_view(request):
 
 @login_required
 def print_tickets_view(request, preorder_id, secret):
+	if EVENT_DOWNLOAD_DATE and datetime.datetime.now() < datetime.datetime.strptime(EVENT_DOWNLOAD_DATE,'%Y-%m-%d %H:%M:%S'):
+		messages.error(request, _("Tickets cannot be downloaded yet, please try again shortly before the event."))
+		return redirect("my-tickets")
+
 	preorder = get_object_or_404(CustomPreorder, Q(pk=preorder_id), Q(user_id=request.user.pk), Q(unique_secret=secret))
 
 	# what to do if this preorder is not yet marked as paid?
 	if not preorder.paid:
-		raise Http404
+		messages.error(request, _("You cannot download your ticket until you paid for it."))
+		return redirect("my-tickets")
 
 	from pyqrcode import MakeQRImage
 	from fpdf import FPDF

@@ -3,8 +3,6 @@
 {% load multiply timedelta %}
 
 {% block content %}
-      {% include "base/hero.html" %}
-
       <div class="row">
           
         <div class="span5">
@@ -42,7 +40,7 @@
                     {% if p.paid %}
                       <a class="btn btn-primary" href="{% url print-tickets p.pk p.unique_secret %}">{% trans "Download tickets / invoice"%}</a>
                     {% else %}
-                      <a class="btn disabled btn-primary" href="">{% trans "Download tickets / invoice"%}</a>
+                      {% trans "You'll be able to download your ticket here as soon as it is marked as paid." %}
                     {% endif %}
                   </td>
                 </tr>

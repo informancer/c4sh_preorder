@@ -81,5 +81,8 @@ EVENT_PAYMENT_ACK_MAIL_TEXT = 	"English version below" + \
 # Footer note visible on all pages
 EVENT_FOOTER_NOTE = "Bei Fragen und Problemen bitte direkt eine Mail an die <a href='mailto:"+EVENT_CONTACT_MAILTO+"'>SIGINT Orga Crew</a>"
 
+# do not allow downloads before this date, YYYY-mm-dd HH:MM:SS
+EVENT_DOWNLOAD_DATE = "2012-09-28 00:00:00"
+
 # Supervisor IPs
 EVENT_SUPERVISOR_IPS = ('127.0.0.1', '172.17.0.1',)

@@ -2,7 +2,6 @@
 {% load multiply i18n %}
 
 {% block content %}
-      {% include "base/hero.html" %}
 
       <div class="row">
         <div class="span12">
@@ -30,6 +29,29 @@
                   </td>
                 </tr>
               {% endfor %}
+
+              {% if tshirt_quota %}
+              <tr>
+                <td style="vertical-align:middle;">{% trans "Merchandise" %}</td>
+                <td style="vertical-align:middle;">
+                  <form class="form-search" style="margin:0" action="{% url cart-add %}" method="post">
+                  <select name="quota">
+                    {% for t in tshirt_quota %}
+                      <option value="{{t.quota.pk}}">{{t.tshirt.type}} {{t.tshirt.size}} {{t.tshirt.price}} {{t.tshirt.currency}} {% trans "(incl. tax)"%}</option>
+                    {% endfor %}
+                  </select>
+                </td>
+                <td style="text-align:right;">
+                  <div class="form-search">
+                    {% csrf_token %}
+                    <input type="text" class="input" style="width:25px;" name="amount" value="1">
+                    <button type="submit" class="btn-success btn">{% trans "Add to cart"%}</button>
+                  </div>
+                  </form>
+                  </td>
+              </tr>
+              {% endif %}
+
             </table>
 <p>F&uuml;r Kinder unter 12 Jahre ist der Eintritt frei.
 Als Sch&uuml;ler gelten alle mit Sch&uuml;lerausweis I. Das bedeutet, dass nur "echte" Sch&uuml;ler diese Tickets erhalten. Berufssch&uuml;ler, Studierende und andere sind von der Erm&auml;&szlig;igung ausgenommen.</p>
