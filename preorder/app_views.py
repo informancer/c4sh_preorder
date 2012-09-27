@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime, os, socket, re, datetime, random, hashlib
 from django.core import serializers
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.http import Http404, HttpResponseServerError, HttpResponseRedirect, HttpResponse, HttpResponseNotFound
@@ -339,11 +339,16 @@ def account_view(request):
 
 @login_required
 def print_tickets_view(request, preorder_id, secret):
+	if EVENT_DOWNLOAD_DATE and datetime.datetime.now() < datetime.datetime.strptime(EVENT_DOWNLOAD_DATE,'%Y-%m-%d %H:%M:%S'):
+		messages.error(request, _("Tickets cannot be downloaded yet, please try again shortly before the event."))
+		return redirect("my-tickets")
+
 	preorder = get_object_or_404(CustomPreorder, Q(pk=preorder_id), Q(user_id=request.user.pk), Q(unique_secret=secret))
 
 	# what to do if this preorder is not yet marked as paid?
 	if not preorder.paid:
-		raise Http404
+		messages.error(request, _("You cannot download your ticket until you paid for it."))
+		return redirect("my-tickets")
 
 	from pyqrcode import MakeQRImage
 	from fpdf import FPDF

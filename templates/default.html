@@ -2,8 +2,6 @@
 {% load i18n %}
 
 {% block content %}
-      {% include "base/hero.html" %}
-
       <div class="row">
       {% if not request.user.is_authenticated %}
         <div class="span6">
