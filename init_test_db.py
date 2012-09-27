@@ -7,7 +7,7 @@ from c4sh_preorder.preorder.models import *
 def date(pd):
 	return datetime.datetime.strptime(pd, "%Y-%m-%dT%H:%M:%SZ")
 
-t1 = PreorderTicket(
+t1 = CustomPreorderTicket(
 	name = "Dauerkarte",
 	backend_id = 1,
 	price = 28.53,
@@ -21,7 +21,7 @@ t1 = PreorderTicket(
 	)
 t1.save()
 
-t2 = PreorderTicket(
+t2 = CustomPreorderTicket(
 	name = "T-Shirt M",
 	backend_id = 2,
 	price = 15.00,
