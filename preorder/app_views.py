@@ -40,7 +40,7 @@ def get_cart(session_cart):
 def default_view(request):
 	if request.user.is_authenticated():
 		nav = 'buy'
-		quota_raw = PreorderQuota.objects.filter(Q(sold__lt=F('quota')), Q(ticket__active=True), Q(ticket__deleted=False))
+		quota_raw = PreorderQuota.objects.filter(Q(sold__lt=F('quota')), Q(ticket__active=True), Q(ticket__deleted=False)).order_by('ticket__sortorder')
 		quota = []
 		tshirt_quota = []
 

@@ -16,7 +16,7 @@ class GoldenToken(models.Model):
 		return "%s: %s (Redeemed: %s)" % (self.ticket.name, self.token, str(self.redeemed))
 
 class PreorderQuota(models.Model):
-	ticket = models.ForeignKey('PreorderTicket', verbose_name="Ticket type")
+	ticket = models.ForeignKey('CustomPreorderTicket', verbose_name="Ticket type")
 	positions = models.ManyToManyField('PreorderPosition', null=True, blank=True, verbose_name="Positions preordered from this quota")
 	quota = models.IntegerField(verbose_name="Ticket quota")
 	sold = models.IntegerField(null=True, blank=True, verbose_name="Tickets preordered from this quota", default=0)
@@ -37,6 +37,10 @@ class PreorderQuota(models.Model):
 
 
 class CustomPreorderTicket(PreorderTicket):
+	sortorder = models.IntegerField()
+	
+	class Meta:
+		ordering = ['sortorder']	
 	
 	def stats_preordered(self):
 		return CustomPreorder.objects.filter(Q(preorderposition__ticket=self)).count()
