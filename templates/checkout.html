@@ -45,9 +45,96 @@
                 </tr>
               {% endfor %}                
             </table>
-            <form action="{% url order %}" method="POST" style="float:right;">
+
+            <form action="{% url order %}" method="POST" class="form-horizontal">
+              {% if single_ticket_over_limit %}
+                <div id="billingaddress">
+                  <p>{% blocktrans with limit=limit %}
+                    Since one single ticket in your cart is over or equal {{limit}},- you are able to give a billig address which will be printed on your ticket / invoice.
+                    {% endblocktrans %}</p>
+                  <legend style="width:250px;">{% trans "Billig address" %}</legend>
+                  <div class="control-group">
+                    <label class="control-label" for="company">{% trans "Company" %}</label>
+                    <div class="controls">
+                      <input type="text" name="company" id="company" placeholder="{% trans "Company" %}">
+                    </div>
+                  </div>
+                  <div class="control-group {% if form.firstname.errors %}error{% endif %}">
+                    <label class="control-label" for="firstname">{% trans "First name" %}</label>
+                    <div class="controls">
+                      <input type="text" name="firstname" id="firstname" placeholder="{% trans "First name" %}">
+                      {% for e in form.firstname.errors %}
+                        <span class="help-inline">{{e}}</span>
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <div class="control-group {% if form.lastname.errors %}error{% endif %}" >
+                    <label class="control-label" for="lastname">{% trans "Last name" %}</label>
+                    <div class="controls">
+                      <input type="text" name="lastname" id="lastname" placeholder="{% trans "Last name" %}">
+                      {% for e in form.lastname.errors %}
+                        <span class="help-inline">{{e}}</span>
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <div class="control-group {% if form.address1.errors %}error{% endif %}">
+                    <label class="control-label" for="address1">{% trans "Address" %}</label>
+                    <div class="controls">
+                      <input type="text" name="address1" id="address1" placeholder="{% trans "Address" %}">
+                      {% for e in form.address1.errors %}
+                        <span class="help-inline">{{e}}</span>
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <div class="control-group {% if form.address2.errors %}error{% endif %}">
+                    <div class="controls">
+                      <input type="text" name="address2" id="address2" placeholder="{% trans "Address" %}">
+                      {% for e in form.address2.errors %}
+                        <span class="help-inline">{{e}}</span>
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <div class="control-group {% if form.city.errors %}error{% endif %}">
+                    <label class="control-label" for="city">{% trans "City" %}</label>
+                    <div class="controls">
+                      <input type="text" name="city" id="city" placeholder="{% trans "City" %}">
+                      {% for e in form.city.errors %}
+                        <span class="help-inline">{{e}}</span>
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <div class="control-group {% if form.zip.errors %}error{% endif %}">
+                    <label class="control-label" for="zip">{% trans "ZIP" %}</label>
+                    <div class="controls">
+                      <input type="text" name="zip" id="zip" placeholder="{% trans "ZIP" %}">
+                      {% for e in form.zip.errors %}
+                        <span class="help-inline">{{e}}</span>
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <div class="control-group {% if form.country.errors %}error{% endif %}">
+                    <label class="control-label" for="country">{% trans "Country" %}</label>
+                    <div class="controls">
+                      <input type="text" name="country" id="country" placeholder="{% trans "Country" %}">
+                      {% for e in form.country.errors %}
+                        <span class="help-inline">{{e}}</span>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+                <br style="clear:both;" />
+              {% endif %}
               {% csrf_token %}
-              <button type="submit" class="btn btn-success"><i class="icon-ok icon-white"></i> {% trans "Preorder these tickets"%}</button>
+              <div style="float:right;">
+                {% if single_ticket_over_limit %}
+                <div style="float:left;margin-right: 30px;margin-top:5px;">
+                  <label class="checkbox">
+                    <input name="without_billingaddress" value="yes" type="checkbox"> {% trans "Proceed without billing address" %}
+                  </label>
+                </div>
+                {% endif %}
+                <button type="submit" class="btn btn-success"><i class="icon-ok icon-white"></i> {% trans "Preorder these tickets"%}</button>
+              </div>
             </form>
 
           {% else %}

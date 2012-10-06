@@ -75,6 +75,24 @@ def order_view(request):
 			messages.error(request, _('Cart is empty. Maybe someone was faster with his preorder and now the quota which your ticket belonged to is exceeded. Please try again.'))
 			return HttpResponseRedirect(reverse("default"))
 		
+		# first - check if we could possibly have a billing address here
+		billing_address = False
+		if request.session.get('billing_address', False):
+			if not request.POST.get('without_billingaddress') == 'yes':
+				form = BillingAddressForm(request.POST)
+				if form.is_valid():
+					billing_address = True
+					billing_company = form.cleaned_data['company']
+					billing_firstname = form.cleaned_data['firstname']
+					billing_lastname = form.cleaned_data['lastname']
+					billing_address1 = form.cleaned_data['address1']
+					billing_address2 = form.cleaned_data['address2']
+					billing_city = form.cleaned_data['city']
+					billing_zip = form.cleaned_data['zip']
+					billing_country = form.cleaned_data['country']
+				else:
+					return checkout_view(request) # we do not do a redirect here, to keep the form errors :3
+
 		# create Preorder
 		preorder = CustomPreorder(
 			name=request.user.username,
@@ -87,6 +105,19 @@ def order_view(request):
 			cached_sum=0
 		)
 		preorder.save()
+
+		if billing_address:
+			billing_address = PreorderBillingAddress(
+				preorder=preorder,
+				company=billing_company,
+				firstname=billing_firstname,
+				lastname=billing_lastname,
+				address1=billing_address1,
+				address2=billing_address2,
+				city=billing_city,
+				zip=billing_zip,
+				country=billing_country
+			).save()
 
 		for c in cart:
 			amount = c['amount']
@@ -145,9 +176,14 @@ def checkout_view(request):
 	cart = get_cart(request.session.get('cart', False))
 	if cart:
 		totals_raw = {}
+		single_ticket_over_limit = False
+
 		for q in cart:
 			amount = float(q['quota'].ticket.price)*int(q['amount'])
 			taxes = float(amount) - (float(amount) * float((100-q['quota'].ticket.tax_rate)/float(100)))
+
+			if amount >= EVENT_BILLIG_ADRESS_LIMIT:
+				single_ticket_over_limit = True
 
 			try:
 				totals_raw[q['quota'].ticket.currency]['amount']+=amount
@@ -166,6 +202,17 @@ def checkout_view(request):
 		totals = []
 		for t in totals_raw:
 			totals.append({'currency': t, 'total': totals_raw[t]['amount'], 'taxes': totals_raw[t]['taxes']})
+
+		if single_ticket_over_limit:
+			if request.POST:
+				p = request.POST
+			else:
+				p = None
+			form = BillingAddressForm(p)
+			limit = EVENT_BILLIG_ADRESS_LIMIT
+			request.session['billing_address'] = True
+		else:
+			request.session['billing_address'] = False
 
 	nav = 'buy'
 	return render_to_response('checkout.html', locals(), context_instance=RequestContext(request))
