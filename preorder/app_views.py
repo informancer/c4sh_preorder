@@ -495,6 +495,32 @@ def print_tickets_view(request, preorder_id, secret):
 		else:
 			pdf.text(20,100,"Online Ticket")
 
+		# print billing address - if eligible
+		if ticket.price >= EVENT_BILLIG_ADRESS_LIMIT:
+			if preorder.get_billing_address():
+
+				from django.utils.encoding import smart_str
+
+				pdf.set_font('Arial','B',13)		
+				pdf.text(20,125,"Billing address")
+				pdf.set_font('Arial','',10)
+
+				ytmp = 0
+
+				if preorder.get_billing_address().company:
+					pdf.text(20,140,"%s" % preorder.get_billing_address().company.encode('ASCII', 'ignore'))
+					ytmp+=12
+				pdf.text(20,140+ytmp,"%s" % preorder.get_billing_address().firstname.encode('ASCII', 'ignore'))
+				pdf.text(20+len(preorder.get_billing_address().firstname*7),140+ytmp,"%s" % preorder.get_billing_address().lastname.encode('ASCII', 'ignore'))
+				pdf.text(20,152+ytmp,"%s" % preorder.get_billing_address().address1.encode('ASCII', 'ignore'))
+				if preorder.get_billing_address().address2:
+					pdf.text(20,164+ytmp,"%s" % preorder.get_billing_address().address2.encode('ASCII', 'ignore'))
+					ytmp+=12
+				pdf.text(20+len(preorder.get_billing_address().zip*7),164+ytmp, preorder.get_billing_address().city.encode('ASCII', 'ignore'))
+				pdf.text(20,164+ytmp,"%s" % preorder.get_billing_address().zip.encode('ASCII', 'ignore'))
+				pdf.text(20,176+ytmp,"%s" % preorder.get_billing_address().country.encode('ASCII', 'ignore'))
+
+
 		# print ticket table
 		pdf.set_font('Arial','B',15)
 		pdf.text(150,220,"Type")
