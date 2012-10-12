@@ -1,0 +1,8 @@
+Django==1.4
+PIL==1.1.6
+Pillow==1.7.7
+South==0.7.6
+django-piston==0.2.3
+django-simple-captcha==0.3.1
+pyPdf==1.13
+pycurl

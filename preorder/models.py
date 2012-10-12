@@ -4,6 +4,7 @@ from c4sh.preorder.models import PreorderTicket, PreorderPosition, Preorder
 from django.db.models import Q
 from django.conf import settings
 import datetime
+from settings import EVENT_CC_PAYMENT_API_KEY
 
 class GoldenToken(models.Model):
 	token = models.CharField(max_length=50, null=False, blank=False, verbose_name="Token", unique=True)
@@ -66,6 +67,8 @@ class PreorderPosition(PreorderPosition):
 
 class CustomPreorder(Preorder):
 
+	transaction_id = models.CharField(max_length=255, null=True, blank=True)
+
 	def __unicode__(self):
 		return self.unique_secret[:10]+"..."
 
@@ -110,6 +113,14 @@ class CustomPreorder(Preorder):
 
 	def get_positions(self):
 		return PreorderPosition.objects.filter(preorder=self)
+
+	def get_cc_transaction_status(self):
+		if self.transaction_id == "":
+			return False
+
+		import pymill
+		p = pymill.Pymill(EVENT_CC_PAYMENT_API_KEY)
+		return p.gettrandetails(self.transaction_id)
 
 	def get_tickets(self):
 		tickets = []

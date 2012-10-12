@@ -49,6 +49,12 @@ EVENT_CONTACT_MAILTO = "orga@tld"
 # Prefix for bank transfer references
 EVENT_PAYMENT_PREFIX = "SIGINT12"
 
+# Description for CC paments
+EVENT_CC_PAYMENT_DESC = "SIGINT12"
+
+# API key for CC payments
+EVENT_CC_PAYMENT_API_KEY = ""
+
 # Bank details for payment
 EVENT_PAYMENT_DETAILS =  "Chaos Computer Club Ossendorf ltd.\n" + \
  "Institut: Ehrenfelder Bank AG\n" + \

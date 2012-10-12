@@ -16,6 +16,10 @@ from preorder.decorators import preorder_check, payload_check
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 from django.template import Context
+
+# paymill api python wrapper
+import pymill 
+
 ###### TOOLS #######
 
 def get_cart(session_cart):
@@ -345,6 +349,59 @@ def account_view(request):
 				success = _("Your password has been changed!")
 
 	return render_to_response('account.html', locals(), context_instance=RequestContext(request))
+
+
+@login_required
+def cc_payment_view(request):
+	preorder_id = request.GET.get('preorderId')
+	paymill_token = request.GET.get('paymillToken')
+
+	# does this preorder exist? is it mine? no? 404!
+	try:
+		preorder = get_object_or_404(CustomPreorder, Q(pk=preorder_id), Q(user_id=request.user.pk))
+	except ValueError:
+		messages.error(request, _("We're unable to handle your request at this time. Please try again later."))
+		return redirect("my-tickets")
+
+	if preorder.paid == True:
+		messages.error(request, _("This preorder has already marked as paid."))
+		return redirect("my-tickets")		
+
+	if preorder.transaction_id != "":
+		messages.error(request, _("You already made a payment for this preorder, which has not yet been successful. We're checking it again soon!"))
+		return redirect("my-tickets")		
+
+	p = pymill.Pymill(EVENT_CC_PAYMENT_API_KEY)
+
+	# calculate the amount in euro cents
+	amount = int(preorder.get_sale_amount()[0]['total'] * 100)
+
+	# let's create the transaction
+	transaction = p.transact(amount=amount, currency="eur", description=EVENT_CC_PAYMENT_DESC, token=paymill_token)
+
+	try:
+		assert transaction['data']['id'] != ""
+		transaction_id = transaction['data']['id']
+		transaction_status = transaction['data']['status']
+
+		preorder.transaction_id = transaction_id
+
+		if transaction_status == 'closed':
+			preorder.paid = True
+			preorder.paid_time = datetime.datetime.now()
+			preorder.paid_via = "CC"
+		
+			messages.success(request, _("The payment has been successful!"))
+		else:
+			messages.success(request, _("The payment has been submitted and is now pending. We're checking for a response soon."))
+		
+		preorder.save()
+
+		return redirect("my-tickets")
+	except:
+		# whoops
+		messages.error(request, _("We're unable to handle your request at this time. Please try again later."))
+		return redirect("my-tickets")
 
 @login_required
 def print_tickets_view(request, preorder_id, secret):

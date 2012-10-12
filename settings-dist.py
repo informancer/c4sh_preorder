@@ -148,6 +148,11 @@ LOGGING = {
 		'mail_admins': {
 			'level': 'ERROR',
 			'class': 'django.utils.log.AdminEmailHandler'
+		},
+		'file': {
+			'level': 'DEBUG',
+			'class': 'logging.FileHandler',
+			'filename': 'preorder.log'
 		}
 	},
 	'loggers': {
@@ -155,6 +160,11 @@ LOGGING = {
 			'handlers': ['mail_admins'],
 			'level': 'ERROR',
 			'propagate': True,
+		},
+		'c4sh_preorder.preorder.management.commands': {
+			'handlers': ['file'],
+			'level': 'INFO',
+			'propagate': True,	
 		},
 	}
 }
