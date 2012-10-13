@@ -48,7 +48,7 @@ function paymillResponseHandler(error,result) {
 
        var token = result.token;
 
-       form.append("<input type='hidden' name='paymillToken' value='" + token + "'/>");
+       form.append("<input type='hidden' name='paymill_token' value='" + token + "'/>");
 
        form.get(0).submit();
    }

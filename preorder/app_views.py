@@ -356,7 +356,7 @@ def account_view(request):
 
 @login_required
 def cc_payment_view(request):
-	paymill_token = request.POST.get('paymillToken')
+	paymill_token = request.POST.get('paymill_token')
 
 	try:
 		preorder = CustomPreorder.objects.filter(user_id=request.user.pk)[:1][0]
