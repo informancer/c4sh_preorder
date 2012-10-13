@@ -5,8 +5,6 @@ $(document).ready(function() {
   var infoCreditCard = $('div#info-credit-card');
   var infoBankTransfer = $('div#info-bank-transfer');
 
-  $('div#payment-choice').button();
-
   choiceCreditCard.click(function() {
     infoCreditCard.show();
     infoBankTransfer.hide();
