@@ -19,13 +19,20 @@
 {% block content %}
       <div class="row">
         <div class="span5">
+          {% if has_unpaid_preorders %}
           <h2>{% trans "Payment information" %}</h2>
 
           <p>{% trans "Please choose your prefered method of payment:" %}</p>
-          <div id="payment-choice" class="btn-group" data-toggle="buttons-radio">
-            <button type="button" class="btn" id="choice-credit-card">{% trans "Credit Card" %}</button>
-            <button type="button" class="btn" id="choice-bank-transfer">{% trans "Bank Transfer" %}</button>
-          </div>
+
+
+          <ul class="nav nav-tabs">
+            <li>
+              <a href="#"  id="choice-credit-card">{% trans "Credit Card" %}</a>
+            </li>
+            <li>
+              <a href="#"  id="choice-bank-transfer">{% trans "Bank Transfer" %}</a>
+            </li>
+          </ul>
 
           <div id="info-bank-transfer">
             {% if preorders %}
@@ -64,6 +71,9 @@
 
             </form>
           </div>
+          {% else %}
+          <h2>{% trans "Thank you for your payment!" %}</h2>
+          {% endif %}
         </div>
 
         <div class="span7">

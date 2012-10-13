@@ -1,6 +1,6 @@
 $(document).ready(function() {
-  var choiceCreditCard = $('button#choice-credit-card');
-  var choiceBankTransfer = $('button#choice-bank-transfer');
+  var choiceCreditCard = $('a#choice-credit-card');
+  var choiceBankTransfer = $('a#choice-bank-transfer');
 
   var infoCreditCard = $('div#info-credit-card');
   var infoBankTransfer = $('div#info-bank-transfer');
@@ -10,11 +10,15 @@ $(document).ready(function() {
   choiceCreditCard.click(function() {
     infoCreditCard.show();
     infoBankTransfer.hide();
+    choiceBankTransfer.parent().removeClass('active');
+    choiceCreditCard.parent().addClass('active');
   });
 
   choiceBankTransfer.click(function() {
     infoCreditCard.hide();
     infoBankTransfer.show();
+    choiceBankTransfer.parent().addClass('active');
+    choiceCreditCard.parent().removeClass('active');
   });
 
   $("#payment-form").submit(function(event) {
@@ -36,20 +40,16 @@ $(document).ready(function() {
 
 function paymillResponseHandler(error,result) {
    if (error) {
-        // zeigt Fehler im Formular an
         $(".payment-errors").text(error.apierror);
 
         $('.submit-button').attr("disabled", false);
    } else {
        var form = $("#payment-form");
 
-       // Token wird ausgegeben
        var token = result.token;
 
-       // Token wird deinem Formular hinzugefügt und wird an Server übergeben
        form.append("<input type='hidden' name='paymillToken' value='" + token + "'/>");
 
-       // Formular absenden
        form.get(0).submit();
    }
 }

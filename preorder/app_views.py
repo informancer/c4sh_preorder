@@ -308,8 +308,11 @@ def tickets_view(request):
 
 	try:
 		preorders = CustomPreorder.objects.filter(user_id=request.user.pk)
+		preorders_unpaid = preorders.exclude(paid=True)
+		has_unpaid_preorders = len(preorders_unpaid) > 0
 	except CustomPreorder.DoesNotExist:
 		preorders = []
+		has_unpaid_preorders = False
 
 	return render_to_response('tickets.html', locals(), context_instance=RequestContext(request))
 
