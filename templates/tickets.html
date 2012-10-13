@@ -2,19 +2,70 @@
 {% load i18n %}
 {% load multiply timedelta %}
 
+{% block javascript %}
+  <script type="text/javascript">
+    var PAYMILL_PUBLIC_KEY = '247143670284eea4cc5fb5b2c079d425';
+  </script>
+  <script type="text/javascript" src="https://bridge.paymill.com/"></script>
+  <script type="text/javascript" src="{{settings.MEDIA_URL}}js/underscore.js"></script>
+  <script type="text/javascript" src="{{settings.MEDIA_URL}}js/backbone.js"></script>
+  <script type="text/javascript" src="{{settings.MEDIA_URL}}js/payments.js"></script>
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{{settings.MEDIA_URL}}css/payments.css">
+{% endblock %}
+
 {% block content %}
       <div class="row">
-          
         <div class="span5">
-          <h2>{% trans "Payment information"%}</h2>
-          {% if preorders %}
-            <p>{% trans "Thanks for your preorder. Please transfer the total amount (see right) to:"%}</p>
-            <pre>{{settings.EVENT_PAYMENT_DETAILS}}<br /><br />{% for p in preorders %}Reference: <strong>{{settings.EVENT_PAYMENT_PREFIX}}-{{p.get_reference_hash}}</strong><br />{% endfor %}</pre>
-          {% else %}
-            {% trans "Here be payment information after you preordered tickets."%}
-          {% endif %}
+          <h2>{% trans "Payment information" %}</h2>
+
+          <p>{% trans "Please choose your prefered method of payment:" %}</p>
+          <div id="payment-choice" class="btn-group" data-toggle="buttons-radio">
+            <button type="button" class="btn" id="choice-credit-card">{% trans "Credit Card" %}</button>
+            <button type="button" class="btn" id="choice-bank-transfer">{% trans "Bank Transfer" %}</button>
+          </div>
+
+          <div id="info-bank-transfer">
+            {% if preorders %}
+              <p>{% trans "Thanks for your preorder. Please transfer the total amount (see right) to:"%}</p>
+              <pre>{{settings.EVENT_PAYMENT_DETAILS}}<br /><br />{% for p in preorders %}Reference: <strong>{{settings.EVENT_PAYMENT_PREFIX}}-{{p.get_reference_hash}}</strong><br />{% endfor %}</pre>
+            {% else %}
+              {% trans "Here be payment information after you preordered tickets."%}
+            {% endif %}
+          </div>
+
+          <div id="info-credit-card">
+            <div class="payment-errors"></div>
+            <form id="payment-form" action="/cc-payment/" method="POST">
+              {% csrf_token %}
+              <div class="form-row"><label>{% trans "Credit Card Number" %}
+                <input class="card-number" type="text" size="20" placeholder="4111111111111111" /></label></div>
+
+              <div class="form-row">
+                <label>{% trans "CVC" %}
+                  <input class="card-cvc" type="text" size="4" placeholder="123" />
+                </label>
+              </div>
+
+              <div class="form-row">
+                <label>{% trans "Card Owner" %}
+                  <input class="card-holdername" type="text" size="4" placeholder="Wolfgang Schäuble" />
+                </label>
+              </div>
+
+              <div class="form-row"><label>{% trans "Valid till (MM/YYYY)" %}</label>
+                <input class="card-expiry-month" type="text" size="2" placeholder="11" />
+                <span></span>
+                <input class="card-expiry-year" type="text" size="4" placeholder="2099" /></div>
+
+              <button class="submit-button" type="submit">{% trans "submit" %}</button>
+
+            </form>
+          </div>
         </div>
-        
+
         <div class="span7">
           <h2>{% trans "Your preorders"%}</h2>
             <table class="table table-striped table-bordered">
@@ -89,7 +140,7 @@
                             {% endif %}
                           </th>
                         </tr>
-                      {% endfor %}                     
+                      {% endfor %}
                     </table>
                   </td>
                 </tr>
@@ -101,6 +152,6 @@
                 </tr>
               {% endfor %}
             </table>
-         </div>        
+         </div>
       </div>
 {% endblock %}
