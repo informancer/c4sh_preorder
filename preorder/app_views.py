@@ -377,8 +377,8 @@ def cc_payment_view(request):
 	amount = int(preorder.get_sale_amount()[0]['total'] * 100)
 
 	# let's create the transaction
-	#transaction = p.transact(amount=amount, currency="eur", description=EVENT_CC_PAYMENT_DESC, token=paymill_token)
-	transaction = p.transact(amount=amount, currency="eur", description="credit card", token=paymill_token)
+	transaction = p.transact(amount=amount, currency="eur", description=EVENT_CC_PAYMENT_DESC, token=paymill_token)
+
 	try:
 		assert transaction['data']['id'] != ""
 		transaction_id = transaction['data']['id']
