@@ -7,8 +7,6 @@
     var PAYMILL_PUBLIC_KEY = '247143670284eea4cc5fb5b2c079d425';
   </script>
   <script type="text/javascript" src="https://bridge.paymill.com/"></script>
-  <script type="text/javascript" src="{{settings.MEDIA_URL}}js/underscore.js"></script>
-  <script type="text/javascript" src="{{settings.MEDIA_URL}}js/backbone.js"></script>
   <script type="text/javascript" src="{{settings.MEDIA_URL}}js/payments.js"></script>
 {% endblock %}
 
@@ -27,10 +25,10 @@
 
           <ul class="nav nav-tabs">
             <li>
-              <a href="#"  id="choice-credit-card">{% trans "Credit Card" %}</a>
+              <a href="#" id="choice-credit-card">{% trans "Credit Card" %}</a>
             </li>
             <li>
-              <a href="#"  id="choice-bank-transfer">{% trans "Bank Transfer" %}</a>
+              <a href="#" id="choice-bank-transfer">{% trans "Bank Transfer" %}</a>
             </li>
           </ul>
 
