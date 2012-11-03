@@ -40,6 +40,8 @@ def default_view(request):
 	subnav = 'default'
 	return render_to_response('admin/default.html', locals(), context_instance=RequestContext(request))
 
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def statistics_view(request, section):
 	nav = 'admin'
 	subnav = 'statistics'
@@ -59,6 +61,8 @@ def statistics_view(request, section):
 
 		return render_to_response('admin/statistics.html', locals(), context_instance=RequestContext(request))
 
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def import_csv_view(request):
 	nav = 'admin'
 	subnav = 'import_csv'
