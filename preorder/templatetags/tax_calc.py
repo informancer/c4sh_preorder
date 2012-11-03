@@ -7,6 +7,6 @@ register = template.Library()
 @register.filter 
 def tax_calc(value, arg):
 	if value and arg:
-		return float(value) * (float(1-(float(arg)/100)))
+		return float(value) / (1+(float(arg)/100))
 	else:
 		return
