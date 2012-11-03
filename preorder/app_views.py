@@ -147,7 +147,7 @@ def checkout_view(request):
 		totals_raw = {}
 		for q in cart:
 			amount = float(q['quota'].ticket.price)*int(q['amount'])
-			taxes = float(amount) - (float(amount) * float((100-q['quota'].ticket.tax_rate)/float(100)))
+			taxes = float(amount) - (float(amount) / (float(q['quota'].ticket.tax_rate)/float(100)+float(1)))
 
 			try:
 				totals_raw[q['quota'].ticket.currency]['amount']+=amount
