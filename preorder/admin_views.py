@@ -9,7 +9,7 @@ from django.template import RequestContext
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from preorder.models import *
-from settings import * 
+from settings import *
 from preorder.forms import *
 from django.db.models import Q, F
 from preorder.decorators import preorder_check
@@ -21,7 +21,8 @@ from django.utils.translation import ugettext as _
 from django.core.mail import send_mail
 
 ###### API VIEWS #######
-
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def api_get_preorder_view(request):
 	preorder_id = int(request.POST.get('id'))
 
@@ -40,6 +41,8 @@ def default_view(request):
 	subnav = 'default'
 	return render_to_response('admin/default.html', locals(), context_instance=RequestContext(request))
 
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def statistics_view(request, section):
 	nav = 'admin'
 	subnav = 'statistics'
@@ -53,12 +56,14 @@ def statistics_view(request, section):
 		return render_to_response('admin/statistics_charts.html', locals(), context_instance=RequestContext(request))
 	else:
 		subnav_statistics = 'overview'
-		
+
 		# stats querysets
 		tickets = CustomPreorderTicket.objects.all()
 
 		return render_to_response('admin/statistics.html', locals(), context_instance=RequestContext(request))
 
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def import_csv_view(request):
 	nav = 'admin'
 	subnav = 'import_csv'
@@ -120,7 +125,7 @@ def import_csv_view(request):
 					if not reference_hash:
 						reference_hash = []
 						reference_hash.append(row[3])
-					
+
 					if len(reference_hash) == 1:
 						reference_hash_only = re.compile('[a-fA-F0-9]{10}').findall(reference_hash[0])
 
@@ -129,7 +134,7 @@ def import_csv_view(request):
 
 						preorder = CustomPreorder.objects.filter(Q(unique_secret__icontains=reference_hash_only[0]))
 						if len(preorder) == 1:
-							value_ok = False							
+							value_ok = False
 							if preorder[0].paid == True:
 								value_ok = True
 								status = "already_paid"
