@@ -189,7 +189,7 @@ SAFERPAY_FONT = None
 
 SAFERPAY_PROCESS_URL = "https://www.saferpay.com/hosting/CreatePayInit.asp"
 SAFERPAY_VERIFY_URL = "https://www.saferpay.com/hosting/VerifyPayConfirm.asp"
-SAFERPAY_PAYMENT_COMPLETE_URL = "https://www.saferpay.com/hosting/PayComplete.asp"
+SAFERPAY_PAYMENT_COMPLETE_URL = "https://www.saferpay.com/hosting/PayCompleteV2.asp"
 SAFERPAY_USE_PAYMENT_COMPLETE_URL = True # You want this to be true.
 
 """
