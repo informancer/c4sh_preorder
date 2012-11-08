@@ -39,8 +39,8 @@ def pay(request):
         'ACCOUNTID': settings.ACCOUNT_ID,
         'ORDERID': order.get_reference_hash(),
         'SUCCESSLINK': domain +  reverse('saferpay-verify'),
-        'BACKLINK': domain + reverse(settings.CANCEL_URL_NAME),
-        'FAILLINK': domain + reverse(settings.FAILURE_URL_NAME),
+        'BACKLINK': domain + reverse('saferpay-abort'),
+        'FAILLINK': domain + reverse('saferpay-fail'),
         
     }
     for style in ('BODYCOLOR', 'HEADCOLOR', 'HEADLINECOLOR', 'MENUCOLOR', 'BODYFONTCOLOR', 'HEADFONTCOLOR', 'MENUFONTCOLOR', 'FONT'):
@@ -52,6 +52,7 @@ def pay(request):
     logger.info('Saferpay: order %d\tredirected to saferpay gateway', order.pk)
     return HttpResponseRedirect(response.content)
 """
+
 def verify(self, request):
     order = self.shop.get_order(request)
     if not order:
