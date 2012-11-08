@@ -11,7 +11,7 @@
             <p>{% trans "Thanks for your preorder. Please transfer the total amount (see right) to:"%}</p>
             <pre>{{settings.EVENT_PAYMENT_DETAILS}}<br /><br />{% for p in preorders %}Reference: <strong>{{settings.EVENT_PAYMENT_PREFIX}}-{{p.get_reference_hash}}</strong><br />{% endfor %}</pre>
 	    {% if settings.EVENT_CC_ENABLE %}
-	    <p>please pay via bank transfer if possible. if you need to use your credit card, we'll charge additional fees of 7.5% + 7.50 EUR per transaction.</p>
+	    <p>{% blocktrans with cc_fee_percentage=settings.EVENT_CC_FEE_PERCENTAGE cc_fee_fixed=settings.EVENT_CC_FEE_FIXED%} please pay via bank transfer if possible. if you need to use your credit card, we'll charge additional fees of {{cc_fee_percentage}}% + {{cc_fee_fixed}}€ per transaction. {% endblocktrans %}</p>
 	    {% url saferpay-pay as cc_payment_url %}
 	    <a href="{{cc_payment_url}}" class="btn"><i class="icon-ok icon-shopping-cart"></i> {% trans "Pay via credit card" %}</a>
 	    {% endif %}
