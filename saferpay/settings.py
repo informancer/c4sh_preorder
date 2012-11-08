@@ -27,3 +27,6 @@ PROCESS_URL = getattr(settings, 'SAFERPAY_PROCESS_URL', 'https://www.saferpay.co
 VERIFY_URL = getattr(settings, 'SAFERPAY_VERIFY_URL', 'https://www.saferpay.com/hosting/VerifyPayConfirm.asp')
 PAYMENT_COMPLETE_URL = getattr(settings, 'SAFERPAY_PAYMENT_COMPLETE_URL', 'https://www.saferpay.com/hosting/PayComplete.asp')
 USE_PAYMENT_COMPLETE_URL = getattr(settings, 'SAFERPAY_USE_PAYMENT_COMPLETE_URL', False)
+
+EVENT_CC_FEE_PERCENTAGE = getattr(settings, 'EVENT_CC_FEE_PERCENTAGE', 0)
+EVENT_CC_FEE_FIXED = getattr(settings, 'EVENT_CC_FEE_FIXED', 0)

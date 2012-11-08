@@ -4,34 +4,40 @@ from django.conf.urls.defaults import patterns, url
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect
 from django.template.context import RequestContext
 from django.utils.translation import get_language, ugettext_lazy as _
 import requests
 
-from saferpay import settings
-from saferpay.tasks import payment_complete
+import settings
 import logging
 
 logger = logging.getLogger('payment.saferpay')
 
 
-def pay(self, request):
+def pay(request):
     protocol = 'https'
-    shop = self.shop
-    order = shop.get_order(request)
-    order.status = Order.PAYMENT
-    order.save()
+    try:
+        order = CustomPreorder.objects.filter(user_id=request.user.pk, paid=False)[0]
+    except CustomPreorder.DoesNotExist:
+        messages.error(request, "You have no preorder to pay.")
+        return redirect("my-tickets")
+    try:
+        total = order.get_sale_amount()[0]['total']
+    except KeyError:
+        messages.error(request, "You have no preorder to pay.")
+        return redirect("my-tickets")
+    total = total * (settings.EVENT_CC_FEE_PERCENTAGE/100+1) + settings.EVENT_CC_FEE_FIXED
     domain = '%s://%s/' % (protocol, settings.APP_URL)
     data = {
-        'AMOUNT': int(shop.get_order_total(order) * 100),
+        'AMOUNT': int(total * 100),
         'CURRENCY': 'EUR', # TODO: don't hard code this
-        'DESCRIPTION': "29C3 Order for %s" % (request.user.username),
+        'DESCRIPTION': "Order %s-%s (including CC fees)" % (settings.EVENT_PAYMENT_PREFIX, order.get_reference_hash()),
         'LANGID': 'EN',
         'ALLOWCOLLECT': 'yes' if settings.ALLOW_COLLECT else 'no',
         'DELIVERY': 'yes' if settings.DELIVERY else 'no',
         'ACCOUNTID': settings.ACCOUNT_ID,
-        'ORDERID': shop.get_order_unique_id(order),
+        'ORDERID': order.get_reference_hash(),
         'SUCCESSLINK': domain +  reverse('saferpay-verify'),
         'BACKLINK': domain + reverse(settings.CANCEL_URL_NAME),
         'FAILLINK': domain + reverse(settings.FAILURE_URL_NAME),
@@ -45,7 +51,7 @@ def pay(self, request):
     response = requests.get(settings.PROCESS_URL, params=data)
     logger.info('Saferpay: order %d\tredirected to saferpay gateway', order.pk)
     return HttpResponseRedirect(response.content)
-
+"""
 def verify(self, request):
     order = self.shop.get_order(request)
     if not order:
@@ -90,4 +96,4 @@ def finish(url=settings.PAYMENT_COMPLETE_URL, params=None, order_id=None):
             else:
                 logger.error('Saferpay: order %i\tcompletion of payment FAILED', order_id)
                 raise
-
+"""

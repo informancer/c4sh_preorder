@@ -33,7 +33,7 @@ urlpatterns += patterns('c4sh_preorder.preorder.app_views',
 
 urlpatterns += patterns('',
     url(r'^captcha/', include('captcha.urls')),
-    url(r'^saferpay/', include('saferpay.urls')),
+    url(r'^cc/', include('saferpay.urls')),
 )
 
 urlpatterns += patterns('c4sh_preorder.preorder.admin_views',
