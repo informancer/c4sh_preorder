@@ -3,4 +3,4 @@
 *:2e*
 *.sqlite3
 event_*.py
-settings.py
+/settings.py

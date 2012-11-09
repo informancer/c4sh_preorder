@@ -86,3 +86,11 @@ EVENT_DOWNLOAD_DATE = "2012-09-28 00:00:00"
 
 # Supervisor IPs
 EVENT_SUPERVISOR_IPS = ('127.0.0.1', '172.17.0.1',)
+
+#Enables CC payment options when set to True
+EVENT_CC_ENABLE = False
+
+# When using Credit Card payments, configure fees here
+EVENT_CC_FEE_PERCENTAGE = 7.5 # 7.5% of the sale amount
+EVENT_CC_FEE_FIXED = 7.5 # 7.50 EUR per transaction
+# We'd then deduct $fee * 1.075 + 7.5 EUR
