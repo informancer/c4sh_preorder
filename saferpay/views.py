@@ -47,11 +47,10 @@ def pay_view(request):
         messages.error(request, "You have no preorder to pay.")
         return redirect("my-tickets")
     total = total * (safersettings.EVENT_CC_FEE_PERCENTAGE/100+1) + safersettings.EVENT_CC_FEE_FIXED
-    #domain = '%s://%s/' % (protocol, settings.APP_URL)
-    domain = 'http://nathan.bitrain.net'
+    domain = '%s://%s/' % (protocol, settings.APP_URL)
     data = {
         'AMOUNT': int(total * 100),
-        'CURRENCY': 'EUR', # TODO: don't hard code this
+        'CURRENCY': 'EUR', # Maybe TODO: don't hard code this
         'DESCRIPTION': "Order %s-%s (including CC fees)" % (settings.EVENT_PAYMENT_PREFIX, order.get_reference_hash()),
         'LANGID': 'EN',
         'ALLOWCOLLECT': 'yes' if safersettings.ALLOW_COLLECT else 'no',
@@ -85,6 +84,7 @@ def abort_view(request):
 
 @login_required
 def complete_view(request):
+    #Check whether the order has been paid or blame someone. Hopefully the CC people
     try:
         order = CustomPreorder.objects.filter(user_id=request.user.pk, paid=False)
     except CustomPreorder.DoesNotExist,IndexError:
@@ -95,7 +95,10 @@ def complete_view(request):
     else:
         messages.info(request, _("Credit card payment was not successful. Please contact the tickets team"))
     return redirect("my-tickets")
+
+
 #this is the view where we mark the payment as completed
+#To allow saferpay to access the URL, we need to exclude it from the CSRF checking
 @csrf_exempt
 def response_view(request):
     # TODO: only allow from saferpay - not really needed, as we check with the VerifyURL against Saferpay
@@ -137,12 +140,10 @@ def response_view(request):
                     try:
                         total = order.get_sale_amount()[0]['total']
                         total_with_fees = total * (safersettings.EVENT_CC_FEE_PERCENTAGE/100+1) + safersettings.EVENT_CC_FEE_FIXED
-                        #strip additional 
                         total_with_fees = '%i' % (total_with_fees*100)
 
                         logger.debug('Fees: Computed: %s From CC: %s ', total_with_fees, orderdata['AMOUNT'])
                         if total_with_fees == orderdata['AMOUNT']:
-                            #order.mark_as_paid('by-credit')
                             order.paid = True
                             order.paid_time = datetime.datetime.now()
                             order.paid_via = "creditcard"
@@ -154,7 +155,6 @@ def response_view(request):
                             if order.get_user().email:
                             # send notification email if email is set
                                 send_mail("[%s] Update notification" % settings.EVENT_NAME_UNIX, settings.EVENT_PAYMENT_ACK_MAIL_TEXT, "%s <%s>" % (settings.EVENT_NAME_UNIX, settings.EVENT_CONTACT_MAILTO), (order.get_user().email,))
-                            #return self.success(request)
                             pass
                         else:
                             logger.info('Saferpay: order failed, the Amounts from CC handler and in the system don\'t match')
@@ -166,5 +166,4 @@ def response_view(request):
             order.save()
             
             return HttpResponse("Dave, this conversation can serve no purpose anymore. Goodbye.", content_type="text/plain")
-            #return self.success(request)
     return redirect("my-tickets")
