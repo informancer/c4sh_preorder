@@ -29,7 +29,7 @@ logger = logging.getLogger('c4sh_preorder.saferpay')
 
 @login_required
 def pay_view(request):
-    protocol = 'http'
+    protocol = 'https'
     try:
         order = CustomPreorder.objects.filter(user_id=request.user.pk, paid=False)
         if len(order)>0:
@@ -124,7 +124,7 @@ def response_view(request):
             #try to claim the money
             # If the transaction id from verify matches the former transaction id, get the UniqueId from the first request
             if transaction_id == orderdata['ID']:
-                claimdata = {'ACCOUNTID':safersettings.ACCOUNT_ID,'ID':transaction_id,'spPassword':safersettings.ACCOUNT_PASSWORD}
+                claimdata = {'ACCOUNTID':safersettings.ACCOUNT_ID,'ID':transaction_id}
                 logger.info('Saferpay: Claiming %s', orderdata['ID'])
                 logger.debug('Saferpay: Sending claiming request to %s with params %s', safersettings.PAYMENT_COMPLETE_URL, claimdata)
                 claimresponse = requests.get(safersettings.PAYMENT_COMPLETE_URL, params=claimdata) 
