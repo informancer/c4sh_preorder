@@ -46,7 +46,7 @@ def pay_view(request):
     except KeyError:
         messages.error(request, "You have no preorder to pay.")
         return redirect("my-tickets")
-    total = total * (safersettings.EVENT_CC_FEE_PERCENTAGE/100+1) + safersettings.EVENT_CC_FEE_FIXED
+    total = (total + safersettings.EVENT_CC_FEE_FIXED) * (safersettings.EVENT_CC_FEE_PERCENTAGE/100+1)
     domain = '%s://%s/' % (protocol, settings.APP_URL)
     data = {
         'AMOUNT': int(total * 100),
@@ -93,7 +93,7 @@ def complete_view(request):
     if len(order)<1:
         messages.success(request, _("Credit card payment was successful."))
     else:
-        messages.error(request, _("Credit card payment was not successful. Please contact the tickets team"))
+        messages.info(request, _("Error updating your ticket status, please reload in a few seconds. If the error persists, please contact the tickets team"))
     return redirect("my-tickets")
 
 
@@ -139,7 +139,7 @@ def response_view(request):
                         return self.failure(request)
                     try:
                         total = order.get_sale_amount()[0]['total']
-                        total_with_fees = total * (safersettings.EVENT_CC_FEE_PERCENTAGE/100+1) + safersettings.EVENT_CC_FEE_FIXED
+                        total_with_fees = (total + safersettings.EVENT_CC_FEE_FIXED) * (safersettings.EVENT_CC_FEE_PERCENTAGE/100+1) 
                         total_with_fees = '%i' % (total_with_fees*100)
 
                         logger.debug('Fees: Computed: %s From CC: %s ', total_with_fees, orderdata['AMOUNT'])
