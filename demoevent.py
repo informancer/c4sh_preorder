@@ -93,4 +93,4 @@ EVENT_CC_ENABLE = False
 # When using Credit Card payments, configure fees here
 EVENT_CC_FEE_PERCENTAGE = 7.5 # 7.5% of the sale amount
 EVENT_CC_FEE_FIXED = 7.5 # 7.50 EUR per transaction
-# We'd then deduct $fee * 1.075 + 7.5 EUR
+# We'd then deduct $fee + 7.5 EUR * 1.075
