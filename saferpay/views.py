@@ -93,7 +93,7 @@ def complete_view(request):
     if len(order)<1:
         messages.success(request, _("Credit card payment was successful."))
     else:
-        messages.error(request, _("Credit card payment was not successful. Please contact the tickets team"))
+        messages.info(request, _("Error updating your ticket status, please reload in a few seconds. If the error persists, please contact the tickets team"))
     return redirect("my-tickets")
 
 
