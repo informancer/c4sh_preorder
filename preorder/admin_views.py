@@ -117,9 +117,17 @@ def import_csv_view(request):
 
 					reference_hash = re.compile('%s-[a-fA-F0-9]{10}' % settings.EVENT_PAYMENT_PREFIX).findall(row[3])
 
+                    #lets check if someone managed to put the reference more than once into the payment
+                    # if we can reduce the set -> put it into the match procedure
+                    # if not, put it into the unmatched list
+
+                    if len(reference_hash) != len(set(reference_hash)):
+                        reference_hash = list(set(reference_hash))
+
 					# trying to figure out if some brains are unable to use the right reference code
 					if not reference_hash:
 						reference_hash = re.compile('[a-fA-F0-9]{10}').findall(row[3])
+
 
 					# okay, giving up
 					if not reference_hash:
