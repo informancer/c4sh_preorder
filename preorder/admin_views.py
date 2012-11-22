@@ -123,7 +123,12 @@ def import_csv_view(request):
 
                     if len(reference_hash) != len(set(reference_hash)):
                         reference_hash = list(set(reference_hash))
-
+    
+                    #maybe the bank mixed up spaces and - ? 
+                    #lets try this first, otherwise we may match too much
+                    if not reference_hash:
+                        reference_hash = re.compile('%s [a-fA-F0-9]{10}' % settings.EVENT_PAYMENT_PREFIX).findall(row[3])
+                    
                     # trying to figure out if some brains are unable to use the right reference code
                     if not reference_hash:
                         reference_hash = re.compile('[a-fA-F0-9]{10}').findall(row[3])
@@ -161,6 +166,9 @@ def import_csv_view(request):
                             matches_success.append({'value_ok': value_ok, 'status': status, 'status_message': status_message, 'preorder': preorder[0], 'csv_data': row, 'invoice_value': simplejson.loads(preorder[0].cached_sum)})
                         else:
                             matches_failure.append(row)
+                    # we found no reference hash, add the current row to the failures for manual matching:
+                    else:
+                        matches_failure.append(row)
 
                     alternative_preorders = CustomPreorder.objects.filter(Q(paid=False)).order_by('unique_secret')
 
