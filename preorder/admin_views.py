@@ -115,7 +115,8 @@ def import_csv_view(request):
                     row[6] = re.sub(',', '.', row[6]) # replacing , with . for float formatting
                     row[6] = float(row[6])
 
-                    reference_hash = re.compile('%s-[a-fA-F0-9]{10}' % settings.EVENT_PAYMENT_PREFIX).findall(row[3])
+                    # sometimes people/banks mix up - and whitespaces. Regex to the rescue!
+                    reference_hash = re.compile('%s[-\ ]?[a-fA-F0-9]{10}' % settings.EVENT_PAYMENT_PREFIX,re.IGNORECASE).findall(row[3])
 
                     #lets check if someone managed to put the reference more than once into the payment
                     #if we can reduce the set -> put it into the match procedure
@@ -124,11 +125,7 @@ def import_csv_view(request):
                     if len(reference_hash) != len(set(reference_hash)):
                         reference_hash = list(set(reference_hash))
     
-                    #maybe the bank mixed up spaces and - ? 
-                    #lets try this first, otherwise we may match too much
-                    if not reference_hash:
-                        reference_hash = re.compile('%s [a-fA-F0-9]{10}' % settings.EVENT_PAYMENT_PREFIX).findall(row[3])
-                    
+                
                     # trying to figure out if some brains are unable to use the right reference code
                     if not reference_hash:
                         reference_hash = re.compile('[a-fA-F0-9]{10}').findall(row[3])
