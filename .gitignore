@@ -1,3 +1,4 @@
+static/tmp/*
 *.pyc
 *.AppleDouble
 *:2e*
