@@ -40,10 +40,10 @@
                     {% for tax in t.taxes %}
                       <span style="font-size:x-small">{% blocktrans with tax_rate=tax.rate%}incl. {{tax_rate}}% taxes:{%endblocktrans%} {{tax.amount|floatformat:2}} {{t.currency}}</span><br />
                     {% endfor %}
-                
+
                   </th>
                 </tr>
-              {% endfor %}                
+              {% endfor %}
             </table>
 
             <form action="{% url order %}" method="POST" class="form-horizontal">
@@ -127,9 +127,10 @@
               {% csrf_token %}
               <div style="float:right;">
                 {% if single_ticket_over_limit %}
-                <div style="float:left;margin-right: 30px;margin-top:5px;">
+                <div style="float:left;margin-right: 30px;margin-top:0px;">
                   <label class="checkbox">
-                    <input name="without_billingaddress" value="yes" type="checkbox"> {% trans "Proceed without billing address" %}
+                    <input name="without_billingaddress" value="yes" type="checkbox"> {% trans "Proceed without billing address" %}<br />
+                    <small style="font-size:11px;">{% trans "You will still be able to provide your billing address when printing your tickets." %}</small>
                   </label>
                 </div>
                 {% endif %}
@@ -143,6 +144,6 @@
              {% trans "Well.. your cart is empty. What do you want to checkout then?"%}
             </div>
           {% endif %}
-         </div>        
+         </div>
       </div>
 {% endblock %}

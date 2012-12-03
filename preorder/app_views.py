@@ -9,7 +9,7 @@ from django.template import RequestContext
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from preorder.models import *
-from settings import * 
+from settings import *
 from preorder.forms import *
 from django.db.models import Q, F
 from preorder.decorators import preorder_check, payload_check
@@ -58,7 +58,7 @@ def default_view(request):
 
 		cart = get_cart(request.session.get('cart', False))
 		return render_to_response('buy.html', locals(), context_instance=RequestContext(request))
-	
+
 	signupform = SignupForm()
 	return render_to_response('default.html', locals(), context_instance=RequestContext(request))
 
@@ -74,7 +74,7 @@ def order_view(request):
 		if not cart:
 			messages.error(request, _('Cart is empty. Maybe someone was faster with his preorder and now the quota which your ticket belonged to is exceeded. Please try again.'))
 			return HttpResponseRedirect(reverse("default"))
-		
+
 		# first - check if we could possibly have a billing address here
 		billing_address = False
 		if request.session.get('billing_address', False):
@@ -167,7 +167,7 @@ def order_view(request):
 			c4shmail(request.user.email, _("Checkout successfully completed"), "checkout_success", Context({ 'user': request.user, 'preorder': preorder , 'payment_until': payment_until, 'payment_details': settings.EVENT_PAYMENT_DETAILS, 'payment_prefix': settings.EVENT_PAYMENT_PREFIX}));
 
 		messages.success(request, _("Thanks for your preorder!"))
-		return HttpResponseRedirect(reverse("my-tickets"))		
+		return HttpResponseRedirect(reverse("my-tickets"))
 
 @login_required
 @preorder_check
@@ -227,10 +227,10 @@ def cart_view(request, action):
 		try:
 			if not quota_id or not amount or int(amount) < 0:
 				messages.error(request, _("Got unexpected post data - please try again."))
-				return HttpResponseRedirect(reverse("default"))		
+				return HttpResponseRedirect(reverse("default"))
 		except ValueError:
 			messages.error(request, _("You are expected to enter digits.. Nothing else."))
-			return HttpResponseRedirect(reverse("default"))					
+			return HttpResponseRedirect(reverse("default"))
 
 		try:
 			quota = PreorderQuota.objects.get(Q(sold__lt=F('quota')), Q(ticket__active=True), Q(ticket__deleted=False), Q(pk=quota_id))
@@ -258,7 +258,7 @@ def cart_view(request, action):
 			request.session['cart'] = session_cart
 
 		return HttpResponseRedirect(reverse("default"))
-	
+
 	elif action == "amend":
 		try:
 			if not quota_id or not amount or int(amount) < 0:
@@ -266,7 +266,7 @@ def cart_view(request, action):
 				return HttpResponseRedirect(reverse("default"))
 		except ValueError:
 			messages.error(request, _("You are expected to enter digits.. Nothing else."))
-			return HttpResponseRedirect(reverse("default"))	
+			return HttpResponseRedirect(reverse("default"))
 
 		try:
 			quota = PreorderQuota.objects.get(Q(sold__lt=F('quota')), Q(ticket__active=True), Q(ticket__deleted=False), Q(pk=quota_id))
@@ -274,8 +274,8 @@ def cart_view(request, action):
 			messages.error(request, _("Quota not found or exceeded."))
 			return HttpResponseRedirect(reverse("default"))
 		except:
-			raise			
-		
+			raise
+
 		session_cart = request.session.get('cart', False)
 		if not session_cart:
 			return HttpResponseRedirect(reverse("default"))
@@ -283,7 +283,7 @@ def cart_view(request, action):
 		user_limit_exceeded = False
 		if quota.ticket.limit_amount_user > 0 and int(amount) > quota.ticket.limit_amount_user:
 			user_limit_exceeded = True
-		if int(amount) > int(quota.get_available()) or user_limit_exceeded:	
+		if int(amount) > int(quota.get_available()) or user_limit_exceeded:
 			messages.error(request, _("Your selected amount %(amount)d of %(ticket)s is not available." % {'amount':int(amount), 'ticket':quota.ticket}))
 			return HttpResponseRedirect(reverse("default"))
 		else:
@@ -291,7 +291,7 @@ def cart_view(request, action):
 			request.session['cart'] = session_cart
 
 		return HttpResponseRedirect(reverse("default"))
-	
+
 	elif action == "delete":
 		session_cart = request.session.get('cart', False)
 		if not session_cart:
@@ -300,9 +300,9 @@ def cart_view(request, action):
 		session_cart[int(quota_id)] = {'amount': 0}
 		request.session['cart'] = session_cart
 
-		return HttpResponseRedirect(reverse("default"))		
+		return HttpResponseRedirect(reverse("default"))
 
-	raise Http404	
+	raise Http404
 
 @login_required
 @payload_check
@@ -348,17 +348,17 @@ def redeem_token_view(request):
 @login_required
 def tickets_view(request):
 	nav = 'my'
-	
+
 	try:
 		preorders = CustomPreorder.objects.filter(user_id=request.user.pk)
 	except CustomPreorder.DoesNotExist:
 		preorders = []
-	
+
 	return render_to_response('tickets.html', locals(), context_instance=RequestContext(request))
 
 @login_required
 def no_view(request):
-	return render_to_response('no.html', locals(), context_instance=RequestContext(request))	
+	return render_to_response('no.html', locals(), context_instance=RequestContext(request))
 
 def signup_view(request):
 	signup_page = True
@@ -372,8 +372,8 @@ def signup_view(request):
 
 			user.set_password(signupform.cleaned_data['password'])
 			user.save()
-		
-	return render_to_response('signup.html', locals(), context_instance=RequestContext(request))	
+
+	return render_to_response('signup.html', locals(), context_instance=RequestContext(request))
 
 @login_required
 def account_view(request):
@@ -406,6 +406,41 @@ def print_tickets_view(request, preorder_id, secret):
 		messages.error(request, _("You cannot download your ticket until you paid for it."))
 		return redirect("my-tickets")
 
+	# check if this ticket is eligible for an invoice address and has not yet one saved
+	single_ticket_over_limit = False
+	billing_address = False
+	if not preorder.get_billing_address():
+		for tposition in preorder.get_tickets():
+			amount = float(tposition['t'].price) * int(tposition['amount'])
+
+			if amount >= EVENT_BILLIG_ADRESS_LIMIT:
+				single_ticket_over_limit = True
+				break
+
+		if single_ticket_over_limit:
+			if request.POST:
+				p = request.POST
+			else:
+				p = None
+			form = BillingAddressForm(p)
+
+			if not request.POST.get('without_billingaddress') == 'yes':
+				if form.is_valid():
+					billing_address = PreorderBillingAddress()
+					billing_address.company = form.cleaned_data['company']
+					billing_address.firstname = form.cleaned_data['firstname']
+					billing_address.lastname = form.cleaned_data['lastname']
+					billing_address.address1 = form.cleaned_data['address1']
+					billing_address.address2 = form.cleaned_data['address2']
+					billing_address.city = form.cleaned_data['city']
+					billing_address.zip = form.cleaned_data['zip']
+					billing_address.country = form.cleaned_data['country']
+					billing_address.preorder = preorder
+					billing_address.save()
+				else:
+					limit = EVENT_BILLIG_ADRESS_LIMIT
+					return render_to_response('billingaddress.html', locals(), context_instance=RequestContext(request))
+
 	from pyqrcode import MakeQRImage
 	from fpdf import FPDF
 	import time
@@ -413,59 +448,6 @@ def print_tickets_view(request, preorder_id, secret):
 	from os import remove
 
 	pdf=FPDF('P', 'pt', 'A4')
-
-	# invoice 
-	"""pdf.add_page()
-
-	# print logo
-	pdf.image('%s%s' % (settings.STATIC_ROOT,settings.EVENT_LOGO), 280, 10, 1000*0.3, 580*0.3)   
-    pdf.set_font('Arial','B',20)
-	pdf.text(20,50,"%s Overview" % settings.EVENT_NAME_SHORT)
-	pdf.set_font('Arial','B',10)
-	pdf.text(20,70,"These are your presale's positions. This is not an invoice.")
-
-	# print ticket table
-	pdf.set_font('Arial','B',15)
-	pdf.text(150,220,"Type")
-	pdf.text(360,220,"Price")
-	pdf.text(480,220,"Price total")
-
-	i = 0
-	for ticket in preorder.get_tickets():
-
-
-		#for ticket in preorder.get_tickets():
-		pdf.set_font('Arial','',25)
-		pdf.text(50, 260+i, '%sx' % str(ticket['amount']))
-		
-		pdf.set_font('Arial','B',25)
-		pdf.text(150, 260+i, '%s' % ticket['t'].name)
-		pdf.set_font('Arial','',17)
-		
-		if preorder.paid_via == 'goldentoken':
-			pdf.text(360, 250+i, 'GOLDEN TOKEN')
-		else:
-			pdf.text(360, 260+i, "%s %s" % (str(floatformat(ticket['t'].price, 2)), ticket['t'].currency))
-			pdf.text(480, 260+i, "%s %s" % (str(floatformat(ticket['t'].price*ticket['amount'], 2)), ticket['t'].currency))
-		i = i + 50
-
-	for t in preorder.get_sale_amount():
-		pdf.text(430, 250+i, "===============")
-		pdf.text(430, 270+i, "%s %s" % (str(floatformat(t['total'], 2)), t['currency']))
-		for tax in t['taxes']:
-			pdf.set_font('Arial','',11)
-			pdf.text(430, 285+i, "incl. %s%% taxes: %s %s" % (tax['rate'], str(floatformat(tax['amount'], 2)), t['currency']))
-
-	# print human readable preorder code
-	pdf.set_font('Arial','',20)
-	pdf.text(10, 800, '%s' % preorder.unique_secret)
-
-	# print invoice information
-	pdf.set_font('Arial', '', 10)
-	pdf.text(10, 830, '%s' % settings.EVENT_INVOICE_ADDRESS)
-	"""
-
-	#############################################
 
 	delete_files = []
 
@@ -496,29 +478,32 @@ def print_tickets_view(request, preorder_id, secret):
 			pdf.text(20,100,"Online Ticket")
 
 		# print billing address - if eligible
-		if ticket.price >= EVENT_BILLIG_ADRESS_LIMIT:
-			if preorder.get_billing_address():
+		if ticket.price >= EVENT_BILLIG_ADRESS_LIMIT or billing_address:
+			if preorder.get_billing_address() or billing_address:
 
 				from django.utils.encoding import smart_str
 
-				pdf.set_font('Arial','B',13)		
+				pdf.set_font('Arial','B',13)
 				pdf.text(20,125,"Billing address")
 				pdf.set_font('Arial','',10)
 
+				if not billing_address:
+					billing_address = preorder.get_billing_address()
+
 				ytmp = 0
 
-				if preorder.get_billing_address().company:
-					pdf.text(20,140,"%s" % preorder.get_billing_address().company.encode('ASCII', 'ignore'))
+				if billing_address.company:
+					pdf.text(20,140,"%s" % billing_address.company.encode('ASCII', 'ignore'))
 					ytmp+=12
-				pdf.text(20,140+ytmp,"%s" % preorder.get_billing_address().firstname.encode('ASCII', 'ignore'))
-				pdf.text(20+len(preorder.get_billing_address().firstname*7),140+ytmp,"%s" % preorder.get_billing_address().lastname.encode('ASCII', 'ignore'))
-				pdf.text(20,152+ytmp,"%s" % preorder.get_billing_address().address1.encode('ASCII', 'ignore'))
-				if preorder.get_billing_address().address2:
-					pdf.text(20,164+ytmp,"%s" % preorder.get_billing_address().address2.encode('ASCII', 'ignore'))
+				pdf.text(20,140+ytmp,"%s" % billing_address.firstname.encode('ASCII', 'ignore'))
+				pdf.text(20+len(billing_address.firstname*7),140+ytmp,"%s" % billing_address.lastname.encode('ASCII', 'ignore'))
+				pdf.text(20,152+ytmp,"%s" % billing_address.address1.encode('ASCII', 'ignore'))
+				if billing_address.address2:
+					pdf.text(20,164+ytmp,"%s" % billing_address.address2.encode('ASCII', 'ignore'))
 					ytmp+=12
-				pdf.text(20+len(preorder.get_billing_address().zip*7),164+ytmp, preorder.get_billing_address().city.encode('ASCII', 'ignore'))
-				pdf.text(20,164+ytmp,"%s" % preorder.get_billing_address().zip.encode('ASCII', 'ignore'))
-				pdf.text(20,176+ytmp,"%s" % preorder.get_billing_address().country.encode('ASCII', 'ignore'))
+				pdf.text(20+len(billing_address.zip*7),164+ytmp, billing_address.city.encode('ASCII', 'ignore'))
+				pdf.text(20,164+ytmp,"%s" % billing_address.zip.encode('ASCII', 'ignore'))
+				pdf.text(20,176+ytmp,"%s" % billing_address.country.encode('ASCII', 'ignore'))
 
 
 		# print ticket table
@@ -531,11 +516,11 @@ def print_tickets_view(request, preorder_id, secret):
 		#for ticket in preorder.get_tickets():
 		pdf.set_font('Arial','',25)
 		#pdf.text(50, 260+i, '%sx' % str(ticket['amount']))
-		
+
 		pdf.set_font('Arial','B',25)
 		pdf.text(150, 260+i, '%s' % ticket.name)
 		pdf.set_font('Arial','',17)
-		
+
 		if ticket.price == 0:
 			pdf.text(430, 260+i, 'Free')
 		else:
@@ -603,7 +588,7 @@ def print_tickets_view(request, preorder_id, secret):
 		pdf.set_right_margin(300)
 		if ticket.price > 0:
 			pdf.write(10, "Bis zu einem Ticketpreis von 150,00 EUR gilt das Ticket gleichzeitig als Kleinbetragsrechnung im Sinne von Paragraph 33 UStDV. Eine Berechtigung zum Vorsteuerabzug besteht bei einem Ticketpreis von mehr als 150,00 EUR nur in Verbindung mit einer separaten Rechnung. Umtausch und Rueckgabe ausgeschlossen.")
-		
+
 
 		#pdf.set_font('Arial', '', 10)
 		#pdf.text(10, 830, '%s' % settings.EVENT_INVOICE_ADDRESS)
