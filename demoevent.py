@@ -105,6 +105,6 @@ EVENT_PASSBOOK_TEAMIDENTIFIER = "" # Passbook cert team identifier
 EVENT_PASSBOOK_DESCRIPTION = "29C3 Ticket" # Passbook ticket description
 EVENT_PASSBOOK_BG_COLOR = "rgb(0,5,50)" # Passbook background color
 EVENT_PASSBOOK_FG_COLOR = "rgb(255,255,255)" # Passbook foreground color
-EVENT_PASSBOOK_LOGO_TEXT = "29C9" # Passbook logo text
+EVENT_PASSBOOK_LOGO_TEXT = "29C3" # Passbook logo text
 EVENT_PASSBOOK_FILES_PATH = "" # Absolute path to passbook files folder which contains certs and logo
 EVENT_PASSBOOK_PASSWORD = "" # Passbook cert private key password
