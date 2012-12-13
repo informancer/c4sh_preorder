@@ -273,6 +273,8 @@ def redeem_token_view(request):
 				if ticket.deleted == True:
 					messages.error(request, _('The ticket %s does no longer exist. Your token has not been redeemed. Please contact support.' % ticket))
 
+
+
 				# create Preorder
 				preorder = CustomPreorder(
 					name=request.user.username,
@@ -281,14 +283,23 @@ def redeem_token_view(request):
 					additional_info='Redeemed token: %s' % token,
 					unique_secret=hashlib.sha1(str(random.random())).hexdigest(),
 					time=datetime.datetime.now(),
-					paid=True,
-					paid_time=datetime.datetime.now(),
-					paid_via="goldentoken", # do not change this!
 					cached_sum=0
 				)
 
+				if ticket.price == 0:
+					# This is a free ticket, mark this as paid.
+					preorder.paid = True
+					preorder.paid_time = datetime.datetime.now()
+					preorder.paid_via = "goldentoken" # do not change this!
+				else:
+					preorder.paid = False
+
 				preorder.save()
 				PreorderPosition(preorder=preorder, ticket=ticket).save()
+
+				preorder.cached_sum = simplejson.dumps(preorder.get_sale_amount())
+				preorder.save()
+
 				token.save()
 
 				messages.success(request, _("Your token has been successfully redeemed."))
