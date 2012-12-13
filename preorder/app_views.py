@@ -423,6 +423,8 @@ def print_tickets_view(request, preorder_id, secret):
 	delete_files = []
 
 	for position in preorder.get_positions():
+        """Print a ticket page for each preorder position
+        """
 
 		if not position.uuid:
 			from uuid import uuid4
@@ -443,6 +445,8 @@ def print_tickets_view(request, preorder_id, secret):
 		pdf.text(20,60,"%s" % settings.EVENT_NAME_SHORT)
 
 		pdf.set_font('Arial','B',20)
+
+        #if the ticket prize is > 150 Euro, we need to create a different invoice
 		if ticket.price <= 150 and ticket.price > 0:
 			pdf.text(20,100,"Online Ticket / Invoice")
 		else:
