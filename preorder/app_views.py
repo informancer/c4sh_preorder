@@ -387,7 +387,6 @@ def passbook_view(request, preorder_id, secret):
 		uuid = position.uuid
 
 		from passbook_helper import make_passbook_file
-		from django.core.files.base import File
 
 		try:
 			passbook_file = make_passbook_file({
