@@ -412,7 +412,7 @@ def print_tickets_view(request, preorder_id, secret):
 
 		# if price > 150, this is an invoice
 		if ticket.price <= 150 and ticket.price > 0:
-			pdf.text(25,130,"Invoice")
+			pdf.text(25,130,"Receipt")
 
 		pdf.text(25,110,"Online Ticket")
 
@@ -490,7 +490,7 @@ def print_tickets_view(request, preorder_id, secret):
 		pdf.set_y(720)
 		pdf.set_right_margin(300)
 		if ticket.price > 0:
-			pdf.write(10, "Bis zu einem Ticketpreis von 150,00 EUR gilt das Ticket gleichzeitig als Kleinbetragsrechnung im Sinne von Paragraph 33 UStDV. Eine Berechtigung zum Vorsteuerabzug besteht bei einem Ticketpreis von mehr als 150,00 EUR nur in Verbindung mit einer separaten Rechnung. Umtausch und Rueckgabe ausgeschlossen.")
+			pdf.write(10, "Bis zu einem Ticketpreis von 150,00 EUR gilt das Ticket gleichzeitig als Kleinbetragsrechnung im Sinne von § 33 UStDV. Eine Berechtigung zum Vorsteuerabzug besteht bei einem Ticketpreis von mehr als 150,00 EUR nur in Verbindung mit einer separaten Rechnung. Umtausch und Rueckgabe ausgeschlossen.")
 
 
 		#pdf.set_font(font, '', 10)
