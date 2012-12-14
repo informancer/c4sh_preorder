@@ -443,7 +443,7 @@ def print_tickets_view(request, preorder_id, secret):
 			pdf.text(400, 260+i, "%s %s" % (str(floatformat(ticket.price, 2)), ticket.currency))
 
 			pdf.set_font(font,'',11)
-			pdf.text(400, 285+i, "incl. %s%% VAT: %s %s" % (ticket.tax_rate, str(floatformat(float(ticket.price)-float(ticket.price)/(float(ticket.tax_rate)/100+1), 2)), ticket.currency))
+			pdf.text(400, 285+i, "incl. %s%% MwSt.: %s %s" % (ticket.tax_rate, str(floatformat(float(ticket.price)-float(ticket.price)/(float(ticket.tax_rate)/100+1), 2)), ticket.currency))
 
 		## special tickets
 		special_tickets = {
