@@ -403,23 +403,32 @@ def print_tickets_view(request, preorder_id, secret):
 		ticket = position.ticket
 
 		# print logo
+		#pdf.image('%s%s' % (settings.STATIC_ROOT,settings.EVENT_LOGO), 390, 10, 1920*0.1, 1600*0.1)
+		#pdf.set_font(font,'',100)
+		#pdf.text(20,85,"%s" % settings.EVENT_NAME_SHORT)
 
-		pdf.image('%s%s' % (settings.STATIC_ROOT,settings.EVENT_LOGO), 390, 10, 1920*0.1, 1600*0.1)
-		pdf.set_font(font,'',100)
-		pdf.text(20,85,"%s" % settings.EVENT_NAME_SHORT)
+
+		pdf.set_font(font,'I',37)
+		pdf.text(20,50,"%s" % 'N.O-T/M.Y-DE/PA.R-TM/EN.T')
+		pdf.set_font(font,'B',37)
+		pdf.text(20,85,"%s" % '2.9-C/3')
 
 		pdf.set_font(font,'I',20)
+		pdf.text(20,150,"%s" % '29th CHAOS COMMUNICATION CONGRESS')
+		pdf.text(20,185,"%s" % 'DECEMBER 27th TO 30TH 2012')
+		pdf.text(20,220,"%s" % 'CONGRESS CENTER HAMBURG, GERMANY')
 
+		pdf.set_font(font,'I',40)
 		# if price > 150, this is an invoice
 		if ticket.price <= 150 and ticket.price > 0:
-			pdf.text(25,130,"Receipt")
-
-		pdf.text(25,110,"Online Ticket")
+			pdf.text(20,325,"RECEIPT")
+		pdf.set_font(font,'B',40)
+		pdf.text(20,290,"ONLINE TICKET")
 
 		# print ticket table
-		pdf.set_font(font,'B',15)
-		pdf.text(50,220,"Type")
-		pdf.text(400,220,"Price")
+		pdf.set_font(font,'I',15)
+		pdf.text(20,420,"Type")
+		pdf.text(350,420,"Price")
 
 		i = 0
 
@@ -427,23 +436,24 @@ def print_tickets_view(request, preorder_id, secret):
 		pdf.set_font(font,'',25)
 		#pdf.text(50, 260+i, '%sx' % str(ticket['amount']))
 
-		pdf.set_font(font,'B',25)
-		pdf.set_y(245+i)
-		pdf.set_x(45)
+		pdf.set_font(font,'B',20)
+		pdf.set_y(418+i)
+		pdf.set_x(20)
 		pdf.set_right_margin(250)
-		pdf.set_left_margin(45)
-		pdf.write(20, ticket.name)
-		pdf.set_font(font,'',17)
+		pdf.set_left_margin(17)
+		pdf.write(17, "\n%s"%ticket.name)
+		pdf.set_left_margin(20)
+		pdf.set_font(font,'B',20)
 
 		pdf.set_left_margin(20)
 
 		if ticket.price == 0:
-			pdf.text(400, 260+i, 'Free')
+			pdf.text(350, 450+i, 'Free')
 		else:
-			pdf.text(400, 260+i, "%s %s" % (str(floatformat(ticket.price, 2)), ticket.currency))
+			pdf.text(350, 450+i, "%s %s" % (str(floatformat(ticket.price, 2)), ticket.currency))
 
 			pdf.set_font(font,'',11)
-			pdf.text(400, 285+i, "incl. %s%% MwSt.: %s %s" % (ticket.tax_rate, str(floatformat(float(ticket.price)-float(ticket.price)/(float(ticket.tax_rate)/100+1), 2)), ticket.currency))
+			pdf.text(350, 465+i, "incl. %s%% MwSt.: %s %s" % (ticket.tax_rate, str(floatformat(float(ticket.price)-float(ticket.price)/(float(ticket.tax_rate)/100+1), 2)), ticket.currency))
 
 		## special tickets
 		special_tickets = {
@@ -453,7 +463,7 @@ def print_tickets_view(request, preorder_id, secret):
 		}
 		if ticket.name in special_tickets.keys():
 			pdf.set_font(font,'B',72)
-			pdf.text(120, 420, '%s' % special_tickets[ticket.name])
+			pdf.text(120, 390, '%s' % special_tickets[ticket.name])
 
 		## special tickets
 
@@ -465,19 +475,19 @@ def print_tickets_view(request, preorder_id, secret):
 		delete_files.append('%stmp/%s.jpg' % (settings.STATIC_ROOT, position.uuid))
 
 		# print human readable ticket code
-		pdf.set_font(font,'',10)
-		pdf.text(330, 545, 'Payment reference: %s-%s' % (settings.EVENT_NAME, preorder.unique_secret[:10]))
-		pdf.text(330, 555, '%s' % position.uuid)
-		pdf.text(330, 565, '%s' % preorder.unique_secret)
+		pdf.set_font(font,'I',7)
+		pdf.text(23, 800, 'Payment reference: %s-%s' % (settings.EVENT_NAME, preorder.unique_secret[:10]))
+		pdf.text(23, 807, '%s' % position.uuid)
+		pdf.text(23, 814, '%s' % preorder.unique_secret)
 
 		# print invoice information
 		pdf.set_font(font, '', 15)
-		pdf.set_y(500)
-		pdf.write(20, '%s' % settings.EVENT_NAME)
-		pdf.set_font(font, '', 10)
-		pdf.set_y(515)
-		pdf.write(20, '%s' % settings.EVENT_TIME_AND_LOCATION)
-		pdf.set_font(font, '', 15)
+		#pdf.set_y(500)
+		#pdf.write(20, '%s' % settings.EVENT_NAME)
+		#pdf.set_font(font, '', 10)
+		#pdf.set_y(515)
+		#pdf.write(20, '%s' % settings.EVENT_TIME_AND_LOCATION)
+		#pdf.set_font(font, '', 15)
 		pdf.set_y(550)
 		pdf.write(20, '%s' % settings.EVENT_INVOICE_ADDRESS)
 		pdf.set_font(font, '', 10)
