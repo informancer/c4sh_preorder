@@ -2,9 +2,9 @@ from passbook.models import Pass, EventTicket, Barcode, StoreCard, BarcodeFormat
 
 def make_passbook_file(args={}):
 	cardInfo = EventTicket()
-	cardInfo.addPrimaryField('name', args['ticket'], 'Ticket')
-	cardInfo.addSecondaryField('doors-open', args['from'], 'From')
-	cardInfo.addSecondaryField('doors-close', args['to'], 'To')
+	cardInfo.addPrimaryField('eventName', args['ticket'], 'Ticket')
+	cardInfo.addSecondaryField('doorsOpen', args['from'], 'From')
+	cardInfo.addSecondaryField('doorsClose', args['to'], 'To')
 
 	passfile = Pass(cardInfo, passTypeIdentifier=args['identifier'], organizationName=args['organisation'], teamIdentifier=args['teamidentifier'])
 
