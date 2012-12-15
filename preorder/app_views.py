@@ -9,7 +9,7 @@ from django.template import RequestContext
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from preorder.models import *
-from settings import * 
+from settings import *
 from preorder.forms import *
 from django.db.models import Q, F
 from preorder.decorators import preorder_check, payload_check
@@ -58,7 +58,7 @@ def default_view(request):
 
 		cart = get_cart(request.session.get('cart', False))
 		return render_to_response('buy.html', locals(), context_instance=RequestContext(request))
-	
+
 	signupform = SignupForm()
 	return render_to_response('default.html', locals(), context_instance=RequestContext(request))
 
@@ -74,7 +74,7 @@ def order_view(request):
 		if not cart:
 			messages.error(request, _('Cart is empty. Maybe someone was faster with his preorder and now the quota which your ticket belonged to is exceeded. Please try again.'))
 			return HttpResponseRedirect(reverse("default"))
-		
+
 		# create Preorder
 		preorder = CustomPreorder(
 			name=request.user.username,
@@ -136,7 +136,7 @@ def order_view(request):
 			c4shmail(request.user.email, _("Checkout successfully completed"), "checkout_success", Context({ 'user': request.user, 'preorder': preorder , 'payment_until': payment_until, 'payment_details': settings.EVENT_PAYMENT_DETAILS, 'payment_prefix': settings.EVENT_PAYMENT_PREFIX}));
 
 		messages.success(request, _("Thanks for your preorder!"))
-		return HttpResponseRedirect(reverse("my-tickets"))		
+		return HttpResponseRedirect(reverse("my-tickets"))
 
 @login_required
 @preorder_check
@@ -180,10 +180,10 @@ def cart_view(request, action):
 		try:
 			if not quota_id or not amount or int(amount) < 0:
 				messages.error(request, _("Got unexpected post data - please try again."))
-				return HttpResponseRedirect(reverse("default"))		
+				return HttpResponseRedirect(reverse("default"))
 		except ValueError:
 			messages.error(request, _("You are expected to enter digits.. Nothing else."))
-			return HttpResponseRedirect(reverse("default"))					
+			return HttpResponseRedirect(reverse("default"))
 
 		try:
 			quota = PreorderQuota.objects.get(Q(sold__lt=F('quota')), Q(ticket__active=True), Q(ticket__deleted=False), Q(pk=quota_id))
@@ -211,7 +211,7 @@ def cart_view(request, action):
 			request.session['cart'] = session_cart
 
 		return HttpResponseRedirect(reverse("default"))
-	
+
 	elif action == "amend":
 		try:
 			if not quota_id or not amount or int(amount) < 0:
@@ -219,7 +219,7 @@ def cart_view(request, action):
 				return HttpResponseRedirect(reverse("default"))
 		except ValueError:
 			messages.error(request, _("You are expected to enter digits.. Nothing else."))
-			return HttpResponseRedirect(reverse("default"))	
+			return HttpResponseRedirect(reverse("default"))
 
 		try:
 			quota = PreorderQuota.objects.get(Q(sold__lt=F('quota')), Q(ticket__active=True), Q(ticket__deleted=False), Q(pk=quota_id))
@@ -227,8 +227,8 @@ def cart_view(request, action):
 			messages.error(request, _("Quota not found or exceeded."))
 			return HttpResponseRedirect(reverse("default"))
 		except:
-			raise			
-		
+			raise
+
 		session_cart = request.session.get('cart', False)
 		if not session_cart:
 			return HttpResponseRedirect(reverse("default"))
@@ -236,7 +236,7 @@ def cart_view(request, action):
 		user_limit_exceeded = False
 		if quota.ticket.limit_amount_user > 0 and int(amount) > quota.ticket.limit_amount_user:
 			user_limit_exceeded = True
-		if int(amount) > int(quota.get_available()) or user_limit_exceeded:	
+		if int(amount) > int(quota.get_available()) or user_limit_exceeded:
 			messages.error(request, _("Your selected amount %(amount)d of %(ticket)s is not available." % {'amount':int(amount), 'ticket':quota.ticket}))
 			return HttpResponseRedirect(reverse("default"))
 		else:
@@ -244,7 +244,7 @@ def cart_view(request, action):
 			request.session['cart'] = session_cart
 
 		return HttpResponseRedirect(reverse("default"))
-	
+
 	elif action == "delete":
 		session_cart = request.session.get('cart', False)
 		if not session_cart:
@@ -253,9 +253,9 @@ def cart_view(request, action):
 		session_cart[int(quota_id)] = {'amount': 0}
 		request.session['cart'] = session_cart
 
-		return HttpResponseRedirect(reverse("default"))		
+		return HttpResponseRedirect(reverse("default"))
 
-	raise Http404	
+	raise Http404
 
 @login_required
 @payload_check
@@ -322,7 +322,7 @@ def tickets_view(request):
 
 @login_required
 def no_view(request):
-	return render_to_response('no.html', locals(), context_instance=RequestContext(request))	
+	return render_to_response('no.html', locals(), context_instance=RequestContext(request))
 
 def signup_view(request):
 	signup_page = True
@@ -336,8 +336,8 @@ def signup_view(request):
 
 			user.set_password(signupform.cleaned_data['password'])
 			user.save()
-		
-	return render_to_response('signup.html', locals(), context_instance=RequestContext(request))	
+
+	return render_to_response('signup.html', locals(), context_instance=RequestContext(request))
 
 @login_required
 def account_view(request):
@@ -378,56 +378,10 @@ def print_tickets_view(request, preorder_id, secret):
 
 	pdf=FPDF('P', 'pt', 'A4')
 
-	# invoice 
-	"""pdf.add_page()
-
-	# print logo
-	pdf.image('%s%s' % (settings.STATIC_ROOT,settings.EVENT_LOGO), 280, 10, 1000*0.3, 580*0.3)   
-    pdf.set_font('Arial','B',20)
-	pdf.text(20,50,"%s Overview" % settings.EVENT_NAME_SHORT)
-	pdf.set_font('Arial','B',10)
-	pdf.text(20,70,"These are your presale's positions. This is not an invoice.")
-
-	# print ticket table
-	pdf.set_font('Arial','B',15)
-	pdf.text(150,220,"Type")
-	pdf.text(360,220,"Price")
-	pdf.text(480,220,"Price total")
-
-	i = 0
-	for ticket in preorder.get_tickets():
-
-
-		#for ticket in preorder.get_tickets():
-		pdf.set_font('Arial','',25)
-		pdf.text(50, 260+i, '%sx' % str(ticket['amount']))
-		
-		pdf.set_font('Arial','B',25)
-		pdf.text(150, 260+i, '%s' % ticket['t'].name)
-		pdf.set_font('Arial','',17)
-		
-		if preorder.paid_via == 'goldentoken':
-			pdf.text(360, 250+i, 'GOLDEN TOKEN')
-		else:
-			pdf.text(360, 260+i, "%s %s" % (str(floatformat(ticket['t'].price, 2)), ticket['t'].currency))
-			pdf.text(480, 260+i, "%s %s" % (str(floatformat(ticket['t'].price*ticket['amount'], 2)), ticket['t'].currency))
-		i = i + 50
-
-	for t in preorder.get_sale_amount():
-		pdf.text(430, 250+i, "===============")
-		pdf.text(430, 270+i, "%s %s" % (str(floatformat(t['total'], 2)), t['currency']))
-		for tax in t['taxes']:
-			pdf.set_font('Arial','',11)
-			pdf.text(430, 285+i, "incl. %s%% taxes: %s %s" % (tax['rate'], str(floatformat(tax['amount'], 2)), t['currency']))
-
-	# print human readable preorder code
-	pdf.set_font('Arial','',20)
-	pdf.text(10, 800, '%s' % preorder.unique_secret)
-
-	# print invoice information
-	pdf.set_font('Arial', '', 10)
-	pdf.text(10, 830, '%s' % settings.EVENT_INVOICE_ADDRESS)
-	"""
+	pdf.add_font(family='sourcecodepro', fname="%sSourceCodePro-Regular.ttf" % settings.STATIC_ROOT, uni=True)
+	pdf.add_font(family='sourcecodepro', style="B", fname="%sSourceCodePro-Bold.ttf" % settings.STATIC_ROOT, uni=True)
+	pdf.add_font(family='sourcecodepro', style="I", fname="%sSourceCodePro-Light.ttf" % settings.STATIC_ROOT, uni=True)
+	font = 'sourcecodepro'
 
 	#############################################
 
@@ -451,46 +405,57 @@ def print_tickets_view(request, preorder_id, secret):
 		ticket = position.ticket
 
 		# print logo
-		pdf.image('%s%s' % (settings.STATIC_ROOT,settings.EVENT_LOGO), 280, 10, 1000*0.3, 580*0.3)
-		pdf.set_font('Arial','B',50)
-		pdf.text(20,60,"%s" % settings.EVENT_NAME_SHORT)
+		#pdf.image('%s%s' % (settings.STATIC_ROOT,settings.EVENT_LOGO), 390, 10, 1920*0.1, 1600*0.1)
+		#pdf.set_font(font,'',100)
+		#pdf.text(20,85,"%s" % settings.EVENT_NAME_SHORT)
 
-		pdf.set_font('Arial','B',20)
 
-        #if the ticket prize is > 150 Euro, we need to create a different invoice
+		pdf.set_font(font,'I',37)
+		pdf.text(20,50,"%s" % 'N.O-T/M.Y-DE/PA.R-TM/EN.T')
+		pdf.set_font(font,'B',37)
+		pdf.text(20,85,"%s" % '2.9-C/3')
+
+		pdf.set_font(font,'I',20)
+		pdf.text(20,150,"%s" % '29th CHAOS COMMUNICATION CONGRESS')
+		pdf.text(20,185,"%s" % 'DECEMBER 27th TO 30TH 2012')
+		pdf.text(20,220,"%s" % 'CONGRESS CENTER HAMBURG, GERMANY')
+
+		pdf.set_font(font,'I',40)
+		# if price > 150, this is an invoice
 		if ticket.price <= 150 and ticket.price > 0:
-			pdf.text(20,100,"Online Ticket / Invoice")
-		else:
-			pdf.text(20,100,"Online Ticket")
+			pdf.text(20,325,"RECEIPT")
+		pdf.set_font(font,'B',40)
+		pdf.text(20,290,"ONLINE TICKET")
 
 		# print ticket table
-		pdf.set_font('Arial','B',15)
-		pdf.text(150,220,"Type")
-		pdf.text(430,220,"Price")
+		pdf.set_font(font,'I',15)
+		pdf.text(20,420,"Type")
+		pdf.text(350,420,"Price")
 
 		i = 0
 
 		#for ticket in preorder.get_tickets():
-		pdf.set_font('Arial','',25)
+		pdf.set_font(font,'',25)
 		#pdf.text(50, 260+i, '%sx' % str(ticket['amount']))
-		
-		pdf.set_font('Arial','B',25)
-		pdf.text(150, 260+i, '%s' % ticket.name)
-		pdf.set_font('Arial','',17)
-		
-		if ticket.price == 0:
-			pdf.text(430, 260+i, 'Free')
-		else:
-			"""for t in preorder.get_sale_amount():
-				pdf.text(430, 250+i, "%s %s" % (str(floatformat(t['total'], 2)), t['currency']))
-				for tax in t['taxes']:
-					pdf.set_font('Arial','',11)
-					pdf.text(430, 270+i, "incl. %s%% taxes: %s %s" % (tax['rate'], str(floatformat(tax['amount'], 2)), t['currency']))
-			"""
-			pdf.text(430, 260+i, "%s %s" % (str(floatformat(ticket.price, 2)), ticket.currency))
 
-			pdf.set_font('Arial','',11)
-			pdf.text(430, 285+i, "incl. %s%% VAT: %s %s" % (ticket.tax_rate, str(floatformat(float(ticket.price)-float(ticket.price)/(float(ticket.tax_rate)/100+1), 2)), ticket.currency))
+		pdf.set_font(font,'B',20)
+		pdf.set_y(418+i)
+		pdf.set_x(20)
+		pdf.set_right_margin(250)
+		pdf.set_left_margin(17)
+		pdf.write(17, "\n%s"%ticket.name)
+		pdf.set_left_margin(20)
+		pdf.set_font(font,'B',20)
+
+		pdf.set_left_margin(20)
+
+		if ticket.price == 0:
+			pdf.text(350, 450+i, 'Free')
+		else:
+			pdf.text(350, 450+i, "%s %s" % (str(floatformat(ticket.price, 2)), ticket.currency))
+
+			pdf.set_font(font,'',11)
+			pdf.text(350, 465+i, "incl. %s%% MwSt.: %s %s" % (ticket.tax_rate, str(floatformat(float(ticket.price)-float(ticket.price)/(float(ticket.tax_rate)/100+1), 2)), ticket.currency))
 
 		## special tickets
 		special_tickets = {
@@ -499,19 +464,12 @@ def print_tickets_view(request, preorder_id, secret):
 			'Presseticket': 'PRESSE'
 		}
 		if ticket.name in special_tickets.keys():
-			pdf.set_font('Arial','B',72)
-			pdf.text(120, 420, '%s' % special_tickets[ticket.name])
+			pdf.set_font(font,'B',72)
+			pdf.text(120, 390, '%s' % special_tickets[ticket.name])
 
 		## special tickets
 
 		i = i + 50
-
-		"""for t in preorder.get_sale_amount():
-			pdf.text(430, 250+i, "=============")
-			pdf.text(430, 270+i, "%s %s" % (str(floatformat(t['total'], 2)), t['currency']))
-			for tax in t['taxes']:
-				pdf.set_font('Arial','',11)
-				pdf.text(430, 285+i, "incl. %s%% taxes: %s %s" % (tax['rate'], str(floatformat(tax['amount'], 2)), t['currency']))"""
 
 		# print qr code
 		pdf.image('%stmp/%s.jpg' % (settings.STATIC_ROOT, position.uuid), 300, 540, 300, 300)
@@ -519,35 +477,35 @@ def print_tickets_view(request, preorder_id, secret):
 		delete_files.append('%stmp/%s.jpg' % (settings.STATIC_ROOT, position.uuid))
 
 		# print human readable ticket code
-		pdf.set_font('Arial','',10)
-		pdf.text(330, 545, 'Payment reference: %s-%s' % (settings.EVENT_NAME, preorder.unique_secret[:10]))
-		pdf.text(330, 555, '%s' % preorder.unique_secret)
-		pdf.text(330, 565, '%s' % position.uuid)
+		pdf.set_font(font,'I',7)
+		pdf.text(23, 800, 'Payment reference: %s-%s' % (settings.EVENT_NAME, preorder.unique_secret[:10]))
+		pdf.text(23, 807, '%s' % position.uuid)
+		pdf.text(23, 814, '%s' % preorder.unique_secret)
 
 		# print invoice information
-		pdf.set_font('Arial', '', 15)
-		pdf.set_y(500)
-		pdf.write(20, '%s' % settings.EVENT_NAME)
-		pdf.set_font('Arial', '', 10)
-		pdf.set_y(515)
-		pdf.write(20, '%s' % settings.EVENT_TIME_AND_LOCATION)
-		pdf.set_font('Arial', '', 15)
-		pdf.set_y(570)
+		pdf.set_font(font, '', 15)
+		#pdf.set_y(500)
+		#pdf.write(20, '%s' % settings.EVENT_NAME)
+		#pdf.set_font(font, '', 10)
+		#pdf.set_y(515)
+		#pdf.write(20, '%s' % settings.EVENT_TIME_AND_LOCATION)
+		#pdf.set_font(font, '', 15)
+		pdf.set_y(550)
 		pdf.write(20, '%s' % settings.EVENT_INVOICE_ADDRESS)
-		pdf.set_font('Arial', '', 10)
-		pdf.set_y(660)
+		pdf.set_font(font, '', 10)
+		pdf.set_y(640)
 		pdf.write(15, '%s' % settings.EVENT_INVOICE_LEGAL)
-		pdf.set_font('Arial', '', 10)
-		pdf.set_y(700)
+		pdf.set_font(font, '', 10)
+		pdf.set_y(680)
 		pdf.write(15, 'Issued: %s' % time.strftime('%Y-%m-%d %H:%M', time.gmtime()))
-		pdf.set_font('Arial', '', 8)
-		pdf.set_y(730)
+		pdf.set_font(font, '', 8)
+		pdf.set_y(720)
 		pdf.set_right_margin(300)
 		if ticket.price > 0:
-			pdf.write(10, "Bis zu einem Ticketpreis von 150,00 EUR gilt das Ticket gleichzeitig als Kleinbetragsrechnung im Sinne von Paragraph 33 UStDV. Eine Berechtigung zum Vorsteuerabzug besteht bei einem Ticketpreis von mehr als 150,00 EUR nur in Verbindung mit einer separaten Rechnung. Umtausch und Rueckgabe ausgeschlossen.")
-		
+			pdf.write(10, "Bis zu einem Ticketpreis von 150,00 EUR gilt das Ticket gleichzeitig als Kleinbetragsrechnung im Sinne von § 33 UStDV. Eine Berechtigung zum Vorsteuerabzug besteht bei einem Ticketpreis von mehr als 150,00 EUR nur in Verbindung mit einer separaten Rechnung. Umtausch und Rueckgabe ausgeschlossen.")
 
-		#pdf.set_font('Arial', '', 10)
+
+		#pdf.set_font(font, '', 10)
 		#pdf.text(10, 830, '%s' % settings.EVENT_INVOICE_ADDRESS)
 
 	response = HttpResponse(mimetype="application/pdf")
