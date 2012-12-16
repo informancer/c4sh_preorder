@@ -488,15 +488,18 @@ def print_tickets_view(request, preorder_id, secret):
         pdf.write(20, '%s' % settings.EVENT_INVOICE_ADDRESS)
         pdf.set_font(font, '', 10)
         pdf.set_y(640)
-        pdf.write(15, '%s' % settings.EVENT_INVOICE_LEGAL)
+        #Computer says no
+        #pdf.write(15, '%s' % settings.EVENT_INVOICE_LEGAL)
         pdf.set_font(font, '', 10)
         pdf.set_y(680)
         pdf.write(15, 'Issued: %s' % time.strftime('%Y-%m-%d %H:%M', time.gmtime()))
         pdf.set_font(font, '', 8)
         pdf.set_y(720)
         pdf.set_right_margin(300)
-        if ticket.price > 0:
-            pdf.write(10, "Bis zu einem Ticketpreis von 150,00 EUR gilt das Ticket gleichzeitig als Kleinbetragsrechnung im Sinne von § 33 UStDV. Eine Berechtigung zum Vorsteuerabzug besteht bei einem Ticketpreis von mehr als 150,00 EUR nur in Verbindung mit einer separaten Rechnung. Umtausch und Rueckgabe ausgeschlossen.")
+        
+        #Computer says no
+        #if ticket.price > 0:
+        #    pdf.write(10, "Bis zu einem Ticketpreis von 150,00 EUR gilt das Ticket gleichzeitig als Kleinbetragsrechnung im Sinne von § 33 UStDV. Eine Berechtigung zum Vorsteuerabzug besteht bei einem Ticketpreis von mehr als 150,00 EUR nur in Verbindung mit einer separaten Rechnung. Umtausch und Rueckgabe ausgeschlossen.")
     #are Credit Card payments enabled? If yes, is this a preorder paid by CC?
     if settings.EVENT_CC_ENABLE and preorder.paid_via=="creditcard":
         total = preorder.get_sale_amount()[0]['total']
@@ -552,15 +555,17 @@ def print_tickets_view(request, preorder_id, secret):
         pdf.write(20, '%s' % settings.EVENT_INVOICE_ADDRESS)
         pdf.set_font(font, '', 10)
         pdf.set_y(640)
-        pdf.write(15, '%s' % settings.EVENT_INVOICE_LEGAL)
+        #Computer says no
+        #pdf.write(15, '%s' % settings.EVENT_INVOICE_LEGAL)
         pdf.set_font(font, '', 10)
         pdf.set_y(680)
         pdf.write(15, 'Issued: %s' % time.strftime('%Y-%m-%d %H:%M', time.gmtime()))
         pdf.set_font(font, '', 8)
         pdf.set_y(720)
         pdf.set_right_margin(300)
-        if ticket.price > 0:
-            pdf.write(10, "Bis zu einem Ticketpreis von 150,00 EUR gilt das Ticket gleichzeitig als Kleinbetragsrechnung im Sinne von § 33 UStDV. Eine Berechtigung zum Vorsteuerabzug besteht bei einem Ticketpreis von mehr als 150,00 EUR nur in Verbindung mit einer separaten Rechnung. Umtausch und Rueckgabe ausgeschlossen.")
+        #Computer says no
+        #if ticket.price > 0:
+        #    pdf.write(10, "Bis zu einem Ticketpreis von 150,00 EUR gilt das Ticket gleichzeitig als Kleinbetragsrechnung im Sinne von § 33 UStDV. Eine Berechtigung zum Vorsteuerabzug besteht bei einem Ticketpreis von mehr als 150,00 EUR nur in Verbindung mit einer separaten Rechnung. Umtausch und Rueckgabe ausgeschlossen.")
 
     
     response = HttpResponse(mimetype="application/pdf")
