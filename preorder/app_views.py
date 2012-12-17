@@ -312,12 +312,12 @@ def redeem_token_view(request):
 @login_required
 def tickets_view(request):
     nav = 'my'
-    
+
     try:
         preorders = CustomPreorder.objects.filter(user_id=request.user.pk)
     except CustomPreorder.DoesNotExist:
         preorders = []
-    
+
     return render_to_response('tickets.html', locals(), context_instance=RequestContext(request))
 
 @login_required
@@ -358,6 +358,70 @@ def account_view(request):
     return render_to_response('account.html', locals(), context_instance=RequestContext(request))
 
 @login_required
+def passbook_view(request, preorder_id, secret):
+
+	if not EVENT_PASSBOOK_ENABLE:
+		messages.error(request, _("Passbook support has not been enabled for this event."))
+		return redirect("my-tickets")
+
+	if EVENT_DOWNLOAD_DATE and datetime.datetime.now() < datetime.datetime.strptime(EVENT_DOWNLOAD_DATE,'%Y-%m-%d %H:%M:%S'):
+		messages.error(request, _("Tickets cannot be downloaded yet, please try again shortly before the event."))
+		return redirect("my-tickets")
+
+	preorder = get_object_or_404(CustomPreorder, Q(pk=preorder_id), Q(user_id=request.user.pk), Q(unique_secret=secret))
+
+	# what to do if this preorder is not yet marked as paid?
+	if not preorder.paid:
+		messages.error(request, _("You cannot download your ticket until you paid for it."))
+		return redirect("my-tickets")
+
+	if request.GET.get('pos'):
+		try:
+			position_id = int(request.GET.get('pos'))
+			# fetch position with preorder, which has already been checked..
+			position = PreorderPosition.objects.get(pk=position_id, preorder=preorder)
+		except:
+			messages.error(request, _("Invalid preorder position given - please try again later."))
+			return redirect("my-tickets")
+
+		if not position.uuid:
+			from uuid import uuid4
+			position.uuid = str(uuid4())
+			position.save()
+
+		uuid = position.uuid
+
+		from passbook_helper import make_passbook_file
+
+		try:
+			passbook_file = make_passbook_file({
+				'ticket': position.ticket.name,
+				'uuid': uuid,
+				'from': EVENT_PASSBOOK_FROM,
+				'to': EVENT_PASSBOOK_TO,
+				'organisation': EVENT_PASSBOOK_ORGANISATION,
+				'identifier': EVENT_PASSBOOK_IDENTIFIER,
+				'teamidentifier': EVENT_PASSBOOK_TEAMIDENTIFIER,
+				'desc': EVENT_PASSBOOK_DESCRIPTION,
+				'bgcolor': EVENT_PASSBOOK_BG_COLOR,
+				'fgcolor': EVENT_PASSBOOK_FG_COLOR,
+				'logotext': EVENT_PASSBOOK_LOGO_TEXT,
+				'filespath': EVENT_PASSBOOK_FILES_PATH,
+				'password': EVENT_PASSBOOK_PASSWORD
+			})
+		except:
+			messages.error(request, _("An error occurred while generating your Passbook file - please try again later."))
+			return redirect("my-tickets")
+
+		response = HttpResponse(mimetype="application/vnd.apple.pkpass")
+		response['Content-disposition'] = 'attachment; filename=Passbook-%s.pkpass' % preorder.get_reference_hash()
+		response.write(passbook_file.getvalue())
+		passbook_file.close()
+		return response
+
+	return render_to_response('passbook.html', locals(), context_instance=RequestContext(request))
+
+@login_required
 def print_tickets_view(request, preorder_id, secret):
     if EVENT_DOWNLOAD_DATE and datetime.datetime.now() < datetime.datetime.strptime(EVENT_DOWNLOAD_DATE,'%Y-%m-%d %H:%M:%S'):
         messages.error(request, _("Tickets cannot be downloaded yet, please try again shortly before the event."))
@@ -390,7 +454,7 @@ def print_tickets_view(request, preorder_id, secret):
 
     for position in preorder.get_positions():
         #Print a ticket page for each preorder position
-        
+
         #Fix for old tickets, probably no longer needed
         if not position.uuid:
             from uuid import uuid4
@@ -419,7 +483,7 @@ def print_tickets_view(request, preorder_id, secret):
         pdf.text(20,220,"%s" % 'CONGRESS CENTER HAMBURG, GERMANY')
 
         pdf.set_font(font,'I',40)
-        
+
         # if price > 150, this is an invoice
         if ticket.price <= 150 and ticket.price > 0:
             pdf.text(20,325,"RECEIPT")
@@ -496,7 +560,7 @@ def print_tickets_view(request, preorder_id, secret):
         pdf.set_font(font, '', 8)
         pdf.set_y(720)
         pdf.set_right_margin(300)
-        
+
         if ticket.price > 0:
             pdf.write(10, "Eine Berechtigung zum Vorsteuerabzug besteht bei einem Ticketpreis von mehr als 150,00 EUR nur in Verbindung mit einer separaten Rechnung. Umtausch und Rueckgabe ausgeschlossen.")
     #are Credit Card payments enabled? If yes, is this a preorder paid by CC?
@@ -524,13 +588,13 @@ def print_tickets_view(request, preorder_id, secret):
         pdf.text(20,150,"%s" % '29th CHAOS COMMUNICATION CONGRESS')
         pdf.text(20,185,"%s" % 'DECEMBER 27th TO 30TH 2012')
         pdf.text(20,220,"%s" % 'CONGRESS CENTER HAMBURG, GERMANY')
-        
+
         # this is an invoice for the cc fees
         pdf.set_font(font,'I',40)
         pdf.text(20,325,"RECEIPT")
         pdf.set_font(font,'B',40)
         pdf.text(20,290,"CREDIT CARD FEES")
-        
+
         # print modified ticket table for credit card statement
         pdf.set_font(font,'I',15)
         pdf.text(20,420,"Type")
@@ -547,7 +611,7 @@ def print_tickets_view(request, preorder_id, secret):
 
         pdf.set_left_margin(20)
         pdf.text(350, 450, "%s %s" % (str(floatformat(cc_fees, 2)), cc_currency))
-        
+
         # print invoice information
         pdf.set_font(font, '', 15)
         pdf.set_y(550)
@@ -563,7 +627,7 @@ def print_tickets_view(request, preorder_id, secret):
         pdf.set_y(720)
         pdf.set_right_margin(300)
 
-    
+
     response = HttpResponse(mimetype="application/pdf")
     response['Content-Disposition'] = 'inline; filename=%s-%s.pdf' % (settings.EVENT_NAME, preorder.unique_secret[:10])
     #response['Content-Length'] = in_memory.tell()
