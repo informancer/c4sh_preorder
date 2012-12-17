@@ -474,7 +474,7 @@ def print_tickets_view(request, preorder_id, secret):
 
         # print human readable ticket code
         pdf.set_font(font,'I',7)
-        pdf.text(23, 800, 'Payment reference: %s-%s' % (settings.EVENT_NAME, preorder.unique_secret[:10]))
+        pdf.text(23, 800, 'Payment reference: %s-%s' % (settings.EVENT_PAYMENT_PREFIX, preorder.unique_secret[:10]))
         pdf.text(23, 807, '%s' % position.uuid)
         pdf.text(23, 814, '%s' % preorder.unique_secret)
 
@@ -497,9 +497,8 @@ def print_tickets_view(request, preorder_id, secret):
         pdf.set_y(720)
         pdf.set_right_margin(300)
         
-        #Computer says no
-        #if ticket.price > 0:
-        #    pdf.write(10, "Bis zu einem Ticketpreis von 150,00 EUR gilt das Ticket gleichzeitig als Kleinbetragsrechnung im Sinne von § 33 UStDV. Eine Berechtigung zum Vorsteuerabzug besteht bei einem Ticketpreis von mehr als 150,00 EUR nur in Verbindung mit einer separaten Rechnung. Umtausch und Rueckgabe ausgeschlossen.")
+        if ticket.price > 0:
+            pdf.write(10, "Eine Berechtigung zum Vorsteuerabzug besteht bei einem Ticketpreis von mehr als 150,00 EUR nur in Verbindung mit einer separaten Rechnung. Umtausch und Rueckgabe ausgeschlossen.")
     #are Credit Card payments enabled? If yes, is this a preorder paid by CC?
     if settings.EVENT_CC_ENABLE and preorder.paid_via=="creditcard":
         total = preorder.get_sale_amount()[0]['total']
@@ -563,9 +562,6 @@ def print_tickets_view(request, preorder_id, secret):
         pdf.set_font(font, '', 8)
         pdf.set_y(720)
         pdf.set_right_margin(300)
-        #Computer says no
-        #if ticket.price > 0:
-        #    pdf.write(10, "Bis zu einem Ticketpreis von 150,00 EUR gilt das Ticket gleichzeitig als Kleinbetragsrechnung im Sinne von § 33 UStDV. Eine Berechtigung zum Vorsteuerabzug besteht bei einem Ticketpreis von mehr als 150,00 EUR nur in Verbindung mit einer separaten Rechnung. Umtausch und Rueckgabe ausgeschlossen.")
 
     
     response = HttpResponse(mimetype="application/pdf")
