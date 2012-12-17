@@ -1,8 +1,8 @@
-sudo apt-get install python-pip python-mysqldb python-virtualenv python-imaging git
+sudo apt-get install python-pip python-mysqldb python-virtualenv git
 
 virtualenv --system-site-packages ./presale
 . presale/bin/activate
-pip install django django-simple-captcha south requests
+pip install django django-simple-captcha south requests fpdf pil
 git clone git://github.com/CCCO/c4sh.git
 git clone git://github.com/CCCO/c4sh_preorder.git
 cd c4sh_preorder
