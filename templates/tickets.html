@@ -43,7 +43,9 @@
                 <tr>
                   <td colspan="3" style="text-align:right">
                     {% if p.paid %}
-                      <a class="btn btn-primary" href="{% url passbook p.pk p.unique_secret %}">{% trans "Download Passbook files for iPhone"%}</a>
+                      {% if settings.EVENT_PASSBOOK_ENABLE %}
+                      <a class="btn btn-primary" href="{% url passbook p.pk p.unique_secret %}">{% trans "Download Passbook files"%}</a>
+                      {% endif %}
                       <a class="btn btn-primary" href="{% url print-tickets p.pk p.unique_secret %}">{% trans "Download tickets / invoice"%}</a>
                     {% else %}
                       {% trans "You'll be able to download your ticket here as soon as it is marked as paid." %}

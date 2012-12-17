@@ -97,6 +97,10 @@ EVENT_CC_FEE_FIXED = 7.5 # 7.50 EUR per transaction
 
 
 # Passbook settings
+
+# Enables Passbook download when set to True
+EVENT_PASSBOOK_ENABLE = False
+
 EVENT_PASSBOOK_FROM = "27th December" # Event from date, e.g. "27th December"
 EVENT_PASSBOOK_TO = "30th December"  # Event from date, e.g. "30th December"
 EVENT_PASSBOOK_ORGANISATION = "CCC Veranstaltungsgesellschaft mbH" # Organisation

@@ -359,6 +359,11 @@ def account_view(request):
 
 @login_required
 def passbook_view(request, preorder_id, secret):
+
+	if not EVENT_PASSBOOK_ENABLE:
+		messages.error(request, _("Passbook support has not been enabled for this event."))
+		return redirect("my-tickets")
+
 	if EVENT_DOWNLOAD_DATE and datetime.datetime.now() < datetime.datetime.strptime(EVENT_DOWNLOAD_DATE,'%Y-%m-%d %H:%M:%S'):
 		messages.error(request, _("Tickets cannot be downloaded yet, please try again shortly before the event."))
 		return redirect("my-tickets")
