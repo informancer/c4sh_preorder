@@ -24,7 +24,7 @@
                             {% endif %}
                         </td>
                         <td style="vertical-align:middle;text-align:center;width:120px;">
-                            <a href="{% url passbook p.pk preorder.unique_secret %}?pos={{p.pk}}">
+                            <a href="{% url passbook preorder.pk preorder.unique_secret %}?pos={{p.pk}}">
                                 <img src="/media/img/passbook.png" style="width:100px;border:0px;" alt="Add to Passbook" />
                             </a>
                         </td>
