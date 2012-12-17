@@ -565,7 +565,7 @@ def print_tickets_view(request, preorder_id, secret):
 
     
     response = HttpResponse(mimetype="application/pdf")
-    response['Content-Disposition'] = 'inline; filename=%s-%s.pdf' % (settings.EVENT_NAME, preorder.unique_secret[:10])
+    response['Content-Disposition'] = 'inline; filename=%s-%s.pdf' % (settings.EVENT_PAYMENT_PREFIX, preorder.unique_secret[:10])
     #response['Content-Length'] = in_memory.tell()
     response.write(pdf.output('', 'S'))
 
