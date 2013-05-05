@@ -242,7 +242,17 @@ def cart_view(request, action):
             return HttpResponseRedirect(reverse("default"))
 
         try:
-            quota = PreorderQuota.objects.get(Q(sold__lt=F('quota')), Q(ticket__active=True), Q(ticket__deleted=False), Q(pk=quota_id))
+            quota = PreorderQuota.objects.get(Q(sold__lt=F('quota')), Q(ticket__active=True), Q(ticket__deleted=False), Q(pk=quota_id),
+            # check if we only sell this ticket in a certain time span
+            (
+                # nope, just sell it
+                Q(ticket__limit_timespan=False)
+                | # or..
+                (
+                    Q(ticket__valid_from__lte=datetime.datetime.now(),
+                    ticket__valid_until__gte=datetime.datetime.now())
+                )
+            ))
         except PreorderQuota.DoesNotExist:
             messages.error(request, _("Quota not found or exceeded."))
             return HttpResponseRedirect(reverse("default"))
