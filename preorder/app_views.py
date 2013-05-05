@@ -41,7 +41,7 @@ def default_view(request):
     if request.user.is_authenticated():
         nav = 'buy'
         quota_raw = PreorderQuota.objects.filter(Q(sold__lt=F('quota')), Q(ticket__active=True), Q(ticket__deleted=False),
-            # check ifwe only sell this ticket in a certain time span
+            # check if we only sell this ticket in a certain time span
             (
                 # nope, just sell it
                 Q(ticket__limit_timespan=False)
@@ -197,12 +197,15 @@ def cart_view(request, action):
 
         try:
             quota = PreorderQuota.objects.get(Q(sold__lt=F('quota')), Q(ticket__active=True), Q(ticket__deleted=False), Q(pk=quota_id),
-                # nope, just sell it
-                Q(ticket__limit_timespan=False)
-                | # or..
+                # check if we only sell this ticket in a certain time span
                 (
-                    Q(ticket__valid_from__lte=datetime.datetime.now(),
-                    ticket__valid_until__gte=datetime.datetime.now())
+                    # nope, just sell it
+                    Q(ticket__limit_timespan=False)
+                    | # or..
+                    (
+                        Q(ticket__valid_from__lte=datetime.datetime.now(),
+                        ticket__valid_until__gte=datetime.datetime.now())
+                    )
                 ))
         except PreorderQuota.DoesNotExist:
             messages.error(request, _("Quota not found or exceeded."))
