@@ -10,7 +10,7 @@ urlpatterns = patterns('',
 )
 
 import sys
-if (sys.argv[1] == 'runserver'):
+if (sys.argv[1] in ['runserver', 'runserver_plus']):
     urlpatterns += patterns('',
         url(r'^admin42/', include(admin.site.urls)),
         (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': STATIC_ROOT, 'show_indexes': False}),

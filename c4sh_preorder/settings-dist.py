@@ -34,7 +34,7 @@ if socket.gethostname() == "$YOUR_DEPLOYMENT_HOST":
 	# is this a ssl installation?
 	import sys
 	try:
-		if (sys.argv[1] != 'runserver'):
+		if (sys.argv[1] not in ['runserver', 'runserver_plus']):
 			SESSION_COOKIE_SECURE = True
 	except:
 		pass
