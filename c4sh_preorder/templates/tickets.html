@@ -113,7 +113,8 @@
                     {{p.get_billing_address.address1}} {% if p.get_billing_address.address2 %}<br />
                     {{p.get_billing_address.address2}} {% endif %} <br />
                     {{p.get_billing_address.zip}} {{p.get_billing_address.city}} <br />
-                    {{p.get_billing_address.country}}
+                    {{p.get_billing_address.country}}<br/>
+                    <span style="font-size: 85%">If your billing address is incorrect, please <a href="mailto:{{settings.EVENT_CONTACT_MAILTO}}?subject=Billing+address+incorrect">contact us</a>.</span>
                   </td>
                 </tr>
                 {% endif %}

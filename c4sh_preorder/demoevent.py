@@ -51,9 +51,6 @@ EVENT_VENUE_PAYLOAD = 3000
 # mailto: for contact menu entry
 EVENT_CONTACT_MAILTO = "orga@tld"
 
-# sum from which billing address needs to be given, monetary unit (e.g. 150 for 150 EUR)
-EVENT_BILLIG_ADRESS_LIMIT = 150
-
 # Prefix for bank transfer references
 EVENT_PAYMENT_PREFIX = "SIGINT12"
 
@@ -94,6 +91,9 @@ EVENT_DOWNLOAD_DATE = "2012-09-28 00:00:00"
 
 # Supervisor IPs
 EVENT_SUPERVISOR_IPS = ('127.0.0.1', '172.17.0.1',)
+
+# Minimum amount required to require a billing address
+EVENT_BILLING_ADDRESS_LIMIT = 150.00
 
 #Enables CC payment options when set to True
 EVENT_CC_ENABLE = False

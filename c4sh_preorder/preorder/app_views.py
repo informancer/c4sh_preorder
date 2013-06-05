@@ -98,18 +98,21 @@ def order_view(request):
 		)
 		preorder.save()
 
-		if billing_address:
-			billing_address = PreorderBillingAddress(
-				preorder=preorder,
-				company=billing_company,
-				firstname=billing_firstname,
-				lastname=billing_lastname,
-				address1=billing_address1,
-				address2=billing_address2,
-				city=billing_city,
-				zip=billing_zip,
-				country=billing_country
-			).save()
+		form = BillingAddressForm(request.POST)
+
+		if not request.POST.get('without_billingaddress') == 'yes':
+			if form.is_valid():
+				billing_address = PreorderBillingAddress()
+				billing_address.company = form.cleaned_data['company']
+				billing_address.firstname = form.cleaned_data['firstname']
+				billing_address.lastname = form.cleaned_data['lastname']
+				billing_address.address1 = form.cleaned_data['address1']
+				billing_address.address2 = form.cleaned_data['address2']
+				billing_address.city = form.cleaned_data['city']
+				billing_address.zip = form.cleaned_data['zip']
+				billing_address.country = form.cleaned_data['country']
+				billing_address.preorder = preorder
+				billing_address.save()
 
 		for c in cart:
 			amount = c['amount']
@@ -151,6 +154,7 @@ def order_view(request):
 		preorder.save()
 
 		request.session['cart'] = {}
+		del request.session['billing_address']
 
 		# sending out success notification via email -- if email is set
 		if request.user.email:
@@ -174,7 +178,7 @@ def checkout_view(request):
 			amount = float(q['quota'].ticket.price)*int(q['amount'])
 			taxes = float(amount) - (float(amount) / (float(q['quota'].ticket.tax_rate)/float(100)+float(1)))
 
-			if amount >= EVENT_BILLIG_ADRESS_LIMIT:
+			if amount >= EVENT_BILLING_ADDRESS_LIMIT:
 				single_ticket_over_limit = True
 
 			try:
@@ -201,7 +205,7 @@ def checkout_view(request):
 			else:
 				p = None
 			form = BillingAddressForm(p)
-			limit = EVENT_BILLIG_ADRESS_LIMIT
+			limit = "%.2f" % EVENT_BILLING_ADDRESS_LIMIT
 			request.session['billing_address'] = True
 		else:
 			request.session['billing_address'] = False
@@ -434,7 +438,7 @@ def print_tickets_view(request, preorder_id, secret):
 		for tposition in preorder.get_tickets():
 			amount = float(tposition['t'].price) * int(tposition['amount'])
 
-			if amount >= EVENT_BILLIG_ADRESS_LIMIT:
+			if amount >= EVENT_BILLING_ADDRESS_LIMIT:
 				single_ticket_over_limit = True
 				break
 
@@ -459,7 +463,7 @@ def print_tickets_view(request, preorder_id, secret):
 					billing_address.preorder = preorder
 					billing_address.save()
 				else:
-					limit = EVENT_BILLIG_ADRESS_LIMIT
+					limit = EVENT_BILLING_ADDRESS_LIMIT
 					return render_to_response('billingaddress.html', locals(), context_instance=RequestContext(request))
 
 	from pyqrcode import MakeQRImage
@@ -519,7 +523,7 @@ def print_tickets_view(request, preorder_id, secret):
 		pdf.text(20,290,"ONLINE TICKET")
 
 		# print billing address - if eligible
-		if ticket.price >= EVENT_BILLIG_ADRESS_LIMIT or billing_address:
+		if ticket.price >= EVENT_BILLING_ADDRESS_LIMIT or billing_address:
 			if preorder.get_billing_address() or billing_address:
 
 				from django.utils.encoding import smart_str
