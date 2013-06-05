@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, include, url
 from c4sh_preorder.settings import MEDIA_ROOT, STATIC_ROOT
 
 from django.contrib import admin
