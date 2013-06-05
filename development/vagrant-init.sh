@@ -15,7 +15,12 @@ apt-get -q -y update
 apt-get install -q -y build-essential python python-dev python-setuptools python-pip git zsh screen tmux vim
 
 # certain module dependencies
-apt-get install -q -y libjpeg62-dev zlib1g-dev libfreetype6-dev liblcms1-dev libncurses5-dev
+apt-get install -q -y libjpeg62-dev zlib1g-dev libfreetype6-dev liblcms1-dev libncurses5-dev libjpeg-dev libjpeg libfreetype6 libpng-dev
+
+# ghettofix for PIL
+ln -s /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib
+ln -s /usr/lib/x86_64-linux-gnu/libfreetype.so /usr/lib
+ln -s /usr/lib/x86_64-linux-gnu/libz.so /usr/lib
 
 # mysql
 export DEBIAN_FRONTEND=noninteractive
