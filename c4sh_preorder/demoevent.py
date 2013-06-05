@@ -10,6 +10,11 @@ When you change this file in production, remember to restart all
 python processes or else the changes won't be in effect.
 """
 
+# Allowed HTTP Hostnames of your presale installation
+ALLOWED_HOSTS = [
+    'presale.events.ccc.de',
+]
+
 # Short name of your event
 EVENT_NAME_SHORT = 'SIGINT12'
 
