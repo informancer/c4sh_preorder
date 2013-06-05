@@ -1,7 +1,6 @@
-from django.core.management import setup_environ
 import datetime
-import settings
-setup_environ(settings)
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 
 from preorder.models import *
 
@@ -18,6 +17,7 @@ t1 = CustomPreorderTicket(
 	limit_amount = 9000,
 	limit_amount_user = 5,
 	is_ticket = True,
+	sortorder = 10,
 	active = True
 	)
 t1.save()
@@ -32,6 +32,7 @@ t2 = CustomPreorderTicket(
 	limit_amount = 20,
 	limit_amount_user = 2,
 	is_ticket = True,
+	sortorder = 20,
 	active = True
 	)
 t2.save()
