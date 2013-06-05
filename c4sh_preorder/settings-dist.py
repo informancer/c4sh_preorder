@@ -23,7 +23,10 @@ if socket.gethostname() == "$YOUR_DEPLOYMENT_HOST":
 			'PASSWORD': 'ppresale6'
 		}
 	}
-	SECRET_KEY = 'change this to a long random string'
+
+	# uncomment SECRET_KEY and change it.
+	#SECRET_KEY = 'change this to a long random string'
+
 	ADMINS = (
 		('you', 'where@errors.will.be.sent'),
 	)
