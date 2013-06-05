@@ -51,7 +51,3 @@ updateMatches = function(form) {
 		});
 	}
 };
-
-$('input[name=without_billingaddress]').on('change', function() {
-	$('div#billingaddress').toggle();  
-});

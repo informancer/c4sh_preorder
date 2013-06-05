@@ -12,7 +12,7 @@
             <pre>{{settings.EVENT_PAYMENT_DETAILS}}<br /><br />{% for p in preorders %}Reference: <strong>{{settings.EVENT_PAYMENT_PREFIX}}-{{p.get_reference_hash}}</strong><br />{% endfor %}</pre>
 	    {% if settings.EVENT_CC_ENABLE %}
 	    <p>{% blocktrans with cc_fee_percentage=settings.EVENT_CC_FEE_PERCENTAGE cc_fee_fixed=settings.EVENT_CC_FEE_FIXED%} please pay via bank transfer if possible. if you need to use your credit card, we'll charge additional fees of {{cc_fee_percentage}}% + {{cc_fee_fixed}}€ per transaction. {% endblocktrans %}</p>
-	    {% url saferpay-pay as cc_payment_url %}
+	    {% url "saferpay-pay" as cc_payment_url %}
 	    <a href="{{cc_payment_url}}" class="btn"><i class="icon-ok icon-shopping-cart"></i> {% trans "Pay via credit card" %}</a>
 	    {% endif %}
 	  {% else %}
@@ -44,9 +44,9 @@
                   <td colspan="3" style="text-align:right">
                     {% if p.paid %}
                       {% if settings.EVENT_PASSBOOK_ENABLE %}
-                      <a class="btn btn-primary" href="{% url passbook p.pk p.unique_secret %}">{% trans "Download Passbook files"%}</a>
+                      <a class="btn btn-primary" href="{% url "passbook" p.pk p.unique_secret %}">{% trans "Download Passbook files"%}</a>
                       {% endif %}
-                      <a class="btn btn-primary" href="{% url print-tickets p.pk p.unique_secret %}">{% trans "Download tickets / invoice"%}</a>
+                      <a class="btn btn-primary" href="{% url "print-tickets" p.pk p.unique_secret %}">{% trans "Download tickets / invoice"%}</a>
                     {% else %}
                       {% trans "You'll be able to download your ticket here as soon as it is marked as paid." %}
                     {% endif %}
@@ -113,7 +113,8 @@
                     {{p.get_billing_address.address1}} {% if p.get_billing_address.address2 %}<br />
                     {{p.get_billing_address.address2}} {% endif %} <br />
                     {{p.get_billing_address.zip}} {{p.get_billing_address.city}} <br />
-                    {{p.get_billing_address.country}} 
+                    {{p.get_billing_address.country}}<br/>
+                    <span style="font-size: 85%">If your billing address is incorrect, please <a href="mailto:{{settings.EVENT_CONTACT_MAILTO}}?subject=Billing+address+incorrect">contact us</a>.</span>
                   </td>
                 </tr>
                 {% endif %}

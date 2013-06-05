@@ -1,7 +1,8 @@
-static/tmp/*
+c4sh_preorder/static/tmp/*
+c4sh_preorder/static/*.pkl
 *.pyc
 *.AppleDouble
 *:2e*
-*.sqlite3
-event_*.py
-/settings.py
+c4sh_preorder/event_*.py
+c4sh_preorder/settings.py
+.vagrant

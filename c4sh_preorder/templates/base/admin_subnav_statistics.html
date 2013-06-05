@@ -1,0 +1,7 @@
+{% load i18n %}
+<div class="tabbable">
+	<ul class="nav nav-tabs">
+		<li {% if subnav_statistics == "overview" %}class="active"{% endif %}><a href="{% url "admin-statistics" %}">{% trans "Overview" %}</a></li>
+		<li {% if subnav_statistics == "charts" %}class="active"{% endif %}><a href="{% url "admin-statistics-charts" %}">{% trans "Charts" %}</a></li>
+	</ul>
+</div>

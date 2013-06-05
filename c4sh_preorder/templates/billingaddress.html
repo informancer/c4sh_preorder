@@ -1,0 +1,22 @@
+{% extends "base/base.html" %}
+{% load multiply get_index tax_calc i18n %}
+
+{% block content %}
+      <div class="row">
+        <div class="span12">
+        	<form action="" method="POST" class="form-horizontal">
+			{% include "billingaddress_form.html" %}
+         </div>
+      </div>
+      <br style="clear:both;" />
+    {% csrf_token %}
+    <div style="float:right;">
+      <div style="float:left;margin-right: 30px;margin-top:0px;">
+        <label class="checkbox">
+          <input name="without_billingaddress" value="yes" type="checkbox"> {% trans "Proceed without billing address" %}<br />
+        </label>
+      </div>
+      <button type="submit" class="btn btn-success"><i class="icon-ok icon-white"></i> {% trans "Print these tickets" %}</button>
+    </div>
+  </form>
+{% endblock %}

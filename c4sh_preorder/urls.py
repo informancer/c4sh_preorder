@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, include, url
 from c4sh_preorder.settings import MEDIA_ROOT, STATIC_ROOT
 
 from django.contrib import admin
@@ -10,7 +10,7 @@ urlpatterns = patterns('',
 )
 
 import sys
-if (sys.argv[1] == 'runserver'):
+if (sys.argv[1] in ['runserver', 'runserver_plus']):
     urlpatterns += patterns('',
         url(r'^admin42/', include(admin.site.urls)),
         (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': STATIC_ROOT, 'show_indexes': False}),

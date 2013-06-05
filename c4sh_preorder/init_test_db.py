@@ -1,8 +1,8 @@
-from django.core.management import setup_environ
-import settings, datetime
-setup_environ(settings)
+import datetime
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 
-from c4sh_preorder.preorder.models import *
+from preorder.models import *
 
 def date(pd):
 	return datetime.datetime.strptime(pd, "%Y-%m-%dT%H:%M:%SZ")
@@ -17,12 +17,13 @@ t1 = CustomPreorderTicket(
 	limit_amount = 9000,
 	limit_amount_user = 5,
 	is_ticket = True,
+	sortorder = 10,
 	active = True
 	)
 t1.save()
 
-t2 = CustomPreorderTicket(
-	name = "T-Shirt M",
+t2 = Tshirt(
+	name = "T-Shirt Girly M",
 	backend_id = 2,
 	price = 15.00,
 	currency = "EUR",
@@ -31,6 +32,9 @@ t2 = CustomPreorderTicket(
 	limit_amount = 20,
 	limit_amount_user = 2,
 	is_ticket = True,
+	sortorder = 20,
+	size = "M",
+	type = "girly",
 	active = True
 	)
 t2.save()

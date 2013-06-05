@@ -1,15 +1,10 @@
-{% extends "base/base.html" %}
 {% load multiply get_index tax_calc i18n %}
 
-{% block content %}
-      <div class="row">
-        <div class="span12">
-          <form action="" method="POST" class="form-horizontal">
               <div id="billingaddress">
                 <p>{% blocktrans with limit=limit %}
-                  Since one single ticket in your cart is over or equal {{limit}},- you are able to give a billig address which will be printed on your ticket / invoice.
+                    Since one ticket in your cart costs at least {{limit}} EUR, we're asking for your billing address which will be printed on your ticket / invoice.
                   {% endblocktrans %}</p>
-                <legend style="width:250px;">{% trans "Billig address" %}</legend>
+                <legend style="width:250px;">{% trans "Billing address" %}</legend>
                 <div class="control-group">
                   <label class="control-label" for="company">{% trans "Company" %}</label>
                   <div class="controls">
@@ -79,17 +74,3 @@
                   </div>
                 </div>
               </div>
-              <br style="clear:both;" />
-            {% csrf_token %}
-            <div style="float:right;">
-              <div style="float:left;margin-right: 30px;margin-top:0px;">
-                <label class="checkbox">
-                  <input name="without_billingaddress" value="yes" type="checkbox"> {% trans "Proceed without billing address" %}<br />
-                </label>
-              </div>
-              <button type="submit" class="btn btn-success"><i class="icon-ok icon-white"></i> {% trans "Print these tickets"%}</button>
-            </div>
-          </form>
-         </div>
-      </div>
-{% endblock %}

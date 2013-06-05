@@ -17,11 +17,11 @@
     	<div class="span6">
 			<h2>{% trans "Email address"%}</h2>
 			<p>{% trans "An email address is required for preorder status update notifications."%}</p>
-			<form action="{% url account %}?form=email" method="post">
+			<form action="{% url "account" %}?form=email" method="post">
 				{% csrf_token %}
 				<div style="float:right">
 					<button type="submit" class="btn btn-primary">{% trans "Save email address"%}</button> <span class="help-inline"><!-- Whoohoo. --></span>
-				</div>	   				
+				</div>
 				<div class="control-group {% if form.email.errors %}error{% endif %}">
 					<div class="input-prepend">
 					   <span class="add-on"><i class="icon-envelope"></i></span>
@@ -45,11 +45,11 @@
 
 			<h2>{% trans "Password"%}</h2>
 			<p>{% trans "Change your login password using this form."%}</p>
-			<form action="{% url account %}?form=password" method="post">
+			<form action="{% url "account" %}?form=password" method="post">
 				{% csrf_token %}
 				<div style="float:right">
 					<button type="submit" class="btn btn-primary">{% trans "Save new password"%}</button> <span class="help-inline"><!-- Whoohoo. --></span>
-				</div>	   				
+				</div>
 				<div class="control-group {% if form.old_password.errors %}error{% endif %}" style="margin-bottom:5px">
 					<div class="input-prepend" style="margin-bottom:0px">
 					   <span class="add-on"><i class="icon-lock"></i></span>
@@ -78,7 +78,7 @@
 					{% endfor %}
 				</div>
 			</form>
-		</div>		
+		</div>
 	</div>
- 
+
 {% endblock %}

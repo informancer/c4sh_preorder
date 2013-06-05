@@ -20,7 +20,7 @@
                   <td style="vertical-align:middle;">{{q.ticket.name}}</td>
                   <td style="vertical-align:middle;">{{q.ticket.price}} {{q.ticket.currency}} {% trans "(incl. tax)"%}</td>
                   <td style="text-align:right;">
-                    <form class="form-search" style="margin:0" action="{% url cart-add %}" method="post">
+                    <form class="form-search" style="margin:0" action="{% url "cart-add" %}" method="post">
                       {% csrf_token %}
                       <input type="hidden" value="{{q.quota.pk}}" name="quota" />
                       <input type="text" class="input" style="width:25px;" name="amount" value="1">
@@ -34,7 +34,7 @@
               <tr>
                 <td style="vertical-align:middle;">{% trans "Merchandise" %}</td>
                 <td style="vertical-align:middle;">
-                  <form class="form-search" style="margin:0" action="{% url cart-add %}" method="post">
+                  <form class="form-search" style="margin:0" action="{% url "cart-add" %}" method="post">
                   <select name="quota">
                     {% for t in tshirt_quota %}
                       <option value="{{t.quota.pk}}">{{t.tshirt.type}} {{t.tshirt.size}} {{t.tshirt.price}} {{t.tshirt.currency}} {% trans "(incl. tax)"%}</option>
@@ -53,8 +53,7 @@
               {% endif %}
 
             </table>
-<p>F&uuml;r Kinder unter 12 Jahre ist der Eintritt frei.
-Als Sch&uuml;ler gelten alle mit Sch&uuml;lerausweis I. Das bedeutet, dass nur "echte" Sch&uuml;ler diese Tickets erhalten. Berufssch&uuml;ler, Studierende und andere sind von der Erm&auml;&szlig;igung ausgenommen.</p>
+          <p>Hackers under the age of 18 years qualify for the <em>Up-and-coming</em> ticket. Hackers under the age of 12 years get in for free while accompanied by an adult.</p>
           {% else %}
             <h2>{% trans "Sorry! Ticket quota exceeded."%}</h2>
             <div class="alert alert-warning">
@@ -85,17 +84,17 @@ Als Sch&uuml;ler gelten alle mit Sch&uuml;lerausweis I. Das bedeutet, dass nur "
                     <td style="vertical-align:middle;">{{c.quota.ticket.price}} {{c.quota.ticket.currency}} {% trans "(incl. tax)"%}</td>
                     <td style="vertical-align:middle;">{{c.quota.ticket.price|multiply:c.amount|floatformat:2}} {{c.quota.ticket.currency}} {% trans "(incl. tax)"%}</td>
                     <td style="text-align:right;">
-                      <form class="form-search" style="margin:0;float:left;" action="{% url cart-amend %}" method="post">
+                      <form class="form-search" style="margin:0;float:left;" action="{% url "cart-amend" %}" method="post">
                         {% csrf_token %}
                         <input type="hidden" value="{{c.quota.pk}}" name="quota" />
                         <input type="text" class="input" style="width:25px;" name="amount" value="{{c.amount}}">
                         <button type="submit" class="btn-primary btn">{% trans "Edit"%}</button>
                       </form>
-                      <form class="form-search" style="margin:0;float:right;" action="{% url cart-delete %}" method="post">
+                      <form class="form-search" style="margin:0;float:right;" action="{% url "cart-delete" %}" method="post">
                         {% csrf_token %}
                         <input type="hidden" value="{{c.quota.pk}}" name="quota" />
                         <button type="submit" class="btn-danger btn">{% trans "Delete"%}</button>
-                      </form>                      
+                      </form>
                     </td>
                   </tr>
                 {% empty %}
@@ -106,7 +105,7 @@ Als Sch&uuml;ler gelten alle mit Sch&uuml;lerausweis I. Das bedeutet, dass nur "
                   </tr>
                 {% endfor %}
               </table>
-              <form action="{% url checkout %}" method="get" style="float:right;">
+              <form action="{% url "checkout" %}" method="get" style="float:right;">
                 <button type="submit" class="btn btn-success"><i class="icon-shopping-cart icon-white"></i> {% trans "Proceed to checkout"%}</button>
               </form>
             {% endif %}
@@ -117,10 +116,13 @@ Als Sch&uuml;ler gelten alle mit Sch&uuml;lerausweis I. Das bedeutet, dass nur "
         <div class="span4">
           <h3>Golden Token</h3>
           {% if not cart %}
-            <form class="well form-search" method="POST" action="{% url redeem-token %}">
+            <form class="well form-search" style="text-align: center;" method="POST" action="{% url "redeem-token" %}">
               {% csrf_token %}
-              <input name="token" type="text" class="input-medium" placeholder="{% trans "Token"%}">
+              <input name="token" type="text" class="input-medium" placeholder="{% trans "Golden Token"%}">
               <button type="submit" class="btn btn-primary">{% trans "Redeem"%}</button>
+              <div style="font-size:85%; padding: 10px 10px 0 10px;">
+                If you have received a Golden Token from us, please enter it here in order to redeem it.
+              </div>
             </form>
           {% else %}
             <div class="alert alert-info">
