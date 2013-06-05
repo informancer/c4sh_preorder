@@ -66,7 +66,7 @@ EVENT_PAYMENT_DETAILS =  "Chaos Computer Club Ossendorf ltd.\n" + \
 EVENT_DASHBOARD_TEXT = "Here be important event-related supervisor information.<br />" + \
                        "You can define this text in EVENT_DASHBOARD_TEXT."
 # Event description
-EVENT_DESCRIPTION_TEXT = "Die SIGINT ist eine dreit&auml;gige Konferenz des CCC Ossendorf in K&ouml;ln, die sich mit Techniken wie Bluetooth hacking, EFI rootkits und Malware Analysis on Android Phones, aber auch um gesellschaftspolitische Forderungen und Utopien, um Hacktivismus, kreative Normverletzungen und Premium-Erfas befasst.\n"
+EVENT_DESCRIPTION_TEXT = "SIGINT is an international hacker conference.\n"
 
 # Text for payment ack notification email
 EVENT_PAYMENT_ACK_MAIL_TEXT = 	"English version below" + \
@@ -84,7 +84,7 @@ EVENT_PAYMENT_ACK_MAIL_TEXT = 	"English version below" + \
  "\n\nSee you on SIGINT12!\nSIGINT Orga"
 
 # Footer note visible on all pages
-EVENT_FOOTER_NOTE = "Bei Fragen und Problemen bitte direkt eine Mail an die <a href='mailto:"+EVENT_CONTACT_MAILTO+"'>SIGINT Orga Crew</a>"
+EVENT_FOOTER_NOTE = "If you experience any difficulties with our presale, please contact the <a href='mailto:"+EVENT_CONTACT_MAILTO+"'>SIGINT Orga</a>."
 
 # do not allow downloads before this date, YYYY-mm-dd HH:MM:SS
 EVENT_DOWNLOAD_DATE = "2012-09-28 00:00:00"

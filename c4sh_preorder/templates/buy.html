@@ -53,8 +53,7 @@
               {% endif %}
 
             </table>
-<p>F&uuml;r Kinder unter 12 Jahre ist der Eintritt frei.
-Als Sch&uuml;ler gelten alle mit Sch&uuml;lerausweis I. Das bedeutet, dass nur "echte" Sch&uuml;ler diese Tickets erhalten. Berufssch&uuml;ler, Studierende und andere sind von der Erm&auml;&szlig;igung ausgenommen.</p>
+          <p>Hackers under the age of 18 years qualify for the <em>Up-and-coming</em> ticket. Hackers under the age of 12 years get in for free while accompanied by an adult.</p>
           {% else %}
             <h2>{% trans "Sorry! Ticket quota exceeded."%}</h2>
             <div class="alert alert-warning">
@@ -117,10 +116,13 @@ Als Sch&uuml;ler gelten alle mit Sch&uuml;lerausweis I. Das bedeutet, dass nur "
         <div class="span4">
           <h3>Golden Token</h3>
           {% if not cart %}
-            <form class="well form-search" method="POST" action="{% url "redeem-token" %}">
+            <form class="well form-search" style="text-align: center;" method="POST" action="{% url "redeem-token" %}">
               {% csrf_token %}
-              <input name="token" type="text" class="input-medium" placeholder="{% trans "Token"%}">
+              <input name="token" type="text" class="input-medium" placeholder="{% trans "Golden Token"%}">
               <button type="submit" class="btn btn-primary">{% trans "Redeem"%}</button>
+              <div style="font-size:85%; padding: 10px 10px 0 10px;">
+                If you have received a Golden Token from us, please enter it here in order to redeem it.
+              </div>
             </form>
           {% else %}
             <div class="alert alert-info">
