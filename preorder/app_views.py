@@ -98,6 +98,19 @@ def order_view(request):
 		)
 		preorder.save()
 
+		if billing_address:
+			billing_address = PreorderBillingAddress(
+				preorder=preorder,
+				company=billing_company,
+				firstname=billing_firstname,
+				lastname=billing_lastname,
+				address1=billing_address1,
+				address2=billing_address2,
+				city=billing_city,
+				zip=billing_zip,
+				country=billing_country
+			).save()
+
 		for c in cart:
 			amount = c['amount']
 			quota = c['quota']
@@ -155,9 +168,14 @@ def checkout_view(request):
 	cart = get_cart(request.session.get('cart', False))
 	if cart:
 		totals_raw = {}
+		single_ticket_over_limit = False
+
 		for q in cart:
 			amount = float(q['quota'].ticket.price)*int(q['amount'])
 			taxes = float(amount) - (float(amount) / (float(q['quota'].ticket.tax_rate)/float(100)+float(1)))
+
+			if amount >= EVENT_BILLIG_ADRESS_LIMIT:
+				single_ticket_over_limit = True
 
 			try:
 				totals_raw[q['quota'].ticket.currency]['amount']+=amount
@@ -176,6 +194,17 @@ def checkout_view(request):
 		totals = []
 		for t in totals_raw:
 			totals.append({'currency': t, 'total': totals_raw[t]['amount'], 'taxes': totals_raw[t]['taxes']})
+
+		if single_ticket_over_limit:
+			if request.POST:
+				p = request.POST
+			else:
+				p = None
+			form = BillingAddressForm(p)
+			limit = EVENT_BILLIG_ADRESS_LIMIT
+			request.session['billing_address'] = True
+		else:
+			request.session['billing_address'] = False
 
 	nav = 'buy'
 	return render_to_response('checkout.html', locals(), context_instance=RequestContext(request))
@@ -303,8 +332,6 @@ def redeem_token_view(request):
 				if ticket.deleted == True:
 					messages.error(request, _('The ticket %s does no longer exist. Your token has not been redeemed. Please contact support.' % ticket))
 
-
-
 				# create Preorder
 				preorder = CustomPreorder(
 					name=request.user.username,
@@ -400,6 +427,41 @@ def print_tickets_view(request, preorder_id, secret):
 		messages.error(request, _("You cannot download your ticket until you paid for it."))
 		return redirect("my-tickets")
 
+	# check if this ticket is eligible for an invoice address and has not yet one saved
+	single_ticket_over_limit = False
+	billing_address = False
+	if not preorder.get_billing_address():
+		for tposition in preorder.get_tickets():
+			amount = float(tposition['t'].price) * int(tposition['amount'])
+
+			if amount >= EVENT_BILLIG_ADRESS_LIMIT:
+				single_ticket_over_limit = True
+				break
+
+		if single_ticket_over_limit:
+			if request.POST:
+				p = request.POST
+			else:
+				p = None
+			form = BillingAddressForm(p)
+
+			if not request.POST.get('without_billingaddress') == 'yes':
+				if form.is_valid():
+					billing_address = PreorderBillingAddress()
+					billing_address.company = form.cleaned_data['company']
+					billing_address.firstname = form.cleaned_data['firstname']
+					billing_address.lastname = form.cleaned_data['lastname']
+					billing_address.address1 = form.cleaned_data['address1']
+					billing_address.address2 = form.cleaned_data['address2']
+					billing_address.city = form.cleaned_data['city']
+					billing_address.zip = form.cleaned_data['zip']
+					billing_address.country = form.cleaned_data['country']
+					billing_address.preorder = preorder
+					billing_address.save()
+				else:
+					limit = EVENT_BILLIG_ADRESS_LIMIT
+					return render_to_response('billingaddress.html', locals(), context_instance=RequestContext(request))
+
 	from pyqrcode import MakeQRImage
 	from fpdf import FPDF
 	import time
@@ -455,6 +517,35 @@ def print_tickets_view(request, preorder_id, secret):
 			pdf.text(20,325,"RECEIPT")
 		pdf.set_font(font,'B',40)
 		pdf.text(20,290,"ONLINE TICKET")
+
+		# print billing address - if eligible
+		if ticket.price >= EVENT_BILLIG_ADRESS_LIMIT or billing_address:
+			if preorder.get_billing_address() or billing_address:
+
+				from django.utils.encoding import smart_str
+
+				pdf.set_font('Arial','B',13)
+				pdf.text(20,125,"Billing address")
+				pdf.set_font('Arial','',10)
+
+				if not billing_address:
+					billing_address = preorder.get_billing_address()
+
+				ytmp = 0
+
+				if billing_address.company:
+					pdf.text(20,140,"%s" % billing_address.company.encode('ASCII', 'ignore'))
+					ytmp+=12
+				pdf.text(20,140+ytmp,"%s" % billing_address.firstname.encode('ASCII', 'ignore'))
+				pdf.text(20+len(billing_address.firstname*7),140+ytmp,"%s" % billing_address.lastname.encode('ASCII', 'ignore'))
+				pdf.text(20,152+ytmp,"%s" % billing_address.address1.encode('ASCII', 'ignore'))
+				if billing_address.address2:
+					pdf.text(20,164+ytmp,"%s" % billing_address.address2.encode('ASCII', 'ignore'))
+					ytmp+=12
+				pdf.text(20+len(billing_address.zip*7),164+ytmp, billing_address.city.encode('ASCII', 'ignore'))
+				pdf.text(20,164+ytmp,"%s" % billing_address.zip.encode('ASCII', 'ignore'))
+				pdf.text(20,176+ytmp,"%s" % billing_address.country.encode('ASCII', 'ignore'))
+
 
 		# print ticket table
 		pdf.set_font(font,'I',15)

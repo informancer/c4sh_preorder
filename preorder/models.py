@@ -134,3 +134,19 @@ class CustomPreorder(Preorder):
 
 		return tickets
 
+	def get_billing_address(self):
+		try:
+			return PreorderBillingAddress.objects.get(preorder=self)
+		except PreorderBillingAddress.DoesNotExist:
+			return False
+
+class PreorderBillingAddress(models.Model):
+	preorder = models.ForeignKey('CustomPreorder', verbose_name="Preorder")
+	company = models.CharField(verbose_name="Company", blank=True, null=True, max_length=255)
+	firstname = models.CharField(verbose_name="First name", blank=False, null=False, max_length=255)
+	lastname = models.CharField(verbose_name="Last name", blank=False, null=False, max_length=255)
+	address1 = models.CharField(verbose_name="Address 1", blank=False, null=False, max_length=255)
+	address2 = models.CharField(verbose_name="Address 2", blank=True, null=True, max_length=255)
+	city = models.CharField(verbose_name="City", blank=False, null=False, max_length=255)
+	zip = models.CharField(verbose_name="ZIP", blank=False, null=False, max_length=255)
+	country = models.CharField(verbose_name="Country", blank=False, null=False, max_length=255)
