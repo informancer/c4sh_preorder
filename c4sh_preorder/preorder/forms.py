@@ -73,3 +73,14 @@ class PasswordForm(forms.Form):
 				raise forms.ValidationError(_("This is not your current password."))
 		
 		return cleaned_data
+
+class BillingAddressForm(forms.Form):
+	company = forms.CharField(required=False)
+	firstname = forms.CharField(required=True)
+	firstname = forms.CharField(required=True)
+	lastname = forms.CharField(required=True)
+	address1 = forms.CharField(required=True)
+	address2 = forms.CharField(required=False)
+	city = forms.CharField(required=True)
+	zip = forms.CharField(required=True)
+	country = forms.CharField(required=True)

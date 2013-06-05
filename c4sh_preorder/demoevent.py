@@ -46,6 +46,9 @@ EVENT_VENUE_PAYLOAD = 3000
 # mailto: for contact menu entry
 EVENT_CONTACT_MAILTO = "orga@tld"
 
+# sum from which billing address needs to be given, monetary unit (e.g. 150 for 150 EUR)
+EVENT_BILLIG_ADRESS_LIMIT = 150
+
 # Prefix for bank transfer references
 EVENT_PAYMENT_PREFIX = "SIGINT12"
 

@@ -101,6 +101,23 @@
                     </table>
                   </td>
                 </tr>
+
+                {% if p.get_billing_address %}
+                <tr>
+                  <th colspan="1" style="vertical-align:top;">{% trans "Billing address" %}</th>
+                  <td colspan="4" style="background-color:#fff">
+                    {% if p.get_billing_address.company %}
+                    {{p.get_billing_address.company}} <br />
+                    {% endif %}
+                    {{p.get_billing_address.firstname}} {{p.get_billing_address.lastname}} <br />
+                    {{p.get_billing_address.address1}} {% if p.get_billing_address.address2 %}<br />
+                    {{p.get_billing_address.address2}} {% endif %} <br />
+                    {{p.get_billing_address.zip}} {{p.get_billing_address.city}} <br />
+                    {{p.get_billing_address.country}} 
+                  </td>
+                </tr>
+                {% endif %}
+
               {% empty %}
                 <tr>
                   <td colspan="3">
