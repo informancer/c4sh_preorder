@@ -1,4 +1,5 @@
-static/tmp/*
+c4sh_preorder/static/tmp/*
+c4sh_preorder/static/*.pkl
 *.pyc
 *.AppleDouble
 *:2e*
