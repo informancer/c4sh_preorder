@@ -43,7 +43,7 @@ if socket.gethostname() == "$YOUR_DEPLOYMENT_HOST":
 	sys.path.append('/home/www/presale/c4sh_preorder/')
 
 	# import event settings from file demoevent.py
-	from .demoevent import *
+	from demoevent import *
 elif socket.gethostname() == "precise64":
 	DEFAULT_FROM_EMAIL = "foo@bar"
 	DEBUG = True
@@ -79,7 +79,7 @@ elif socket.gethostname() == "precise64":
 	sys.path.append('/home/vagrant/c4sh_preorder/')
 
 	# import event settings
-	from .demoevent import *
+	from demoevent import *
 else:
 	import sys
 	print "Please configure c4sh_preorder in settings.py. Your hostname is %s." % socket.gethostname()
