@@ -1,5 +1,5 @@
 {% load i18n %}
-<form class="form-horizontal" method="POST" action="{% url signup %}">
+<form class="form-horizontal" method="POST" action="{% url "signup" %}">
 {% csrf_token %}
 <div class="control-group {% if signup_page and signupform.username.errors %}error{% endif %}">
 <label class="control-label" for="id_username">{% trans "Username"%}</label>
@@ -43,7 +43,7 @@
 		<span class="help-inline">{{e}}</span>
    {% endfor %}
    {% endif %}
-   <p class="help-block">{% trans "Optional. Required for status notifications."%}</p>   
+   <p class="help-block">{% trans "Optional. Required for status notifications."%}</p>
 </div>
 </div>
 
