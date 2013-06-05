@@ -4,17 +4,22 @@
 
 {% block content %}
       <div class="row">
-          
+
         <div class="span5">
           <h2>{% trans "Payment information"%}</h2>
           {% if preorders %}
             <p>{% trans "Thanks for your preorder. Please transfer the total amount (see right) to:"%}</p>
             <pre>{{settings.EVENT_PAYMENT_DETAILS}}<br /><br />{% for p in preorders %}Reference: <strong>{{settings.EVENT_PAYMENT_PREFIX}}-{{p.get_reference_hash}}</strong><br />{% endfor %}</pre>
-          {% else %}
+	    {% if settings.EVENT_CC_ENABLE %}
+	    <p>{% blocktrans with cc_fee_percentage=settings.EVENT_CC_FEE_PERCENTAGE cc_fee_fixed=settings.EVENT_CC_FEE_FIXED%} please pay via bank transfer if possible. if you need to use your credit card, we'll charge additional fees of {{cc_fee_percentage}}% + {{cc_fee_fixed}}€ per transaction. {% endblocktrans %}</p>
+	    {% url saferpay-pay as cc_payment_url %}
+	    <a href="{{cc_payment_url}}" class="btn"><i class="icon-ok icon-shopping-cart"></i> {% trans "Pay via credit card" %}</a>
+	    {% endif %}
+	  {% else %}
             {% trans "Here be payment information after you preordered tickets."%}
           {% endif %}
         </div>
-        
+
         <div class="span7">
           <h2>{% trans "Your preorders"%}</h2>
             <table class="table table-striped table-bordered">
@@ -38,6 +43,9 @@
                 <tr>
                   <td colspan="3" style="text-align:right">
                     {% if p.paid %}
+                      {% if settings.EVENT_PASSBOOK_ENABLE %}
+                      <a class="btn btn-primary" href="{% url passbook p.pk p.unique_secret %}">{% trans "Download Passbook files"%}</a>
+                      {% endif %}
                       <a class="btn btn-primary" href="{% url print-tickets p.pk p.unique_secret %}">{% trans "Download tickets / invoice"%}</a>
                     {% else %}
                       {% trans "You'll be able to download your ticket here as soon as it is marked as paid." %}
@@ -70,7 +78,7 @@
                           {% else %}
                             {{t.t.price|multiply:t.amount|floatformat:2}} {{t.t.currency}} (incl. tax)
                           {% endif %}
-                          </td>
+                        </td>
                       </tr>
                       {% endfor %}
                       {% for t in p.get_sale_amount %}
@@ -89,7 +97,7 @@
                             {% endif %}
                           </th>
                         </tr>
-                      {% endfor %}                     
+                      {% endfor %}
                     </table>
                   </td>
                 </tr>
@@ -118,6 +126,6 @@
                 </tr>
               {% endfor %}
             </table>
-         </div>        
+         </div>
       </div>
 {% endblock %}

@@ -21,7 +21,7 @@ class PreorderQuota(models.Model):
 	quota = models.IntegerField(verbose_name="Ticket quota")
 	sold = models.IntegerField(null=True, blank=True, verbose_name="Tickets preordered from this quota", default=0)
 
-	# TODO: check if quota is available 
+	# TODO: check if quota is available
 	#def save(self):
 
 	def __unicode__(self):
@@ -38,10 +38,10 @@ class PreorderQuota(models.Model):
 
 class CustomPreorderTicket(PreorderTicket):
 	sortorder = models.IntegerField()
-	
+
 	class Meta:
-		ordering = ['sortorder']	
-	
+		ordering = ['sortorder']
+
 	def stats_preordered(self):
 		return CustomPreorder.objects.filter(Q(preorderposition__ticket=self)).count()
 
@@ -73,7 +73,7 @@ class CustomPreorder(Preorder):
 		return User.objects.get(pk=self.user_id)
 
 	def get_reference_hash(self):
-		return self.unique_secret[:10]		
+		return self.unique_secret[:10]
 
 	def payment_required_until(self):
 		return self.time + datetime.timedelta(days=int(settings.EVENT_PAYMENT_REQUIRED_TIME)) # returns timedelta

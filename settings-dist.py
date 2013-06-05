@@ -158,3 +158,37 @@ LOGGING = {
 		},
 	}
 }
+
+
+""" Uncomment this for Saferpay credit card payments:
+
+INSTALLED_APPS += ('saferpay',)
+
+SAFERPAY_ACCOUNT_ID = "99867-94913159"
+
+SAFERPAY_NOTIFY_ADDRESS = "zakx@koeln.ccc.de"
+SAFERPAY_ALLOW_COLLECT = False
+SAFERPAY_DELIVERY = False
+
+SAFERPAY_ABORT_URL_NAME = APP_URL+"/saferpay/a/"
+SAFERPAY_FAILURE_URL_NAME = APP_URL+"/saferpay/f/"
+
+### Styling ###
+
+SAFERPAY_BODYCOLOR = None
+SAFERPAY_HEADCOLOR = None
+SAFERPAY_HEADLINECOLOR = None
+SAFERPAY_MENUCOLOR = None
+SAFERPAY_BODYFONTCOLOR = None
+SAFERPAY_HEADFONTCOLOR = None
+SAFERPAY_MENUFONTCOLOR = None
+SAFERPAY_FONT = None
+
+### URLs ###
+
+SAFERPAY_PROCESS_URL = "https://www.saferpay.com/hosting/CreatePayInit.asp"
+SAFERPAY_VERIFY_URL = "https://www.saferpay.com/hosting/VerifyPayConfirm.asp"
+SAFERPAY_PAYMENT_COMPLETE_URL = "https://www.saferpay.com/hosting/PayCompleteV2.asp"
+SAFERPAY_USE_PAYMENT_COMPLETE_URL = True # You want this to be true.
+
+"""
