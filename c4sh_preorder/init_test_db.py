@@ -1,8 +1,9 @@
 from django.core.management import setup_environ
-import settings, datetime
+import datetime
+import .settings
 setup_environ(settings)
 
-from c4sh_preorder.preorder.models import *
+from .preorder.models import *
 
 def date(pd):
 	return datetime.datetime.strptime(pd, "%Y-%m-%dT%H:%M:%SZ")

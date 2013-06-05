@@ -35,32 +35,35 @@ if socket.gethostname() == "$YOUR_DEPLOYMENT_HOST":
 			SESSION_COOKIE_SECURE = True
 	except:
 		pass
-	
+
 	# path to c4sh installation. at least preorder models required.
 	sys.path.append('/home/www/presale/')
 
 	# path to c4sh_preorder installation. required for gunicorn
 	sys.path.append('/home/www/presale/c4sh_preorder/')
 
-	# import event settings from file event_sigint12.py
-	from event_sigint12 import *
-elif socket.gethostname() == "devhost.local":
+	# import event settings from file demoevent.py
+	from .demoevent import *
+elif socket.gethostname() == "precise64":
 	DEFAULT_FROM_EMAIL = "foo@bar"
 	DEBUG = True
 	TEMPLATE_DEBUG = DEBUG
 	APP_URL = "preorder"
 	EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-	MEDIA_ROOT = '/Users/zakx/git/c4sh_preorder/media/'
+	MEDIA_ROOT = '/home/vagrant/c4sh_preorder/media/'
 	MEDIA_URL = '/media/'
-	STATIC_ROOT = '/Users/zakx/git/c4sh_preorder/static/'
+	STATIC_ROOT = '/home/vagrant/c4sh_preorder/static/'
 	STATIC_URL = '/static/'
 	TEMPLATE_DIRS = (
-		"/Users/zakx/git/c4sh_preorder/templates",
+		"/home/vagrant/c4sh_preorder/templates",
 	)
 	DATABASES = {
 		'default': {
-			'NAME': '/Users/zakx/git/c4sh.sqlite3',
-			'ENGINE': 'django.db.backends.sqlite3',
+			'NAME': 'c4sh_preorder',
+			'ENGINE': 'django.db.backends.mysql',
+			'USER': 'root',
+			'HOST': 'localhost',
+			'PASSWORD': ''
 		}
 	}
 	SECRET_KEY = 'change this to a long random string'
@@ -68,15 +71,15 @@ elif socket.gethostname() == "devhost.local":
 		('zakx', 'zakx@example.com'),
 	)
 	SESSION_COOKIE_SECURE = False
-	
+
 	# path to c4sh installation. at least preorder models required.
-	sys.path.append('/Users/zakx/git')
+	sys.path.append('/home/vagrant/c4sh/')
 
 	# path to c4sh_preorder installation. required for gunicorn
-	sys.path.append('/Users/zakx/git/c4sh_preorder/')
+	sys.path.append('/home/vagrant/c4sh_preorder/')
 
 	# import event settings
-	from event_sigint12 import *
+	from .demoevent import *
 else:
 	import sys
 	print "Please configure c4sh_preorder in settings.py. Your hostname is %s." % socket.gethostname()
