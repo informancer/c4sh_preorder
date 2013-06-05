@@ -22,8 +22,8 @@ t1 = CustomPreorderTicket(
 	)
 t1.save()
 
-t2 = CustomPreorderTicket(
-	name = "T-Shirt M",
+t2 = Tshirt(
+	name = "T-Shirt Girly M",
 	backend_id = 2,
 	price = 15.00,
 	currency = "EUR",
@@ -33,6 +33,8 @@ t2 = CustomPreorderTicket(
 	limit_amount_user = 2,
 	is_ticket = True,
 	sortorder = 20,
+	size = "M",
+	type = "girly",
 	active = True
 	)
 t2.save()
