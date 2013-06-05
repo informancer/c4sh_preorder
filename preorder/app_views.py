@@ -388,70 +388,6 @@ def account_view(request):
 	return render_to_response('account.html', locals(), context_instance=RequestContext(request))
 
 @login_required
-def passbook_view(request, preorder_id, secret):
-
-	if not EVENT_PASSBOOK_ENABLE:
-		messages.error(request, _("Passbook support has not been enabled for this event."))
-		return redirect("my-tickets")
-
-	if EVENT_DOWNLOAD_DATE and datetime.datetime.now() < datetime.datetime.strptime(EVENT_DOWNLOAD_DATE,'%Y-%m-%d %H:%M:%S'):
-		messages.error(request, _("Tickets cannot be downloaded yet, please try again shortly before the event."))
-		return redirect("my-tickets")
-
-	preorder = get_object_or_404(CustomPreorder, Q(pk=preorder_id), Q(user_id=request.user.pk), Q(unique_secret=secret))
-
-	# what to do if this preorder is not yet marked as paid?
-	if not preorder.paid:
-		messages.error(request, _("You cannot download your ticket until you paid for it."))
-		return redirect("my-tickets")
-
-	if request.GET.get('pos'):
-		try:
-			position_id = int(request.GET.get('pos'))
-			# fetch position with preorder, which has already been checked..
-			position = PreorderPosition.objects.get(pk=position_id, preorder=preorder)
-		except:
-			messages.error(request, _("Invalid preorder position given - please try again later."))
-			return redirect("my-tickets")
-
-		if not position.uuid:
-			from uuid import uuid4
-			position.uuid = str(uuid4())
-			position.save()
-
-		uuid = position.uuid
-
-		from passbook_helper import make_passbook_file
-
-		try:
-			passbook_file = make_passbook_file({
-				'ticket': position.ticket.name,
-				'uuid': uuid,
-				'from': EVENT_PASSBOOK_FROM,
-				'to': EVENT_PASSBOOK_TO,
-				'organisation': EVENT_PASSBOOK_ORGANISATION,
-				'identifier': EVENT_PASSBOOK_IDENTIFIER,
-				'teamidentifier': EVENT_PASSBOOK_TEAMIDENTIFIER,
-				'desc': EVENT_PASSBOOK_DESCRIPTION,
-				'bgcolor': EVENT_PASSBOOK_BG_COLOR,
-				'fgcolor': EVENT_PASSBOOK_FG_COLOR,
-				'logotext': EVENT_PASSBOOK_LOGO_TEXT,
-				'filespath': EVENT_PASSBOOK_FILES_PATH,
-				'password': EVENT_PASSBOOK_PASSWORD
-			})
-		except:
-			messages.error(request, _("An error occurred while generating your Passbook file - please try again later."))
-			return redirect("my-tickets")
-
-		response = HttpResponse(mimetype="application/vnd.apple.pkpass")
-		response['Content-disposition'] = 'attachment; filename=Passbook-%s.pkpass' % preorder.get_reference_hash()
-		response.write(passbook_file.getvalue())
-		passbook_file.close()
-		return response
-
-	return render_to_response('passbook.html', locals(), context_instance=RequestContext(request))
-
-@login_required
 def print_tickets_view(request, preorder_id, secret):
 	if EVENT_DOWNLOAD_DATE and datetime.datetime.now() < datetime.datetime.strptime(EVENT_DOWNLOAD_DATE,'%Y-%m-%d %H:%M:%S'):
 		messages.error(request, _("Tickets cannot be downloaded yet, please try again shortly before the event."))
@@ -668,3 +604,67 @@ def print_tickets_view(request, preorder_id, secret):
 		remove(f)
 
 	return response
+
+@login_required
+def passbook_view(request, preorder_id, secret):
+
+	if not EVENT_PASSBOOK_ENABLE:
+		messages.error(request, _("Passbook support has not been enabled for this event."))
+		return redirect("my-tickets")
+
+	if EVENT_DOWNLOAD_DATE and datetime.datetime.now() < datetime.datetime.strptime(EVENT_DOWNLOAD_DATE,'%Y-%m-%d %H:%M:%S'):
+		messages.error(request, _("Tickets cannot be downloaded yet, please try again shortly before the event."))
+		return redirect("my-tickets")
+
+	preorder = get_object_or_404(CustomPreorder, Q(pk=preorder_id), Q(user_id=request.user.pk), Q(unique_secret=secret))
+
+	# what to do if this preorder is not yet marked as paid?
+	if not preorder.paid:
+		messages.error(request, _("You cannot download your ticket until you paid for it."))
+		return redirect("my-tickets")
+
+	if request.GET.get('pos'):
+		try:
+			position_id = int(request.GET.get('pos'))
+			# fetch position with preorder, which has already been checked..
+			position = PreorderPosition.objects.get(pk=position_id, preorder=preorder)
+		except:
+			messages.error(request, _("Invalid preorder position given - please try again later."))
+			return redirect("my-tickets")
+
+		if not position.uuid:
+			from uuid import uuid4
+			position.uuid = str(uuid4())
+			position.save()
+
+		uuid = position.uuid
+
+		from passbook_helper import make_passbook_file
+
+		try:
+			passbook_file = make_passbook_file({
+				'ticket': position.ticket.name,
+				'uuid': uuid,
+				'from': EVENT_PASSBOOK_FROM,
+				'to': EVENT_PASSBOOK_TO,
+				'organisation': EVENT_PASSBOOK_ORGANISATION,
+				'identifier': EVENT_PASSBOOK_IDENTIFIER,
+				'teamidentifier': EVENT_PASSBOOK_TEAMIDENTIFIER,
+				'desc': EVENT_PASSBOOK_DESCRIPTION,
+				'bgcolor': EVENT_PASSBOOK_BG_COLOR,
+				'fgcolor': EVENT_PASSBOOK_FG_COLOR,
+				'logotext': EVENT_PASSBOOK_LOGO_TEXT,
+				'filespath': EVENT_PASSBOOK_FILES_PATH,
+				'password': EVENT_PASSBOOK_PASSWORD
+			})
+		except:
+			messages.error(request, _("An error occurred while generating your Passbook file - please try again later."))
+			return redirect("my-tickets")
+
+		response = HttpResponse(mimetype="application/vnd.apple.pkpass")
+		response['Content-disposition'] = 'attachment; filename=Passbook-%s.pkpass' % preorder.get_reference_hash()
+		response.write(passbook_file.getvalue())
+		passbook_file.close()
+		return response
+
+	return render_to_response('passbook.html', locals(), context_instance=RequestContext(request))
