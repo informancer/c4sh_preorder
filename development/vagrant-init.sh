@@ -39,6 +39,8 @@ ln -s /vagrant/c4sh_preorder /home/vagrant/
 # copy misc. files
 cp /vagrant/development/files/motd /etc/motd.tail
 
+cd /home/vagrant && sudo -u vagrant git clone https://github.com/CCCO/c4sh
+
 echo
 echo
 echo "Your c4sh_preorder development instance is ready, use 'vagrant ssh' to connect."
