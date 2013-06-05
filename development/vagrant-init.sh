@@ -19,7 +19,7 @@ apt-get install -q -y libjpeg62-dev zlib1g-dev libfreetype6-dev liblcms1-dev lib
 
 # mysql
 export DEBIAN_FRONTEND=noninteractive
-apt-get install -q -y mysql-server mysql-client
+apt-get install -q -y mysql-server mysql-client python-mysqldb
 mysqladmin create c4sh_preorder
 
 # virtualenv global setup
