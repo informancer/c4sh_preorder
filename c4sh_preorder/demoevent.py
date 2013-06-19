@@ -109,14 +109,31 @@ EVENT_CC_FEE_FIXED = 7.5 # 7.50 EUR per transaction
 # Enables Passbook download when set to True
 EVENT_PASSBOOK_ENABLE = False
 
-EVENT_PASSBOOK_FROM = "27th December" # Event from date, e.g. "27th December"
-EVENT_PASSBOOK_TO = "30th December"  # Event from date, e.g. "30th December"
-EVENT_PASSBOOK_ORGANISATION = "CCC Veranstaltungsgesellschaft mbH" # Organisation
-EVENT_PASSBOOK_IDENTIFIER = "" # Passbook cert identifier
+EVENT_PASSBOOK_FROM = "July 5th, 2013" # Event from date, e.g. "27th December"
+EVENT_PASSBOOK_TO = "July 7th, 2013"  # Event from date, e.g. "30th December"
+EVENT_PASSBOOK_ORGANISATION = "SIGINT 2013" # Organisation, shown on lockscreen
+EVENT_PASSBOOK_IDENTIFIER = "pass.de.ccc.events...." # Passbook cert identifier
 EVENT_PASSBOOK_TEAMIDENTIFIER = "" # Passbook cert team identifier
-EVENT_PASSBOOK_DESCRIPTION = "29C3 Ticket" # Passbook ticket description
-EVENT_PASSBOOK_BG_COLOR = "rgb(0,5,50)" # Passbook background color
+EVENT_PASSBOOK_DESCRIPTION = "SIGINT13 Ticket" # Passbook ticket description
+EVENT_PASSBOOK_BG_COLOR = "rgb(51,51,51)" # Passbook background color
 EVENT_PASSBOOK_FG_COLOR = "rgb(255,255,255)" # Passbook foreground color
-EVENT_PASSBOOK_LOGO_TEXT = "29C3" # Passbook logo text
-EVENT_PASSBOOK_FILES_PATH = "" # Absolute path to passbook files folder which contains certs and logo
+EVENT_PASSBOOK_LOGO_TEXT = "SIGINT 2013" # Passbook logo text
+EVENT_PASSBOOK_FILES_PATH = "/home/vagrant/c4sh_preorder/passbook" # Absolute path to passbook files folder which contains certs and logo
 EVENT_PASSBOOK_PASSWORD = "" # Passbook cert private key password
+EVENT_PASSBOOK_LOCATION = (50.948463, 6.943885) # (lat, long)
+EVENT_PASSBOOK_RELEVANT_DATE = "2013-07-05T10:00:00+02:00" # when passbook gets relevant, ISO 8601 like "2013-07-05T10:00:00+02:00"
+
+"""
+passbook howto:
+EVENT_PASSBOOK_FILES_PATH needs to point to a directory containing the following files:
+Certificates.p12
+certificate.pem
+key.pem
+wwdr.pem
+
+icon.png -- 114x114px
+background.png -- 180x220px, gets blurred automatically
+background@2x.png -- 360x440px, gets blurred automatically
+logo.png -- 160x50px
+logo@2x.png -- 320x100px
+"""
