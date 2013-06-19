@@ -1,4 +1,4 @@
-from passbook.models import Pass, EventTicket, Barcode, StoreCard, BarcodeFormat
+from passbook.models import Pass, EventTicket, Barcode, StoreCard, BarcodeFormat, Location
 
 def make_passbook_file(args={}):
 	cardInfo = EventTicket()
@@ -14,9 +14,16 @@ def make_passbook_file(args={}):
 	passfile.logoText = args['logotext']
 	passfile.serialNumber = args['uuid']
 	passfile.barcode = Barcode(message=args['uuid'], format=BarcodeFormat.QR)
-	passfile.barcode.altText = args['uuid']
+	passfile.barcode.altText = args['uuid'][:13]
 
-	passfile.addFile('icon.png', open('%s/logo.png' % args['filespath'], 'r'))
+	loc = Location(args['lat'], args['long'])
+	passfile.locations = [loc,]
+	passfile.relevantDate = args['relevant_date']
+
+	passfile.addFile('icon.png', open('%s/icon.png' % args['filespath'], 'r'))
 	passfile.addFile('logo.png', open('%s/logo.png' % args['filespath'], 'r'))
+	passfile.addFile('logo@2x.png', open('%s/logo@2x.png' % args['filespath'], 'r'))
+	passfile.addFile('background.png', open('%s/background.png' % args['filespath'], 'r'))
+	passfile.addFile('background@2x.png', open('%s/background@2x.png' % args['filespath'], 'r'))
 
 	return passfile.create('%s/certificate.pem' % args['filespath'], '%s/key.pem' % args['filespath'], '%s/wwdr.pem' % args['filespath'], args['password'])

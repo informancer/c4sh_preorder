@@ -750,7 +750,10 @@ def passbook_view(request, preorder_id, secret):
 				'fgcolor': EVENT_PASSBOOK_FG_COLOR,
 				'logotext': EVENT_PASSBOOK_LOGO_TEXT,
 				'filespath': EVENT_PASSBOOK_FILES_PATH,
-				'password': EVENT_PASSBOOK_PASSWORD
+				'password': EVENT_PASSBOOK_PASSWORD,
+				'lat': EVENT_PASSBOOK_LOCATION[0],
+				'long': EVENT_PASSBOOK_LOCATION[1],
+				'relevant_date': EVENT_PASSBOOK_RELEVANT_DATE
 			})
 		except:
 			messages.error(request, _("An error occurred while generating your Passbook file - please try again later."))
