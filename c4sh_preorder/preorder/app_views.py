@@ -589,8 +589,8 @@ def print_tickets_view(request, preorder_id, secret):
 		## special tickets
 		special_tickets = {
 			'Speaker Ticket': 'SPEAKER',
-			'Standbetreiber-Ticket': 'STAND',
-			'Presseticket': 'PRESSE'
+			'Booth Operator': 'BOOTH',
+			'Member of the Press': 'PRESS'
 		}
 		if ticket.name in special_tickets.keys():
 			pdf.set_font(font,'B',72)
