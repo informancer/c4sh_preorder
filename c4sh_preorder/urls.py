@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, include, url
-from c4sh_preorder.settings import MEDIA_ROOT, STATIC_ROOT
-
+from django.http import HttpResponse
 from django.contrib import admin
+from c4sh_preorder.settings import MEDIA_ROOT, STATIC_ROOT
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -35,6 +35,7 @@ urlpatterns += patterns('c4sh_preorder.preorder.app_views',
 urlpatterns += patterns('',
     url(r'^captcha/', include('captcha.urls')),
     url(r'^cc/', include('saferpay.urls')),
+    url(r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain"))
 )
 
 urlpatterns += patterns('c4sh_preorder.preorder.admin_views',
