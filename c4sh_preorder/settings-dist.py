@@ -23,6 +23,9 @@ if socket.gethostname() == "$YOUR_DEPLOYMENT_HOST":
 			'PASSWORD': 'ppresale6'
 		}
 	}
+	DATABASE_OPTIONS = {
+		"init_command": "SET storage_engine=INNODB",
+	}
 
 	# uncomment SECRET_KEY and change it.
 	#SECRET_KEY = 'change this to a long random string'
@@ -68,6 +71,9 @@ elif socket.gethostname() == "precise64":
 			'HOST': 'localhost',
 			'PASSWORD': ''
 		}
+	}
+	DATABASE_OPTIONS = {
+		"init_command": "SET storage_engine=INNODB",
 	}
 	SECRET_KEY = 'change this to a long random string'
 	ADMINS = (
