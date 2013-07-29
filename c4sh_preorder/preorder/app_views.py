@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# encoding: utf-8
 import datetime, os, socket, re, datetime, random, hashlib
 from django.core import serializers
 from django.shortcuts import render_to_response, get_object_or_404, redirect
@@ -480,10 +480,10 @@ def print_tickets_view(request, preorder_id, secret):
 	pdf=FPDF('P', 'pt', 'A4')
 
 	#initialisation
-	pdf.add_font(family='sourcecodepro', fname="%sSourceCodePro-Regular.ttf" % settings.STATIC_ROOT, uni=True)
-	pdf.add_font(family='sourcecodepro', style="B", fname="%sSourceCodePro-Bold.ttf" % settings.STATIC_ROOT, uni=True)
-	pdf.add_font(family='sourcecodepro', style="I", fname="%sSourceCodePro-Light.ttf" % settings.STATIC_ROOT, uni=True)
-	font = 'sourcecodepro'
+	pdf.add_font(family='dejavu', fname="%sdejavu/DejaVuSans.ttf" % settings.STATIC_ROOT, uni=True)
+	pdf.add_font(family='dejavu', style="B", fname="%sdejavu/DejaVuSans-Bold.ttf" % settings.STATIC_ROOT, uni=True)
+	pdf.add_font(family='dejavu', style="I", fname="%sdejavu/DejaVuSans-ExtraLight.ttf" % settings.STATIC_ROOT, uni=True)
+	font = 'dejavu'
 
 	#############################################
 
@@ -509,32 +509,33 @@ def print_tickets_view(request, preorder_id, secret):
 		ticket = position.ticket
 
 		#PDF "header"
-		pdf.set_font(font,'I',37)
-		pdf.text(20,50,"%s" % 'N.O-T/M.Y-DE/PA.R-TM/EN.T')
-		pdf.set_font(font,'B',37)
-		pdf.text(20,85,"%s" % '2.9-C/3')
-
-		pdf.set_font(font,'I',20)
-		pdf.text(20,150,"%s" % '29th CHAOS COMMUNICATION CONGRESS')
-		pdf.text(20,185,"%s" % 'DECEMBER 27th TO 30TH 2012')
-		pdf.text(20,220,"%s" % 'CONGRESS CENTER HAMBURG, GERMANY')
+		pdf.image('%s%s' % (settings.STATIC_ROOT, settings.EVENT_LOGO), 15, 15, 200, 96)
+		#pdf.set_font(font,'B',27)
+		#pdf.text(20,50,"%s" % 'SIGINT 2013')
+		pdf.set_font(font,'I',6)
+		pdf.text(110,100,"%s" % 'July 5th - July 7th')
+		pdf.text(110,107,"%s" % 'Mediapark, Cologne, Germany')
+		pdf.text(110,114,"%s" % 'https://sigint.ccc.de/')
 
 		pdf.set_font(font,'I',40)
 
 		# if price > 150, this is an invoice
-		if ticket.price <= 150 and ticket.price > 0:
-			pdf.text(20,325,"RECEIPT")
+		if ticket.price < 150 and ticket.price > 0:
+			pass
+			#pdf.text(220,100,"RECEIPT")
+		elif ticket.price >= 150:
+			pdf.text(220,90,"RECEIPT")
 		pdf.set_font(font,'B',40)
-		pdf.text(20,290,"ONLINE TICKET")
+		pdf.text(220,50,"ONLINE TICKET")
 
 		# print billing address - if eligible
-		if ticket.price >= EVENT_BILLING_ADDRESS_LIMIT or billing_address:
+		if ticket.price >= EVENT_BILLING_ADDRESS_LIMIT:
 			if preorder.get_billing_address() or billing_address:
 
 				from django.utils.encoding import smart_str
 
 				pdf.set_font('Arial','B',13)
-				pdf.text(20,125,"Billing address")
+				pdf.text(20,150,"Billing address")
 				pdf.set_font('Arial','',10)
 
 				if not billing_address:
@@ -543,29 +544,27 @@ def print_tickets_view(request, preorder_id, secret):
 				ytmp = 0
 
 				if billing_address.company:
-					pdf.text(20,140,"%s" % billing_address.company.encode('ASCII', 'ignore'))
+					pdf.text(20,170,"%s" % billing_address.company)
 					ytmp+=12
-				pdf.text(20,140+ytmp,"%s" % billing_address.firstname.encode('ASCII', 'ignore'))
-				pdf.text(20+len(billing_address.firstname*7),140+ytmp,"%s" % billing_address.lastname.encode('ASCII', 'ignore'))
-				pdf.text(20,152+ytmp,"%s" % billing_address.address1.encode('ASCII', 'ignore'))
+				pdf.text(20,170+ytmp,"%s %s" % (billing_address.firstname, billing_address.lastname))
+				pdf.text(20,182+ytmp,"%s" % billing_address.address1)
 				if billing_address.address2:
-					pdf.text(20,164+ytmp,"%s" % billing_address.address2.encode('ASCII', 'ignore'))
+					pdf.text(20,194+ytmp,"%s" % billing_address.address2)
 					ytmp+=12
-				pdf.text(20+len(billing_address.zip*7),164+ytmp, billing_address.city.encode('ASCII', 'ignore'))
-				pdf.text(20,164+ytmp,"%s" % billing_address.zip.encode('ASCII', 'ignore'))
-				pdf.text(20,176+ytmp,"%s" % billing_address.country.encode('ASCII', 'ignore'))
+				pdf.text(20,194+ytmp,"%s %s" % (billing_address.zip, billing_address.city))
+				pdf.text(20,206+ytmp,"%s" % billing_address.country)
 
 
 		# print ticket table
 		pdf.set_font(font,'I',15)
-		pdf.text(20,420,"Type")
-		pdf.text(350,420,"Price")
+		pdf.text(20,260,"Type")
+		if ticket.price > 0:
+			pdf.text(350,260,"Price")
 
 		i = 0
 
-		pdf.set_font(font,'',25)
 		pdf.set_font(font,'B',20)
-		pdf.set_y(418+i)
+		pdf.set_y(270+i)
 		pdf.set_x(20)
 		pdf.set_right_margin(250)
 		pdf.set_left_margin(17)
@@ -575,23 +574,32 @@ def print_tickets_view(request, preorder_id, secret):
 
 		pdf.set_left_margin(20)
 
-		if ticket.price == 0:
-			pdf.text(350, 450+i, 'Free')
-		else:
-			pdf.text(350, 450+i, "%s %s" % (str(floatformat(ticket.price, 2)), ticket.currency))
+		if ticket.price > 0:
+			pdf.text(350, 302, "%s %s" % (str(floatformat(ticket.price, 2)), "€" if ticket.currency == "EUR" else ticket.currency))
 
 			pdf.set_font(font,'',11)
-			pdf.text(350, 465+i, "incl. %s%% VAT: %s %s" % (ticket.tax_rate, str(floatformat(float(ticket.price)-float(ticket.price)/(float(ticket.tax_rate)/100+1), 2)), ticket.currency))
+			price_vat = str(floatformat(float(ticket.price)-float(ticket.price)/(float(ticket.tax_rate)/100+1), 2))
+			price_net = str(floatformat(float(ticket.price)/(float(ticket.tax_rate)/100+1), 2))
+			#pdf.text(350, 320, "incl. %s%% VAT: %s %s" % (ticket.tax_rate, price_vat, ticket.currency))
+			#if ticket.price >= 150:
+			pdf.set_font(font,'',7)
+			pdf.text(350, 314, "%(price_net)s %(currency)s net + %(tax_rate)s%% VAT (%(price_vat)s %(currency)s) = %(price)s %(currency)s total" % ({
+				'tax_rate': ticket.tax_rate,
+				'price': ticket.price,
+				'price_net': price_net,
+				'price_vat': price_vat,
+				'currency': "€" if ticket.currency == "EUR" else ticket.currency,
+				}))
 
 		## special tickets
 		special_tickets = {
-			'Speakerticket': 'SPEAKER',
-			'Standbetreiber-Ticket': 'STAND',
-			'Presseticket': 'PRESSE'
+			'Speaker Ticket': 'SPEAKER',
+			'Booth Operator': 'BOOTH',
+			'Member of the Press': 'PRESS'
 		}
 		if ticket.name in special_tickets.keys():
 			pdf.set_font(font,'B',72)
-			pdf.text(120, 390, '%s' % special_tickets[ticket.name])
+			pdf.text(pdf.w/2-(pdf.get_string_width(special_tickets[ticket.name])/2), 490, '%s' % special_tickets[ticket.name])
 
 		## special tickets
 
@@ -603,10 +611,10 @@ def print_tickets_view(request, preorder_id, secret):
 		delete_files.append('%stmp/%s.jpg' % (settings.STATIC_ROOT, position.uuid))
 
 		# print human readable ticket code
-		pdf.set_font(font,'I',7)
-		pdf.text(23, 800, 'Payment reference: %s-%s' % (settings.EVENT_PAYMENT_PREFIX, preorder.unique_secret[:10]))
-		pdf.text(23, 807, '%s' % position.uuid)
-		pdf.text(23, 814, '%s' % preorder.unique_secret)
+		pdf.set_font(font,'I',8)
+		pdf.text(23, 790, 'Payment reference: %s-%s' % (settings.EVENT_PAYMENT_PREFIX, preorder.unique_secret[:10]))
+		pdf.text(23, 800, '%s' % position.uuid)
+		pdf.text(23, 810, '%s' % preorder.unique_secret)
 
 
 
@@ -618,8 +626,8 @@ def print_tickets_view(request, preorder_id, secret):
 		pdf.write(20, '%s' % settings.EVENT_INVOICE_ADDRESS)
 		pdf.set_font(font, '', 10)
 		pdf.set_y(640)
-		#Computer says no
-		#pdf.write(15, '%s' % settings.EVENT_INVOICE_LEGAL)
+		if ticket.price > 0:
+			pdf.write(15, '%s' % settings.EVENT_INVOICE_LEGAL)
 		pdf.set_font(font, '', 10)
 		pdf.set_y(680)
 		pdf.write(15, 'Issued: %s' % time.strftime('%Y-%m-%d %H:%M', time.gmtime()))
@@ -627,9 +635,12 @@ def print_tickets_view(request, preorder_id, secret):
 		pdf.set_y(720)
 		pdf.set_right_margin(300)
 
-		if ticket.price > 0:
-			pdf.write(10, "Bis zu einem Ticketpreis von 150,00 EUR gilt das Ticket gleichzeitig als Kleinbetragsrechnung im Sinne von § 33 UStDV. Umtausch und Rueckgabe ausgeschlossen.")
+		if ticket.price > 0 and ticket.price < 150:
+			pdf.write(10, "Bis zu einem Ticketpreis von 150,00 EUR gilt das Ticket gleichzeitig als Kleinbetragsrechnung im Sinne von § 33 UStDV. Umtausch und Rückgabe ausgeschlossen.")
+		elif ticket.price >= 150:
+			pdf.write(10, "Umtausch und Rückgabe ausgeschlossen.")
 	#are Credit Card payments enabled? If yes, is this a preorder paid by CC?
+	""" commented out for sigint13
 	if settings.EVENT_CC_ENABLE and preorder.paid_via=="creditcard":
 		total = preorder.get_sale_amount()[0]['total']
 		total_with_fees = (total + settings.EVENT_CC_FEE_FIXED) * (settings.EVENT_CC_FEE_PERCENTAGE/100+1)
@@ -692,6 +703,7 @@ def print_tickets_view(request, preorder_id, secret):
 		pdf.set_font(font, '', 8)
 		pdf.set_y(720)
 		pdf.set_right_margin(300)
+	"""
 
 
 	response = HttpResponse(mimetype="application/pdf")

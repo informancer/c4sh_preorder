@@ -1,15 +1,19 @@
 from preorder.models import *
 from django.contrib import admin
 
+class BillingAddressInline(admin.StackedInline):
+	model = PreorderBillingAddress
+	extra = 0
+
 class PositionsInline(admin.StackedInline):
-    model = PreorderPosition
-    extra = 1
+	model = PreorderPosition
+	extra = 1
 
 class CustomPreorderAdmin(admin.ModelAdmin):
-    list_display = ('username', 'time', 'get_sale_amount')
-    inlines = [PositionsInline]
-    search_fields = ['username', 'unique_secret']
-    list_filter = ['username', 'time']
+	list_display = ('username', 'time', 'get_sale_amount')
+	inlines = [PositionsInline, BillingAddressInline]
+	search_fields = ['username', 'unique_secret']
+	list_filter = ['username', 'time']
 
 
 admin.site.register(PreorderQuota)

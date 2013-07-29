@@ -25,7 +25,7 @@ EVENT_NAME_UNIX = 'sigint12'
 EVENT_NAME = 'SIGINT12'
 
 #Official logo for your event, located inside STATIC_ROOT. Will be used for PDF output of tickets and stuff
-EVENT_LOGO = 'sigint12.png'
+EVENT_LOGO = 'sigint13.png'
 
 
 # Postal address of host (for invoices)
@@ -52,7 +52,7 @@ EVENT_VENUE_PAYLOAD = 3000
 EVENT_CONTACT_MAILTO = "orga@tld"
 
 # Prefix for bank transfer references
-EVENT_PAYMENT_PREFIX = "SIGINT12"
+EVENT_PAYMENT_PREFIX = "SIGINT13"
 
 # Bank details for payment
 EVENT_PAYMENT_DETAILS =  "Chaos Computer Club Ossendorf ltd.\n" + \
