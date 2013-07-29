@@ -119,8 +119,8 @@
 									<i class="icon-exclamation-sign"></i>
 								{% endif %}</td>
 							<td>{{m.preorder}}</td>
-							<td>{{m.csv_data.0}}</td>
-							<td {% if not m.value_ok %}style="background-color:red"{% endif %}>{{m.csv_data.6|floatformat:2}}</td>
+							<td>{{m.csv_data.1|date:"d.m.y"}}</td>
+							<td {% if not m.value_ok %}style="background-color:red"{% endif %}>{{m.csv_data.5}}</td>
 							<td>
 								{% for v in m.invoice_value %}
 									{{v.total|floatformat:2}} {{v.currency}}
@@ -157,8 +157,8 @@
 					{% for m in matches_failure %}
 						<tr>
 							<td>{{m.3}}</td>
-							<td class="entry_date">{{m.0}}</td>
-							<td class="value">{{m.6}}</td>
+							<td class="entry_date">{{m.1|date:"d.m.y"}}</td>
+							<td class="value">{{m.5}}</td>
 							<td><a href="javascript:void(0);" onclick="$(this).parent().parent().next().toggle();if($(this).find('i').attr('class') == 'icon-zoom-in'){$(this).find('i').removeClass('icon-zoom-in');$(this).find('i').addClass('icon-zoom-out')}else{$(this).find('i').removeClass('icon-zoom-out');$(this).find('i').addClass('icon-zoom-in')}" title="Show raw data" alt="Show raw data"><i class="icon-zoom-in"></i></a></td>
 						</tr>
 						<tr style="display:none;">
@@ -167,7 +167,6 @@
 							</td>
 							<td colspan="3">
 								<form action="javascript:void(0)" onsubmit="updateMatches(this)">
-								<!-- {{m.3}} -->
 								<label for="assign">{% trans "Assign to:"%}</label>
 								<select style="width:125px" name="assign">
 									<option value="">{% trans "Select.."%}</option>
