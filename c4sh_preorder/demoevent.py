@@ -95,6 +95,9 @@ EVENT_SUPERVISOR_IPS = ('127.0.0.1', '172.17.0.1',)
 # Minimum amount required to require a billing address
 EVENT_BILLING_ADDRESS_LIMIT = 150.00
 
+# CSV parser module (see preorder/csv_parser/*.py)
+EVENT_CSV_PARSER = "postbank"
+
 #Enables CC payment options when set to True
 EVENT_CC_ENABLE = False
 
