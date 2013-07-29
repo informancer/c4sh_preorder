@@ -93,8 +93,7 @@ def import_csv_view(request):
 			form = CSVForm(request.POST, request.FILES)
 			if form.is_valid():
 
-				# FIXME: make "postbank" a setting
-				rows = csv_parser.parse(request.FILES['csv_file'], "postbank", str(form.cleaned_data['delimiter']))
+				rows = csv_parser.parse(request.FILES['csv_file'], EVENT_CSV_PARSER, str(form.cleaned_data['delimiter']))
 
 				matches_success = []
 				matches_failure = []
