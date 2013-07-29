@@ -396,7 +396,12 @@ def signup_view(request):
 				user.email = signupform.cleaned_data['email']
 
 			user.set_password(signupform.cleaned_data['password'])
-			user.save()
+			try:
+				user.save()
+			except:
+				signup_success = False
+				messages.error(request, _("Something went wrong, please try again."))
+				return render_to_response('signup.html', locals(), context_instance=RequestContext(request))
 
 	return render_to_response('signup.html', locals(), context_instance=RequestContext(request))
 
