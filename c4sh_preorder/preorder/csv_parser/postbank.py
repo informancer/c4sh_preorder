@@ -1,6 +1,6 @@
 import re
 import datetime
-from decimal import Decimal, getcontext
+from decimal import Decimal, getcontext, ROUND_HALF_UP
 import settings
 from . import Status
 
@@ -19,12 +19,13 @@ def parse_row(row):
 
 	date = datetime.datetime.strptime(row[0], "%d.%m.%Y")
 
-	getcontext().prec = 2 # set Decimal precision to 2
+	getcontext().prec = 20 # set Decimal precision to 20
 
 	row[6] = re.sub(' \\x80', '', row[6]) # replacing malicious EUR symbol
 	row[6] = re.sub('\.', '', row[6]) # remove Tausendertrennzeichen (fixes #29)
 	row[6] = re.sub(',', '.', row[6]) # replacing , with . for float formatting
-	row[6] = Decimal(row[6])
+	row[6] = Decimal(row[6]).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
+
 
 	# sometimes people/banks mix up - and whitespaces. Regex to the rescue!
 	reference_hash = re.compile('%s[-\ ]?[a-fA-F0-9]{10}' % settings.EVENT_PAYMENT_PREFIX,re.IGNORECASE).findall(row[3])
@@ -50,6 +51,7 @@ def parse_row(row):
 		reference_hash = []
 		reference_hash.append(row[3])
 
+	reference_hash_only = ""
 	if len(reference_hash) == 1:
 		reference_hash_only = re.compile('[a-fA-F0-9]{10}').findall(reference_hash[0])
 

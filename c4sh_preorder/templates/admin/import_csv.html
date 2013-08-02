@@ -69,15 +69,6 @@
 		   						{% endfor %}
 		        			</div>
 		        		</div>
-						<div class="control-group {% if form.delimiter.errors %}error{% endif %}">
-							<label class="control-label" for="delimiter">{% trans "Delimiter"%}</label>
-							<div class="controls">
-								<input type="text" value="{{form.delimiter.value|default:";"}}" name="delimiter" id="delimiter" />
-		   						{% for e in form.delimiter.errors %}
-									<span class="help-inline">{{e}}</span>
-		   						{% endfor %}
-		        			</div>
-		        		</div>
 						<button type="submit" class="btn">{% trans "Upload and proceed.."%}</button>
 	        		</form>
 	        </div>

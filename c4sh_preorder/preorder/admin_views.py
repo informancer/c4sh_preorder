@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime, os, socket, re, datetime, random, hashlib, csv
-from decimal import Decimal, getcontext
+from decimal import Decimal, getcontext, ROUND_HALF_UP
 from django.core import serializers
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -93,12 +93,10 @@ def import_csv_view(request):
 			form = CSVForm(request.POST, request.FILES)
 			if form.is_valid():
 
-				rows = csv_parser.parse(request.FILES['csv_file'], EVENT_CSV_PARSER, str(form.cleaned_data['delimiter']))
+				rows = csv_parser.parse(request.FILES['csv_file'], EVENT_CSV_PARSER, EVENT_CSV_DELIMITER)
 
 				matches_success = []
 				matches_failure = []
-
-				getcontext().prec = 2
 
 				for row in rows:
 					if row[0] == csv_parser.Status.Success:
@@ -120,7 +118,9 @@ def import_csv_view(request):
 								for iv in simplejson.loads(preorder[0].cached_sum):
 									invoice_value+=iv['total']
 
-								if Decimal(invoice_value) == row[5]:
+								getcontext().prec = 20
+
+								if Decimal(invoice_value).quantize(Decimal('.01'), rounding=ROUND_HALF_UP) == row[5]:
 									# Check if value is correct
 									value_ok = True
 

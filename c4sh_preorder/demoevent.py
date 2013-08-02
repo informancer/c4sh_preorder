@@ -96,7 +96,8 @@ EVENT_SUPERVISOR_IPS = ('127.0.0.1', '172.17.0.1',)
 EVENT_BILLING_ADDRESS_LIMIT = 150.00
 
 # CSV parser module (see preorder/csv_parser/*.py)
-EVENT_CSV_PARSER = "postbank"
+EVENT_CSV_PARSER = "sparkasse"
+EVENT_CSV_DELIMITER = "\t"
 
 #Enables CC payment options when set to True
 EVENT_CC_ENABLE = False
