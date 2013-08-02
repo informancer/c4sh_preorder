@@ -49,7 +49,6 @@ class EmailForm(forms.Form):
 	email = forms.EmailField(required=True)
 
 class CSVForm(forms.Form):
-	delimiter = forms.CharField(min_length=1, max_length=1, required=True)
 	csv_file = forms.FileField()
 
 class PasswordForm(forms.Form):

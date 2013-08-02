@@ -9,7 +9,7 @@ class Status:
 	"""
 	Failure, Success = range(2)
 
-def parse(csv_file, engine, delimiter=";"):
+def parse(csv_file, engine, delimiter):
 	try:
 		parser = importlib.import_module("c4sh_preorder.preorder.csv_parser.%s" % engine)
 	except:
