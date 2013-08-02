@@ -51,6 +51,7 @@ def parse_row(row):
 		reference_hash = []
 		reference_hash.append(row[3])
 
+	reference_hash_only = ""
 	if len(reference_hash) == 1:
 		reference_hash_only = re.compile('[a-fA-F0-9]{10}').findall(reference_hash[0])
 
