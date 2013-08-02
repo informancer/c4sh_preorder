@@ -57,7 +57,7 @@ class PasswordForm(forms.Form):
 	new_password2 = forms.CharField(required=True)
 	def __init__(self, user, *args, **kwargs):
 		self.user = user
-		super(PasswordForm, self).__init__(*args, **kwargs)	
+		super(PasswordForm, self).__init__(*args, **kwargs)
 
 	def clean(self):
 		cleaned_data = self.cleaned_data
@@ -70,7 +70,7 @@ class PasswordForm(forms.Form):
 				raise forms.ValidationError(_("Your password needs to contain at least one number and one character."))
 			if not self.user.check_password(cleaned_data.get('old_password')):
 				raise forms.ValidationError(_("This is not your current password."))
-		
+
 		return cleaned_data
 
 class BillingAddressForm(forms.Form):
