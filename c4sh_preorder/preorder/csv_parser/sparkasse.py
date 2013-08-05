@@ -63,6 +63,6 @@ def parse_row(row):
 		reference_hash_only = re.compile('[a-fA-F0-9]{10}').findall(reference_hash[0])
 
 	if len(reference_hash_only) == 1:
-		return (Status.Success, date, row[7], row[4], reference_hash_only[0], row[5])
+		return (Status.Success, date, row[7].decode('ISO-8859-1').encode('utf-8'), row[4].decode('ISO-8859-1').encode('utf-8'), reference_hash_only[0], row[5])
 	else:
-		return (Status.Failure, date or row[1], row[7], row[4], None, row[5])
+		return (Status.Failure, date or row[1], row[7].decode('ISO-8859-1').encode('utf-8'), row[4].decode('ISO-8859-1').encode('utf-8'), None, row[5])
