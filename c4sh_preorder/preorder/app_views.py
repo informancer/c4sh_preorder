@@ -1,5 +1,5 @@
 # encoding: utf-8
-import datetime, os, socket, re, datetime, random, hashlib
+import datetime, os, socket, re, datetime, random, hashlib, StringIO, Image
 from django.core import serializers
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -8,14 +8,15 @@ from django.http import Http404, HttpResponseServerError, HttpResponseRedirect, 
 from django.template import RequestContext
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from preorder.models import *
-from settings import *
-from preorder.forms import *
-from django.db.models import Q, F
-from preorder.decorators import preorder_check, payload_check
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 from django.template import Context
+from django.db.models import Q, F
+from preorder.models import *
+from preorder.forms import *
+from preorder.decorators import preorder_check, payload_check
+from preorder.bezahlcode_helper import make_bezahlcode_uri
+from settings import *
 ###### TOOLS #######
 
 def get_cart(session_cart):
@@ -379,7 +380,29 @@ def tickets_view(request):
 	except CustomPreorder.DoesNotExist:
 		preorders = []
 
+	if settings.EVENT_BEZAHLCODE_ENABLE:
+		bezahlcode = make_bezahlcode_uri(preorders[0].get_reference_hash(), \
+			preorders[0].get_sale_amount()[0]['total'])
+
 	return render_to_response('tickets.html', locals(), context_instance=RequestContext(request))
+
+@login_required
+def bezahlcode_view(request):
+	if not settings.EVENT_BEZAHLCODE_ENABLE:
+		return HttpResponseNotFound()
+
+	preorders = CustomPreorder.objects.filter(user_id=request.user.pk)
+	if len(preorders) < 1:
+		return HttpResponseServerError()
+
+	import pyqrcode
+	uri = make_bezahlcode_uri(preorders[0].get_reference_hash(), \
+			preorders[0].get_sale_amount()[0]['total'])
+	buf = StringIO.StringIO()
+	qr = pyqrcode.MakeQRImage(uri)
+	img = qr.resize((200,200), Image.ANTIALIAS)
+	img.save(buf, "PNG")
+	return HttpResponse(buf.getvalue(), mimetype="image/png")
 
 @login_required
 def no_view(request):

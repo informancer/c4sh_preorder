@@ -2,7 +2,7 @@
 from django.conf.urls import patterns, include, url
 from django.http import HttpResponse
 from django.contrib import admin
-from c4sh_preorder.settings import MEDIA_ROOT, STATIC_ROOT
+from c4sh_preorder.settings import MEDIA_ROOT, STATIC_ROOT, EVENT_BEZAHLCODE_ENABLE
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -31,6 +31,9 @@ urlpatterns += patterns('c4sh_preorder.preorder.app_views',
     url(r'^print/(?P<preorder_id>(\d+))/(?P<secret>(\w+))/$', 'print_tickets_view', name='print-tickets'),
     url(r'^passbook/(?P<preorder_id>(\d+))/(?P<secret>(\w+))/$', 'passbook_view', name='passbook'),
 )
+
+if EVENT_BEZAHLCODE_ENABLE:
+    urlpatterns += patterns('c4sh_preorder.preorder.app_views', url(r'^tickets/bezahlcode\.png$', 'bezahlcode_view', name='bezahlcode'))
 
 urlpatterns += patterns('',
     url(r'^captcha/', include('captcha.urls')),
