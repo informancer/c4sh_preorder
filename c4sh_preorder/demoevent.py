@@ -62,6 +62,12 @@ EVENT_PAYMENT_DETAILS =  "Chaos Computer Club Ossendorf ltd.\n" + \
  "IBAN: DEFoo\n" + \
  "SWIFT/BIC: Bar"
 
+# Bezahlcode integration, see http://bezahlcode.de for more information
+EVENT_BEZAHLCODE_ENABLE = True
+EVENT_BEZAHLCODE_NAME = "CCCO ltd."
+EVENT_BEZAHLCODE_IBAN = "DE00000000000000000000000" # No spaces
+EVENT_BEZAHLCODE_BIC = "COKSDE33" # No spaces
+
 # Supervisor information
 EVENT_DASHBOARD_TEXT = "Here be important event-related supervisor information.<br />" + \
                        "You can define this text in EVENT_DASHBOARD_TEXT."
