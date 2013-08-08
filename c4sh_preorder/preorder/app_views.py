@@ -380,7 +380,7 @@ def tickets_view(request):
 	except CustomPreorder.DoesNotExist:
 		preorders = []
 
-	if settings.EVENT_BEZAHLCODE_ENABLE:
+	if settings.EVENT_BEZAHLCODE_ENABLE and len(preorders) > 0:
 		bezahlcode = make_bezahlcode_uri(preorders[0].get_reference_hash(), \
 			preorders[0].get_sale_amount()[0]['total'])
 
