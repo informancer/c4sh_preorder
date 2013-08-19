@@ -1,5 +1,5 @@
 c4sh_preorder
 =============
 
-This is a stub for the preorder repository. Actual code will be released shortly.
+This is the preorder software to be used with [c4sh](https://github.com/CCCO/c4sh).
 
