@@ -15,7 +15,7 @@ apt-get -q -y update
 apt-get install -q -y build-essential python python-dev python-setuptools python-pip git zsh screen tmux vim
 
 # certain module dependencies
-apt-get install -q -y libjpeg62-dev zlib1g-dev libfreetype6-dev liblcms1-dev libncurses5-dev libfreetype6 libpng-dev
+apt-get install -q -y libjpeg62-dev zlib1g-dev libfreetype6-dev liblcms1-dev libncurses5-dev libfreetype6 libpng-dev m2crypto
 
 # ghettofix for PIL
 ln -s /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib
