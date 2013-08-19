@@ -506,7 +506,13 @@ def print_tickets_view(request, preorder_id, secret):
 	pdf.add_font(family='dejavu', fname="%sdejavu/DejaVuSans.ttf" % settings.STATIC_ROOT, uni=True)
 	pdf.add_font(family='dejavu', style="B", fname="%sdejavu/DejaVuSans-Bold.ttf" % settings.STATIC_ROOT, uni=True)
 	pdf.add_font(family='dejavu', style="I", fname="%sdejavu/DejaVuSans-ExtraLight.ttf" % settings.STATIC_ROOT, uni=True)
-	font = 'dejavu'
+
+	# FrOSCon
+	pdf.add_font(family='arista', fname="%sarista_2_0/Arista2.0 light.ttf" % settings.STATIC_ROOT, uni=True)
+	pdf.add_font(family='arista', style="B", fname="%sarista_2_0/Arista2.0.ttf" % settings.STATIC_ROOT, uni=True)
+	pdf.add_font(family='arista', style="I", fname="%sarista_2_0/Arista2.0Alternate.ttf" % settings.STATIC_ROOT, uni=True)
+	pdf.add_font(family='arialfroscon', fname="%sarista_2_0/arial_rounded_mt_bold.TTF" % settings.STATIC_ROOT, uni=True)
+	font = 'arista'
 
 	#############################################
 
@@ -532,24 +538,24 @@ def print_tickets_view(request, preorder_id, secret):
 		ticket = position.ticket
 
 		#PDF "header"
-		pdf.image('%s%s' % (settings.STATIC_ROOT, settings.EVENT_LOGO), 15, 15, 200, 96)
+		pdf.image('%s%s' % (settings.STATIC_ROOT, settings.EVENT_LOGO), 15, 15, 200, 52)
 		#pdf.set_font(font,'B',27)
 		#pdf.text(20,50,"%s" % 'SIGINT 2013')
 		pdf.set_font(font,'I',6)
-		pdf.text(110,100,"%s" % 'July 5th - July 7th')
-		pdf.text(110,107,"%s" % 'Mediapark, Cologne, Germany')
-		pdf.text(110,114,"%s" % 'https://sigint.ccc.de/')
+		pdf.text(15,80,"%s" % 'August 24th - August 25th')
+		pdf.text(15,87,"%s" % 'Hochschule Bonn-Rhein-Sieg, Sankt Augustin, Germany')
+		pdf.text(15,94,"%s" % 'https://www.froscon.org/')
 
 		pdf.set_font(font,'I',40)
 
 		# if price > 150, this is an invoice
-		if ticket.price < 150 and ticket.price > 0:
+		if ticket.price < 100 and ticket.price > 0:
 			pass
 			#pdf.text(220,100,"RECEIPT")
-		elif ticket.price >= 150:
-			pdf.text(220,90,"RECEIPT")
+		elif ticket.price >= 100:
+			pdf.text(300,90,"RECEIPT")
 		pdf.set_font(font,'B',40)
-		pdf.text(220,50,"ONLINE TICKET")
+		pdf.text(300,50,"ONLINE TICKET")
 
 		# print billing address - if eligible
 		if ticket.price >= EVENT_BILLING_ADDRESS_LIMIT:
@@ -557,9 +563,9 @@ def print_tickets_view(request, preorder_id, secret):
 
 				from django.utils.encoding import smart_str
 
-				pdf.set_font('Arial','B',13)
+				pdf.set_font(font,'B',13)
 				pdf.text(20,150,"Billing address")
-				pdf.set_font('Arial','',10)
+				pdf.set_font(font,'',10)
 
 				if not billing_address:
 					billing_address = preorder.get_billing_address()
@@ -616,9 +622,9 @@ def print_tickets_view(request, preorder_id, secret):
 
 		## special tickets
 		special_tickets = {
-			'Speaker Ticket': 'SPEAKER',
-			'Booth Operator': 'BOOTH',
-			'Member of the Press': 'PRESS'
+			'Speaker & Shirt': 'SPEAKER',
+			'Exhibitor': 'EXHIBITOR',
+			#'Member of the Press': 'PRESS'
 		}
 		if ticket.name in special_tickets.keys():
 			pdf.set_font(font,'B',72)
@@ -634,7 +640,7 @@ def print_tickets_view(request, preorder_id, secret):
 		delete_files.append('%stmp/%s.jpg' % (settings.STATIC_ROOT, position.uuid))
 
 		# print human readable ticket code
-		pdf.set_font(font,'I',8)
+		pdf.set_font("dejavu",'I',8)
 		pdf.text(23, 790, 'Payment reference: %s-%s' % (settings.EVENT_PAYMENT_PREFIX, preorder.unique_secret[:10]))
 		pdf.text(23, 800, '%s' % position.uuid)
 		pdf.text(23, 810, '%s' % preorder.unique_secret)
@@ -645,7 +651,7 @@ def print_tickets_view(request, preorder_id, secret):
 
 		# print invoice information
 		pdf.set_font(font, '', 15)
-		pdf.set_y(550)
+		pdf.set_y(530)
 		pdf.write(20, '%s' % settings.EVENT_INVOICE_ADDRESS)
 		pdf.set_font(font, '', 10)
 		pdf.set_y(640)
@@ -658,9 +664,9 @@ def print_tickets_view(request, preorder_id, secret):
 		pdf.set_y(720)
 		pdf.set_right_margin(300)
 
-		if ticket.price > 0 and ticket.price < 150:
+		if ticket.price > 0 and ticket.price < 100:
 			pdf.write(10, "Bis zu einem Ticketpreis von 150,00 EUR gilt das Ticket gleichzeitig als Kleinbetragsrechnung im Sinne von § 33 UStDV. Umtausch und Rückgabe ausgeschlossen.")
-		elif ticket.price >= 150:
+		elif ticket.price >= 100:
 			pdf.write(10, "Umtausch und Rückgabe ausgeschlossen.")
 	#are Credit Card payments enabled? If yes, is this a preorder paid by CC?
 	""" commented out for sigint13
