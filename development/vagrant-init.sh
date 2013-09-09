@@ -12,7 +12,12 @@ export LC_ALL=en_US.UTF-8
 apt-get -q -y update
 
 # basic packages
-apt-get install -q -y build-essential python python-dev python-setuptools python-pip git zsh screen tmux vim
+apt-get install -q -y build-essential python python-dev python-setuptools python-pip git zsh screen tmux vim rabbitmq-server
+
+# initialize rabbitmq
+rabbitmqctl add_user vagrant vagrant
+rabbitmqctl add_vhost raring64
+rabbitmqctl set_permissions -p raring64 vagrant ".*" ".*" ".*"
 
 # certain module dependencies
 apt-get install -q -y libjpeg62-dev zlib1g-dev libfreetype6-dev liblcms1-dev libncurses5-dev libfreetype6 libpng-dev python-m2crypto
