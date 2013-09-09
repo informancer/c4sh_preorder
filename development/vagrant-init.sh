@@ -52,7 +52,8 @@ ln -s /vagrant/c4sh_preorder /home/vagrant/
 # copy misc. files
 cp /vagrant/development/files/motd /etc/motd.tail
 
-cd /home/vagrant && sudo -u vagrant git clone https://github.com/CCCO/c4sh
+export HOME=/home/vagrant # this is now neccessary here
+sudo -u vagrant git clone https://github.com/CCCO/c4sh /home/vagrant/c4sh
 
 echo
 echo
