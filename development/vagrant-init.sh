@@ -8,6 +8,9 @@ export LANGUAGE=en_US.UTF-8
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
+echo "127.0.1.1 preorderdev" >>/etc/hosts
+hostname preorderdev
+
 # update repository cache
 apt-get -q -y update
 
@@ -16,8 +19,8 @@ apt-get install -q -y build-essential python python-dev python-setuptools python
 
 # initialize rabbitmq
 rabbitmqctl add_user vagrant vagrant
-rabbitmqctl add_vhost raring64
-rabbitmqctl set_permissions -p raring64 vagrant ".*" ".*" ".*"
+rabbitmqctl add_vhost preorderdev
+rabbitmqctl set_permissions -p preorderdev vagrant ".*" ".*" ".*"
 
 # certain module dependencies
 apt-get install -q -y libjpeg62-dev zlib1g-dev libfreetype6-dev liblcms1-dev libncurses5-dev libfreetype6 libpng-dev python-m2crypto
