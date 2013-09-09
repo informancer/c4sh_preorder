@@ -40,7 +40,7 @@ if ! command -v pip; then
     easy_install -U pip
 fi
 if [[ ! -f /usr/local/bin/virtualenv ]]; then
-    easy_install virtualenv virtualenvwrapper virtualenv-clone
+    pip install virtualenv virtualenvwrapper virtualenv-clone
 fi
 
 # install our Python dependencies
