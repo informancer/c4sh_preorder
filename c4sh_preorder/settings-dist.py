@@ -50,7 +50,7 @@ if socket.gethostname() == "$YOUR_DEPLOYMENT_HOST":
 
 	# import event settings from file demoevent.py
 	from demoevent import *
-elif socket.gethostname() == "precise64":
+elif socket.gethostname() == "preorderdev":
 	DEFAULT_FROM_EMAIL = "foo@bar"
 	DEBUG = True
 	TEMPLATE_DEBUG = DEBUG
@@ -148,7 +148,7 @@ INSTALLED_APPS = (
 	'django.contrib.admindocs',
 	'c4sh_preorder.preorder',
 	'captcha',
-	'south'
+	'south',
 )
 
 if DEBUG:
