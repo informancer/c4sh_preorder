@@ -16,7 +16,7 @@ if (sys.argv[1] in ['runserver', 'runserver_plus']):
         (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': STATIC_ROOT, 'show_indexes': False}),
     )
 
-urlpatterns += patterns('c4sh_preorder.preorder.app_views',
+urlpatterns += patterns('c4sh_preorder.preorder.views',
     url(r'^$', 'default_view', name='default'),
     url(r'^signup/$', 'signup_view', name='signup'),
     url(r'^account/$', 'account_view', name='account'),
@@ -33,7 +33,7 @@ urlpatterns += patterns('c4sh_preorder.preorder.app_views',
 )
 
 if EVENT_BEZAHLCODE_ENABLE:
-    urlpatterns += patterns('c4sh_preorder.preorder.app_views', url(r'^tickets/bezahlcode\.png$', 'bezahlcode_view', name='bezahlcode'))
+    urlpatterns += patterns('c4sh_preorder.preorder.views', url(r'^tickets/bezahlcode\.png$', 'bezahlcode_view', name='bezahlcode'))
 
 urlpatterns += patterns('',
     url(r'^captcha/', include('captcha.urls')),
@@ -41,7 +41,7 @@ urlpatterns += patterns('',
     url(r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain"))
 )
 
-urlpatterns += patterns('c4sh_preorder.preorder.admin_views',
+urlpatterns += patterns('c4sh_preorder.backend.views',
     url(r'^admin/$', 'default_view', name='admin'),
     url(r'^admin/import-csv/$', 'import_csv_view', name='admin-import-csv'),
     url(r'^admin/statistics/$', 'statistics_view', {'section': False}, name='admin-statistics'),

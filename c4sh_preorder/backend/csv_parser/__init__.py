@@ -11,7 +11,7 @@ class Status:
 
 def parse(csv_file, engine, delimiter):
 	try:
-		parser = importlib.import_module("c4sh_preorder.preorder.csv_parser.%s" % engine)
+		parser = importlib.import_module("c4sh_preorder.backend.csv_parser.%s" % engine)
 	except:
 		raise Exception("No valid CSV parser engine found")
 

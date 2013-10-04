@@ -1,5 +1,6 @@
 # encoding: utf-8
-import datetime, os, socket, re, datetime, random, hashlib, StringIO, Image
+import datetime, os, socket, re, datetime, random, hashlib, StringIO
+from PIL import Image
 from django.core import serializers
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
