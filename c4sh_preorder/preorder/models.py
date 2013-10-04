@@ -55,7 +55,10 @@ class CustomPreorderTicket(PreorderTicket):
 			return 0
 
 	def stats_percentage(self):
-		return float(self.stats_preordered()) / float(PreorderPosition.objects.all().count()) * 100
+		try:
+			return float(self.stats_preordered()) / float(PreorderPosition.objects.all().count()) * 100
+		except ZeroDivisionError:
+			return 0
 
 class Tshirt(CustomPreorderTicket):
 	size = models.CharField(verbose_name="T-Shirt Size", max_length=10)
