@@ -90,7 +90,7 @@ EVENT_PAYMENT_ACK_MAIL_TEXT = 	"English version below" + \
  "\n\nSee you on SIGINT12!\nSIGINT Orga"
 
 # Footer note visible on all pages
-EVENT_FOOTER_NOTE = "If you experience any difficulties with our presale, please contact the <a href='mailto:"+EVENT_CONTACT_MAILTO+"'>SIGINT Orga</a>."
+EVENT_FOOTER_NOTE = "If you experience any difficulties with our presale, please contact the <a href='mailto:"+EVENT_CONTACT_MAILTO+"'>30C3 Orga</a>."
 
 # do not allow downloads before this date, YYYY-mm-dd HH:MM:SS
 EVENT_DOWNLOAD_DATE = "2012-09-28 00:00:00"
