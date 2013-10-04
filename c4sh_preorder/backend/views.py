@@ -17,7 +17,7 @@ from django.core.mail import send_mail
 from preorder.models import *
 from preorder.forms import *
 from preorder.decorators import preorder_check
-from preorder import csv_parser
+from backend import csv_parser
 from settings import *
 
 ###### API VIEWS #######

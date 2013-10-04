@@ -87,6 +87,9 @@ elif socket.gethostname() == "preorderdev":
 	# path to c4sh_preorder installation. required for gunicorn
 	sys.path.append('/home/vagrant/c4sh_preorder/')
 
+	sys.path.append('/home/vagrant/')
+
+
 	# import event settings
 	from demoevent import *
 else:
@@ -147,6 +150,7 @@ INSTALLED_APPS = (
 	'django.contrib.admin',
 	'django.contrib.admindocs',
 	'c4sh_preorder.preorder',
+	'c4sh_preorder.backend',
 	'captcha',
 	'south',
 )
