@@ -24,8 +24,8 @@
 				</div>
 				<div class="control-group {% if form.email.errors %}error{% endif %}">
 					<div class="input-prepend">
-					   <span class="add-on"><i class="icon-envelope"></i></span>
-					   <input value="{% if not form.email.value %}{% if request.user.email %}{{request.user.email}}{% endif %}{% else %}{{form.email.value}}{% endif %}" type="text" name="email" class="input-large" id="id_email">
+					   <span class="input-group-addon"><i class="glyphicon-envelope"></i></span>
+					   <input value="{% if not form.email.value %}{% if request.user.email %}{{request.user.email}}{% endif %}{% else %}{{form.email.value}}{% endif %}" type="text" name="email" class="input-lg" id="id_email">
 					</div>
 					{% for e in form.email.errors %}
 						<span class="help-inline">{{e}}</span>
@@ -52,8 +52,8 @@
 				</div>
 				<div class="control-group {% if form.old_password.errors %}error{% endif %}" style="margin-bottom:5px">
 					<div class="input-prepend" style="margin-bottom:0px">
-					   <span class="add-on"><i class="icon-lock"></i></span>
-					   <input value="" type="password" name="old_password" class="input-large" id="id_old_password" style="margin-bottom:0px" placeholder="Current password">
+					   <span class="input-group-addon"><i class="glyphicon-lock"></i></span>
+					   <input value="" type="password" name="old_password" class="input-lg" id="id_old_password" style="margin-bottom:0px" placeholder="Current password">
 					</div>
 					{% for e in form.old_password.errors %}
 						<span class="help-inline" style="margin-bottom:0px">{{e}}</span>
@@ -61,8 +61,8 @@
 				</div>
 				<div class="control-group {% if form.new_password1.errors %}error{% endif %}"  style="margin-bottom:5px">
 					<div class="input-prepend" style="margin-bottom:0px">
-					   <span class="add-on"><i class="icon-lock"></i></span>
-					   <input value="" type="password" name="new_password1" class="input-large" id="id_newpassword1" style="margin-bottom:0px" placeholder="New password">
+					   <span class="input-group-addon"><i class="glyphicon-lock"></i></span>
+					   <input value="" type="password" name="new_password1" class="input-lg" id="id_newpassword1" style="margin-bottom:0px" placeholder="New password">
 					</div>
 					{% for e in form.new_password1.errors %}
 						<span class="help-inline" style="margin-bottom:0px">{{e}}</span>
@@ -70,8 +70,8 @@
 				</div>
 				<div class="control-group {% if form.new_password2.errors %}error{% endif %}" style="margin-bottom:5px">
 					<div class="input-prepend" style="margin-bottom:0px">
-					   <span class="add-on"><i class="icon-lock"></i></span>
-					   <input value="" type="password" name="new_password2" class="input-large" id="id_new_password2" style="margin-bottom:0px" placeholder="..repeat">
+					   <span class="input-group-addon"><i class="glyphicon-lock"></i></span>
+					   <input value="" type="password" name="new_password2" class="input-lg" id="id_new_password2" style="margin-bottom:0px" placeholder="..repeat">
 					</div>
 					{% for e in form.new_password2.errors %}
 						<span class="help-inline" style="margin-bottom:0px">{{e}}</span>

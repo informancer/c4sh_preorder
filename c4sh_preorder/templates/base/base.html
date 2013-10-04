@@ -6,50 +6,74 @@
     <meta name="generator" content="c4sh_preorder, http://ccco.github.com/c4sh/" />
     <title>{% block title %}{{settings.EVENT_NAME_SHORT}} Preorder{% endblock %}</title>
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="{{settings.MEDIA_URL}}css/bootstrap.min.css" rel="stylesheet" media="screen">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <script src="{{settings.MEDIA_URL}}js/html5shiv.js"></script>
+      <script src="{{settings.MEDIA_URL}}js/respond.min.js"></script>
     <![endif]-->
 
-    <link href="{{settings.MEDIA_URL}}css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
       body {
-        padding-top: 60px;
-        padding-bottom: 40px;
+        padding-top: 50px;
       }
-      input[name=captcha_1] {
-        margin-top: -25px;
-        width:100px;
+      #footer {
+        height: 40px;
+        background-color: #f5f5f5;
       }
+      .container .credit {
+        margin: 10px 0;
+      }
+
+      #footer > .container {
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+
+      code {
+      font-size: 80%;
+      }
+      {% block css %}{% endblock %}
     </style>
   </head>
 
   <body>
-
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
-          </a>
-          <a class="brand" href="/">{{settings.EVENT_NAME_SHORT}} Preorder</a>
-          <div class="nav-collapse">
-            {% if request.user.is_authenticated %}
-            <ul class="nav">
-              <li {% if nav == "buy" %}class="active"{% endif %}><a href="{% url "default" %}">{% trans "Preorder Tickets"%}</a></li>
+          </button>
+          <a class="navbar-brand" href="/">{{settings.EVENT_NAME_SHORT}}</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          {% if request.user.is_authenticated %}
+          <ul class="nav navbar-nav">
+            <li {% if nav == "buy" %}class="active"{% endif %}><a href="{% url "default" %}">{% trans "Preorder Tickets"%}</a></li>
               <li {% if nav == "my" %}class="active"{% endif %}><a href="{% url "my-tickets" %}">{% trans "My Tickets"%}</a></li>
               <li {% if nav == "contact" %}class="active"{% endif %}><a href="mailto:{{settings.EVENT_CONTACT_MAILTO}}">{% trans "Contact"%}</a></li>
               {% if request.user.is_superuser %}
-              <li {% if nav == "admin" %}class="active"{% endif %}><a href="{% url "admin" %}"><i class="icon-star icon-white" style="margin-right:5px"></i>{% trans "Admin"%}</a></li>
+              <li {% if nav == "admin" %}class="active"{% endif %}><a href="{% url "admin" %}"><i class="glyphicon glyphicon-star glyphicon-white" style="margin-right:5px"></i>{% trans "Admin"%}</a></li>
               {% endif %}
-            </ul>
-            {% endif %}
-            {% if request.user.is_authenticated %}
-            <p class="navbar-text pull-right">{% trans "Logged in as"%} <a href="{% url "account" %}">{{request.user.username}}</a> <a href="{% url "logout" %}"><i class="icon-off icon-white" style="cursor:pointer;vertical-align:-3px;margin-left:5px;"></i></a></p>
-            {% endif %}
-          </div><!--/.nav-collapse -->
-        </div>
+          </ul>
+          {% endif %}
+          {% if request.user.is_authenticated %}
+          <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{request.user.username}} <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                {# <li><a href="#">{% trans "Change password" %}</a></li> #}
+                <li><a href="{% url "logout" %}">{% trans "Logout" %}</a></li>
+              </ul>
+            </li>
+          </ul>
+          {% endif %}
+        </div><!--/.nav-collapse -->
       </div>
     </div>
 
@@ -68,17 +92,19 @@
       {% block content %}
       {% endblock %}
 
-      <hr>
+     <div id="footer">
+      <div class="container">
+        <p class="text-muted credit">{{settings.EVENT_FOOTER_NOTE|safe}}</p>
+      </div>
+    </div>
 
-      <footer>
-        <p>{{settings.EVENT_FOOTER_NOTE|safe}}</p>
-      </footer>
 
     </div> <!-- /container -->
 
     <script src="{{settings.MEDIA_URL}}js/jquery.js"></script>
     <script src="{{settings.MEDIA_URL}}js/jquery-1.7.1.js"></script>
     <script src="{{settings.MEDIA_URL}}js/main.js"></script>
+    <script src="{{settings.MEDIA_URL}}js/bootstrap.min.js"></script>
 
     {% block javascript %}{%endblock%}
   </body>
