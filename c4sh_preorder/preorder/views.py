@@ -425,9 +425,9 @@ def signup_view(request):
 			except:
 				signup_success = False
 				messages.error(request, _("Something went wrong, please try again."))
-				return render_to_response('signup.html', locals(), context_instance=RequestContext(request))
+				return render_to_response('default.html', locals(), context_instance=RequestContext(request))
 
-	return render_to_response('signup.html', locals(), context_instance=RequestContext(request))
+	return render_to_response('default.html', locals(), context_instance=RequestContext(request))
 
 @login_required
 def account_view(request):
