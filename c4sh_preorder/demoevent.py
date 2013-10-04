@@ -16,16 +16,16 @@ ALLOWED_HOSTS = [
 ]
 
 # Short name of your event
-EVENT_NAME_SHORT = 'SIGINT12'
+EVENT_NAME_SHORT = '30C3'
 
 # Unix-friendly name of your event (lowercase, a-z0-9)
-EVENT_NAME_UNIX = 'sigint12'
+EVENT_NAME_UNIX = '30c3'
 
 # Official name of your event
-EVENT_NAME = 'SIGINT12'
+EVENT_NAME = '30th Chaos Communication Congress'
 
 #Official logo for your event, located inside STATIC_ROOT. Will be used for PDF output of tickets and stuff
-EVENT_LOGO = 'sigint13.png'
+EVENT_LOGO = '30c3.png'
 
 
 # Postal address of host (for invoices)
@@ -72,7 +72,7 @@ EVENT_BEZAHLCODE_BIC = "COKSDE33" # No spaces
 EVENT_DASHBOARD_TEXT = "Here be important event-related supervisor information.<br />" + \
                        "You can define this text in EVENT_DASHBOARD_TEXT."
 # Event description
-EVENT_DESCRIPTION_TEXT = "SIGINT is an international hacker conference.\n"
+EVENT_DESCRIPTION_TEXT = "December 27<sup>th</sup>-30<sup>th</sup>, 2013 – Hamburg, Germany\n"
 
 # Text for payment ack notification email
 EVENT_PAYMENT_ACK_MAIL_TEXT = 	"English version below" + \
