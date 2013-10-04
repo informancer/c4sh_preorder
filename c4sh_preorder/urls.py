@@ -47,7 +47,7 @@ urlpatterns += patterns('c4sh_preorder.backend.views',
     url(r'^admin/statistics/$', 'statistics_view', {'section': False}, name='admin-statistics'),
     url(r'^admin/statistics/charts/$', 'statistics_view', {'section': 'charts'}, name='admin-statistics-charts'),
 
-    url(r'^admin/api/get-preorder.json$', 'api_get_preorder_view', name='admin-api-get-preorder')
+    url(r'^admin/api/get-preorder\.json$', 'api_get_preorder_view', name='admin-api-get-preorder')
 )
 
 urlpatterns += patterns('django.contrib.auth.views',
