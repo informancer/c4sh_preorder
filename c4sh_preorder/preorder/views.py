@@ -41,38 +41,46 @@ def get_cart(session_cart):
 @payload_check
 def default_view(request):
 	if request.user.is_authenticated():
-		nav = 'buy'
-		quota_raw = PreorderQuota.objects.filter(Q(sold__lt=F('quota')), Q(ticket__active=True), Q(ticket__deleted=False),
-			# check if we only sell this ticket in a certain time span
-			(
-				# nope, just sell it
-				Q(ticket__limit_timespan=False)
-				| # or..
-				(
-					Q(ticket__valid_from__lte=datetime.datetime.now(),
-					ticket__valid_until__gte=datetime.datetime.now())
-				)
-			)).order_by('ticket__sortorder')
-		quota = []
-		tshirt_quota = []
-
-		for q in quota_raw:
-			if len([item for item in quota if item['ticket'] == q.ticket]) == 0:
-
-				try:
-					tshirt = Tshirt.objects.get(pk=q.ticket.pk)
-					tshirt_quota.append({'quota': q, 'tshirt': tshirt})
-					continue
-				except Tshirt.DoesNotExist:
-					ticket = q.ticket
-
-				quota.append({'quota': q, 'ticket': ticket})
-
-		cart = get_cart(request.session.get('cart', False))
-		return render_to_response('buy.html', locals(), context_instance=RequestContext(request))
+		return buy_view(request)
 
 	signupform = SignupForm()
 	return render_to_response('default.html', locals(), context_instance=RequestContext(request))
+
+@login_required
+@payload_check
+def buy_view(request):
+	nav = 'buy'
+	quota_raw = PreorderQuota.objects.filter(Q(sold__lt=F('quota')), Q(ticket__active=True), Q(ticket__deleted=False),
+		# check if we only sell this ticket in a certain time span
+		(
+			# nope, just sell it
+			Q(ticket__limit_timespan=False)
+			| # or..
+			(
+				Q(ticket__valid_from__lte=datetime.datetime.now(),
+				ticket__valid_until__gte=datetime.datetime.now())
+			)
+		)).order_by('ticket__sortorder')
+	quota = []
+	tshirt_quota = {}
+
+	for q in quota_raw:
+		if len([item for item in quota if item['ticket'] == q.ticket]) == 0:
+
+			try:
+				tshirt = Tshirt.objects.get(pk=q.ticket.pk)
+				tshirt_quota[tshirt.pk] = q.pk
+				continue
+			except Tshirt.DoesNotExist:
+				ticket = q.ticket
+
+			quota.append({'quota': q, 'ticket': ticket})
+
+	# we don't give a shit about merchandize quotas.
+	merchandise = Merchandise.objects.filter(active=True)
+
+	cart = get_cart(request.session.get('cart', False))
+	return render_to_response('buy.html', locals(), context_instance=RequestContext(request))
 
 @login_required
 @preorder_check

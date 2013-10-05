@@ -1,100 +1,171 @@
 {% extends "base/base.html" %}
-{% load multiply i18n %}
+{% load get_index multiply i18n %}
+
+{% block css %}
+.form-token {
+  max-width: 350px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-token .form-control {
+  position: relative;
+  font-size: 16px;
+  height: auto;
+  padding: 10px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.form-token .form-control:focus {
+  z-index: 2;
+}
+.form-token input[type="text"] {
+  margin-bottom: 1px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+{% endblock %}
 
 {% block content %}
 
       <div class="row">
-        <div class="span12">
-          {% if quota or tshirt_quota %}
+        <div class="{% if cart %}col-md-7{% else %}col-md-12{% endif %}">
+          {% if quota or merchandise %}
             <h2>{% trans "Preorder tickets"%}</h2>
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>{% trans "Ticket type"%}</th>
+                    <th>{% trans "Price"%}</th>
+                    <th style="width:150px;">{% trans "Add to cart" %}</th>
+                  </tr>
+                </thead>
+                <tbody>
 
-            <table class="table table-striped table-bordered">
-              <tr>
-                <th>{% trans "Ticket type"%}</th>
-                <th>{% trans "Price"%}</th>
-                <th style="width:135px"></th>
-              </tr>
-
-              {% for q in quota %}
-                <tr>
-                  <td style="vertical-align:middle;">{{q.ticket.name}}</td>
-                  <td style="vertical-align:middle;">{{q.ticket.price}} {{q.ticket.currency}} {% trans "(incl. tax)"%}</td>
-                  <td style="text-align:right;">
-                    <form class="form-search" style="margin:0" action="{% url "cart-add" %}" method="post">
-                      {% csrf_token %}
-                      <input type="hidden" value="{{q.quota.pk}}" name="quota" />
-                      <input type="text" class="input" style="width:25px;" name="amount" value="1">
-                      <button type="submit" class="btn-success btn">{% trans "Add to cart"%}</button>
-                    </form>
-                  </td>
-                </tr>
-              {% endfor %}
-
-              {% if tshirt_quota %}
-              <tr>
-                <td style="vertical-align:middle;">{% trans "Merchandise" %}</td>
-                <td style="vertical-align:middle;">
-                  <form class="form-search" style="margin:0" action="{% url "cart-add" %}" method="post">
-                  <select name="quota">
-                    {% for t in tshirt_quota %}
-                      <option value="{{t.quota.pk}}">{{t.tshirt.type}} {{t.tshirt.size}} {{t.tshirt.price}} {{t.tshirt.currency}} {% trans "(incl. tax)"%}</option>
-                    {% endfor %}
-                  </select>
-                </td>
-                <td style="text-align:right;">
-                  <div class="form-search">
-                    {% csrf_token %}
-                    <input type="text" class="input" style="width:25px;" name="amount" value="1">
-                    <button type="submit" class="btn-success btn">{% trans "Add to cart"%}</button>
-                  </div>
+                {% for q in quota %}
+                  <form class="form-search" style="margin:0" action="{% url "cart-add" %}" method="post" role="form">
+                  <tr>
+                    <td style="vertical-align:middle;">
+                      <span style="font-size: larger;">{{q.ticket.name}}</span>
+                    </td>
+                    <td style="vertical-align:middle;">
+                      {{q.ticket.price}} {{q.ticket.currency}} {% trans "(incl. tax)"%}
+                    </td>
+                    <td>
+                        {% csrf_token %}
+                        <input type="hidden" value="{{q.quota.pk}}" name="quota" />
+                        <input type="hidden" value="1" name="amount" />
+                      <button type="submit" class="btn-success btn btn-block">{% trans "Add to cart"%}</button>
+                    </td>
+                  </tr>
                   </form>
-                  </td>
-              </tr>
-              {% endif %}
+                {% endfor %}
+                </tbody>
+              </table>
 
-            </table>
+              {% if merchandise %}
+              <h2>{% trans "Merchandise" %}</h2>
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>{% trans "Type"%}</th>
+                    <th>{% trans "Size &amp; Price"%}</th>
+                    <th style="width:150px">{% trans "Add to cart" %}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for m in merchandise %}
+                  <tr>
+                    <td style="vertical-align:middle;">
+                      <span style="font-size: larger;">{{m.name}}</span>
+                      {% if m.detail_url %}
+                        <br /><small><a href="{{m.detail_url}}">more details</a></small>
+                      {% endif %}
+                    </td>
+                    <td style="vertical-align:middle;">
+                      <form class="form-search" style="margin:0" action="{% url "cart-add" %}" method="post">
+                      <select name="quota" class="form-control">
+                        {% for t in m.tshirt_set.all %}
+                          <option value="{{ tshirt_quota|get_index:t.pk }}">{{t.tshirt.type}} {{t.tshirt.size}} {{t.tshirt.price}} {{t.tshirt.currency}} {% trans "(incl. tax)"%}</option>
+                        {% endfor %}
+                      </select>
+                    </td>
+                    <td style="text-align:right;">
+                      <div class="form-search">
+                        {% csrf_token %}
+                        <input type="hidden" name="amount" value="1" />
+                        <button type="submit" class="btn-success btn btn-block">{% trans "Add to cart"%}</button>
+                      </div>
+                      </form>
+                      </td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+              {% endif %}
+            </div>
           <p>Hackers under the age of 18 years qualify for the <em>Up-and-coming</em> ticket. Hackers under the age of 12 years get in for free while accompanied by an adult.</p>
           {% else %}
-            <h2>{% trans "Sorry! Ticket quota exceeded."%}</h2>
             <div class="alert alert-warning">
-             {% trans "We're sorry, but we have no more tickets left. Please wait for the next quota update."%}
+             {% trans "There are no tickets on sale right now." %}
             </div>
           {% endif %}
           </div>
-        </div>
 
-        <div class="row">
-          <div class="span12">
-            {% if cart %}
+          {% if cart %}
+          <div class="col-md-5">
               <h2>Your cart</h2>
 
-              <table class="table table-striped table-bordered">
+              <table class="table">
                 <tr>
-                  <th style="width:50px">{% trans "Amount"%}</th>
-                  <th>{% trans "Ticket type"%}</th>
-                  <th>{% trans "Price per ticket"%}</th>
-                  <th>{% trans "Total price"%}</th>
+                  <th style="max-width:50px">#</th>
+                  <th>{% trans "Ticket"%}</th>
+                  <th>{% trans "Price"%}</th>
+                  <th>{% trans "Total"%}</th>
                   <th style="width:150px"></th>
                 </tr>
 
                 {% for c in cart %}
                   <tr>
                     <td style="vertical-align:middle;">{{c.amount}}x</td>
-                    <td style="vertical-align:middle;">{{c.quota.ticket}}</td>
-                    <td style="vertical-align:middle;">{{c.quota.ticket.price}} {{c.quota.ticket.currency}} {% trans "(incl. tax)"%}</td>
-                    <td style="vertical-align:middle;">{{c.quota.ticket.price|multiply:c.amount|floatformat:2}} {{c.quota.ticket.currency}} {% trans "(incl. tax)"%}</td>
+                    <td style="vertical-align:middle;">{{c.quota.ticket.name}}</td>
+                    <td style="vertical-align:middle;">{{c.quota.ticket.price}}&nbsp;{{c.quota.ticket.currency}}<br /><small>{% trans "(incl. tax)"%}</small></td>
+                    <td style="vertical-align:middle;">{{c.quota.ticket.price|multiply:c.amount|floatformat:2}}&nbsp;{{c.quota.ticket.currency}}<br/><small>{% trans "(incl. tax)"%}</small></td>
                     <td style="text-align:right;">
-                      <form class="form-search" style="margin:0;float:left;" action="{% url "cart-amend" %}" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" value="{{c.quota.pk}}" name="quota" />
-                        <input type="text" class="input" style="width:25px;" name="amount" value="{{c.amount}}">
-                        <button type="submit" class="btn-primary btn">{% trans "Edit"%}</button>
+
+                        <div class="input-group">
+                          <span class="input-group-btn">
+                            <form action="{% url "cart-amend" %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{c.quota.pk}}" name="quota" />
+                            <input type="hidden" name="amount" value="{{c.amount|add:1}}" />
+                            <button type="submit" class="btn-success btn btn-sm">
+                              <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                            </form>
+                          </span>
+                          <span class="input-group-btn">
+                            <form action="{% url "cart-amend" %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{c.quota.pk}}" name="quota" />
+                            <input type="hidden" name="amount" value="{{c.amount|add:"-1"}}" />
+                            <button type="submit" class="btn-danger btn btn-sm">
+                              <span class="glyphicon glyphicon-minus"></span>
+                            </button>
+                            </form>
+                          </span>
+                        </div>
                       </form>
+                      <!--
                       <form class="form-search" style="margin:0;float:right;" action="{% url "cart-delete" %}" method="post">
                         {% csrf_token %}
                         <input type="hidden" value="{{c.quota.pk}}" name="quota" />
-                        <button type="submit" class="btn-danger btn">{% trans "Delete"%}</button>
+                        <button type="submit" class="btn-danger btn btn-lg">
+                          <span class="glyphicon glyphicon-minus"></span> {% trans "Delete"%}
+                        </button>
                       </form>
+                      -->
                     </td>
                   </tr>
                 {% empty %}
@@ -108,27 +179,30 @@
               <form action="{% url "checkout" %}" method="get" style="float:right;">
                 <button type="submit" class="btn btn-success"><i class="icon-shopping-cart icon-white"></i> {% trans "Proceed to checkout"%}</button>
               </form>
-            {% endif %}
         </div>
+        {% endif %}
       </div>
 
       <div class="row">
         <div class="span4">
-          <h3>Golden Token</h3>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Golden Token</h3>
+            </div>
+            <div class="panel-body">
+              <p>If you have received a Golden Token from us, please enter it here in order to redeem it.</p>
           {% if not cart %}
-            <form class="well form-search" style="text-align: center;" method="POST" action="{% url "redeem-token" %}">
+            <form class="form-token" method="POST" action="{% url "redeem-token" %}" role="form">
               {% csrf_token %}
-              <input name="token" type="text" class="input-medium" placeholder="{% trans "Golden Token"%}">
-              <button type="submit" class="btn btn-primary">{% trans "Redeem"%}</button>
-              <div style="font-size:85%; padding: 10px 10px 0 10px;">
-                If you have received a Golden Token from us, please enter it here in order to redeem it.
-              </div>
+              <input name="token" type="text" class="form-control" placeholder="{% trans "Golden Token"%}">
+              <button type="submit" class="btn btn-primary btn-block">{% trans "Redeem"%}</button>
             </form>
           {% else %}
-            <div class="alert alert-info">
+            <div class="alert alert-warning">
               {% trans "Clear your cart in order to redeem a token. Any account can either redeem a token or place a regular preorder."%}
             </div>
           {% endif %}
+        </div>
         </div>
       </div>
 {% endblock %}
