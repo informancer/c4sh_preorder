@@ -183,6 +183,8 @@
         {% endif %}
       </div>
 
+      <div class="clearfix hide-sm" style="height: 40px;"></div>
+
       <div class="row">
         <div class="span4">
           <div class="panel panel-default">
@@ -190,7 +192,9 @@
               <h3 class="panel-title">Golden Token</h3>
             </div>
             <div class="panel-body">
-              <p>If you have received a Golden Token from us, please enter it here in order to redeem it.</p>
+              <p>
+                {% trans "If you are a conference speaker, member of the press or otherwise invited guest, we may have given you a Golden Token. You can redeem this here:" %}
+              </p>
           {% if not cart %}
             <form class="form-token" method="POST" action="{% url "redeem-token" %}" role="form">
               {% csrf_token %}
