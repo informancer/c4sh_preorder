@@ -4,7 +4,7 @@ from django import template
 
 register = template.Library()
 
-@register.filter 
+@register.filter
 def get_index(value, arg):
 	try:
 		return value[arg]
