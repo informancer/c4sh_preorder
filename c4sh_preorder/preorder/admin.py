@@ -18,6 +18,7 @@ class CustomPreorderAdmin(admin.ModelAdmin):
 
 admin.site.register(PreorderQuota)
 admin.site.register(CustomPreorderTicket)
+admin.site.register(Merchandise)
 admin.site.register(Tshirt)
 admin.site.register(CustomPreorder, CustomPreorderAdmin)
 admin.site.register(GoldenToken)
