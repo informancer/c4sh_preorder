@@ -88,7 +88,7 @@
       {% endblock %}
 
       {% for message in messages %}
-      <div class="alert alert-{{message.tags}}">
+      <div class="alert {% if message.tags == "error" %}alert-danger{% endif %}{% if message.tags == "success" %}alert-success{% endif %}{% if message.tags == "info" %}alert-info{% endif %}">
         {{message|safe}}
       </div>
       {% endfor %}
