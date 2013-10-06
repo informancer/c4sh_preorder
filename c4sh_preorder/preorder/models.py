@@ -65,6 +65,7 @@ class Merchandise(models.Model):
 	name = models.CharField(verbose_name="Product Name", max_length=255)
 	preview_image = models.URLField(verbose_name="URL to preview image", blank=True, null=True)
 	detail_url = models.URLField(verbose_name="Link to detail page", blank=True, null=True)
+	detail_text = models.CharField(verbose_name="Short detail text (will be linked if detail URL is set", max_length=200, blank=True, null=True)
 	active = models.BooleanField(verbose_name="On Sale?", default=True)
 
 	def __unicode__(self):

@@ -79,9 +79,33 @@
                   <tr>
                     <td style="vertical-align:middle;">
                       <span style="font-size: larger;">{{m.name}}</span>
-                      {% if m.detail_url %}
-                        <br /><small><a href="{{m.detail_url}}">more details</a></small>
+                      {% spaceless %}
+                      {% if m.detail_url or m.detail_text %}
+                        <br /><small>
+                        {% if m.detail_url %}
+                          <a href="{{m.detail_url}}">
+                        {% endif %}
+                        {% if m.detail_url %}
+                          {% if m.detail_text %}
+                            {# url given + text given #}
+                            {{m.detail_text}}
+                          {% else %}
+                            {# url given + no text given #}
+                            more details
+                          {% endif %}
+                        {% else %}
+                          {# no url given #}
+                          {% if m.detail_text %}
+                            {# no url given + text given #}
+                            {{m.detail_text}}
+                          {% endif %}
+                        {% endif %}
+                        {% if m.detail_url %}
+                          </a>
+                        {% endif %}
+                        </small>
                       {% endif %}
+                      {% endspaceless %}
                     </td>
                     <td style="vertical-align:middle;">
                       <form class="form-search" style="margin:0" action="{% url "cart-add" %}" method="post">

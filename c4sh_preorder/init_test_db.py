@@ -67,9 +67,9 @@ q1 = PreorderQuota(
 	quota = 200
 	).save()
 
-m_shirt = Merchandise(name="T-Shirt", active=True)
+m_shirt = Merchandise(name="T-Shirt", detail_text="design coming soon", active=True)
 m_shirt.save()
-m_hoodie = Merchandise(name="Hoodie", active=True)
+m_hoodie = Merchandise(name="Hoodie", detail_url="https://events.ccc.de/", detail_text="foobar", active=True)
 m_hoodie.save()
 
 t2 = Tshirt(
