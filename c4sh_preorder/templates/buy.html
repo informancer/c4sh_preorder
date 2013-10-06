@@ -88,7 +88,7 @@
                         {% if m.detail_url %}
                           {% if m.detail_text %}
                             {# url given + text given #}
-                            {{m.detail_text}}
+                            {{m.detail_text|safe}}
                           {% else %}
                             {# url given + no text given #}
                             more details
@@ -97,7 +97,7 @@
                           {# no url given #}
                           {% if m.detail_text %}
                             {# no url given + text given #}
-                            {{m.detail_text}}
+                            {{m.detail_text|safe}}
                           {% endif %}
                         {% endif %}
                         {% if m.detail_url %}
