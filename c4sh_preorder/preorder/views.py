@@ -4,7 +4,7 @@ from PIL import Image
 from django.core import serializers
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, logout
+from django.contrib.auth import authenticate, login, logout
 from django.http import Http404, HttpResponseServerError, HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.template import RequestContext
 from django.contrib import messages
@@ -434,6 +434,12 @@ def signup_view(request):
 				signup_success = False
 				messages.error(request, _("Something went wrong, please try again."))
 				return render_to_response('default.html', locals(), context_instance=RequestContext(request))
+
+			# This might look redundant, but this avoids us having to do user.backend hacks.
+			user = authenticate(username=signupform.cleaned_data['username'], password=signupform.cleaned_data['password'])
+			login(request, user)
+			messages.success(request, _("Welcome! You are now registered and ready to order tickets."))
+			return redirect("default")
 
 	return render_to_response('default.html', locals(), context_instance=RequestContext(request))
 
