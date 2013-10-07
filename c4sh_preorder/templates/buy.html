@@ -64,6 +64,10 @@
                 </tbody>
               </table>
 
+              {% if settings.EVENT_TICKET_INFO %}
+              <p>{{settings.EVENT_TICKET_INFO|safe}}</p>
+              {% endif %}
+
               {% if merchandise %}
               <h2>{% trans "Merchandise" %}</h2>
               <table class="table table-bordered table-striped">
@@ -129,7 +133,6 @@
               </table>
               {% endif %}
             </div>
-          <p>Hackers under the age of 18 years qualify for the <em>Up-and-coming</em> ticket. Hackers under the age of 12 years get in for free while accompanied by an adult.</p>
           {% else %}
             <div class="alert alert-warning">
              {% trans "There are no tickets on sale right now." %}

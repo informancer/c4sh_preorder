@@ -74,6 +74,9 @@ EVENT_DASHBOARD_TEXT = "Here be important event-related supervisor information.<
 # Event description
 EVENT_DESCRIPTION_TEXT = "December 27<sup>th</sup>-30<sup>th</sup>, 2013 – Hamburg, Germany\n"
 
+# Additional information about tickets, to be shown below the ticket selection
+EVENT_TICKET_INFO = "Hackers under the age of 18 years qualify for the <em>Up-and-coming</em> ticket. Hackers under the age of 12 years get in for free while accompanied by an adult."
+
 # Text for payment ack notification email
 EVENT_PAYMENT_ACK_MAIL_TEXT = 	"English version below" + \
  "\n------------------------------- " + \
