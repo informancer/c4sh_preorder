@@ -210,30 +210,33 @@
         {% endif %}
       </div>
 
-      <div class="clearfix hide-sm" style="height: 40px;"></div>
+      <div class="clearfix hide-sm" style="height: 20px;"></div>
 
       <div class="row">
-        <div class="span4">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
           <div class="panel panel-default">
             <div class="panel-heading">
               <h3 class="panel-title">Golden Token</h3>
             </div>
             <div class="panel-body">
+              {% if not cart %}
               <p>
                 {% trans "If you are a conference speaker, member of the press or otherwise invited guest, we may have given you a Golden Token. You can redeem this here:" %}
               </p>
-          {% if not cart %}
-            <form class="form-token" method="POST" action="{% url "redeem-token" %}" role="form">
-              {% csrf_token %}
-              <input name="token" type="text" class="form-control" placeholder="{% trans "Golden Token"%}">
-              <button type="submit" class="btn btn-primary btn-block">{% trans "Redeem"%}</button>
-            </form>
-          {% else %}
-            <div class="alert alert-warning">
-              {% trans "Clear your cart in order to redeem a token. Any account can either redeem a token or place a regular preorder."%}
+              <form class="form-token" method="POST" action="{% url "redeem-token" %}" role="form">
+                {% csrf_token %}
+                <input name="token" type="text" class="form-control" placeholder="{% trans "Golden Token"%}">
+                <button type="submit" class="btn btn-primary btn-block">{% trans "Redeem"%}</button>
+             </form>
+              {% else %}
+              <div class="alert alert-warning">
+                {% trans "Clear your cart in order to redeem a token. Any account can either redeem a token or place a regular preorder."%}
+              </div>
+              {% endif %}
             </div>
-          {% endif %}
+          </div>
         </div>
-        </div>
+        <div class="col-md-3"></div>
       </div>
 {% endblock %}
