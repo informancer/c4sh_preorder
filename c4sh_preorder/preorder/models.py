@@ -1,9 +1,40 @@
 from django.db import models
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 from c4sh.preorder.models import PreorderTicket, PreorderPosition, Preorder
 from django.db.models import Q
 from django.conf import settings
 import datetime
+
+class UserProfile(models.Model):
+	user = models.OneToOneField(User, primary_key=True, related_name='user_profile')
+
+	# Hack to avoid IntegrityErrors while using Django forms to create users
+	def save(self, *args, **kwargs):
+		if not self.pk:
+			try:
+				p = UserProfile.objects.get(user=self.user)
+				self.pk = p.pk
+			except UserProfile.DoesNotExist:
+				pass
+		super(UserProfile, self).save(*args, **kwargs)
+
+	@property
+	def has_preorders(self):
+		return (CustomPreorder.objects.filter(user_id=self.user.pk).count() >= 1)
+
+	def get_preorders(self):
+		try:
+			return CustomPreorder.objects.filter(user_id=request.user.pk)
+		except CustomPreorder.DoesNotExist:
+			return []
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+	""" Automatically create UserProfile object for new users """
+	if created:
+		UserProfile.objects.get_or_create(user=instance)
 
 class GoldenToken(models.Model):
 	token = models.CharField(max_length=50, null=False, blank=False, verbose_name="Token", unique=True)
