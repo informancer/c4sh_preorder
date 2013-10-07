@@ -134,8 +134,10 @@ MIDDLEWARE_CLASSES = (
 	'django.middleware.transaction.TransactionMiddleware', # <- important
 	'django.middleware.csrf.CsrfViewMiddleware',
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
-	'django.contrib.messages.middleware.MessageMiddleware',
+	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+X_FRAME_OPTIONS = 'DENY'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 ROOT_URLCONF = 'c4sh_preorder.urls'
