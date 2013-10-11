@@ -204,7 +204,9 @@
                 {% endfor %}
               </table>
               <form action="{% url "checkout" %}" method="get" style="float:right;">
-                <button type="submit" class="btn btn-success"><i class="icon-shopping-cart icon-white"></i> {% trans "Proceed to checkout"%}</button>
+                <button type="submit" class="btn btn-primary btn-lg">
+                  <span class="glyphicon glyphicon-shopping-cart glyphicon-white"></span> {% trans "Proceed to checkout"%}
+                </button>
               </form>
         </div>
         {% endif %}
