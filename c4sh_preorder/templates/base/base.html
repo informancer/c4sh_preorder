@@ -58,8 +58,11 @@
         <div class="navbar-collapse collapse">
           {% if request.user.is_authenticated %}
           <ul class="nav navbar-nav">
-            <li {% if nav == "buy" %}class="active"{% endif %}><a href="{% url "default" %}">{% trans "Preorder Tickets"%}</a></li>
+            {% if not request.user.get_profile.has_preorders %}
+              <li {% if nav == "buy" %}class="active"{% endif %}><a href="{% url "default" %}">{% trans "Ticket Shop"%}</a></li>
+            {% else %}
               <li {% if nav == "my" %}class="active"{% endif %}><a href="{% url "my-tickets" %}">{% trans "My Tickets"%}</a></li>
+            {% endif %}
               <li {% if nav == "contact" %}class="active"{% endif %}><a href="mailto:{{settings.EVENT_CONTACT_MAILTO}}">{% trans "Contact"%}</a></li>
               {% if request.user.is_superuser %}
               <li {% if nav == "admin" %}class="active"{% endif %}><a href="{% url "admin" %}"><i class="glyphicon glyphicon-star glyphicon-white" style="margin-right:5px"></i>{% trans "Admin"%}</a></li>
