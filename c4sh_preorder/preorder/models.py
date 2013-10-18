@@ -30,6 +30,9 @@ class UserProfile(models.Model):
 		except CustomPreorder.DoesNotExist:
 			return []
 
+	def __unicode__(self):
+		return "Profile of %s" % self.user.username
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
 	""" Automatically create UserProfile object for new users """
