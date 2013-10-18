@@ -219,10 +219,18 @@
               <p>
                 {% trans "If you are a conference speaker, member of the press or otherwise invited guest, we may have given you a Golden Token. You can redeem this here:" %}
               </p>
-              <form class="form-token" method="POST" action="{% url "redeem-token" %}" role="form">
+              <form class="form-token form-horizontal" method="POST" action="{% url "redeem-token" %}" role="form">
                 {% csrf_token %}
-                <input name="token" type="text" class="form-control" placeholder="{% trans "Golden Token"%}">
-                <button type="submit" class="btn btn-primary btn-block">{% trans "Redeem"%}</button>
+                <div class="form-group">
+                  <div class="col-xs-12">
+                    <input name="token" type="text" class="form-control" placeholder="{% trans "Golden Token"%}">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary btn-block">{% trans "Redeem"%}</button>
+                  </div>
+                </div>
              </form>
             </div>
           </div>
