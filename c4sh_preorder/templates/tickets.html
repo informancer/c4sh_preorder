@@ -4,12 +4,20 @@
 
 {% block content %}
       <div class="row">
-
         <div class="col-md-5">
-          <h1>{% trans "Payment information"%}</h1>
+          <div class="panel panel-primary" style="min-height:350px;">
+            <div class="panel-heading">
+              <h3 class="panel-title">{% trans "Payment information" %}</h3>
+            </div>
+            <div class="panel-body">
           {% if preorders %}
-            <p>{% trans "Thanks for your preorder. Please transfer the total amount (see right) to:"%}</p>
-            <pre>{{settings.EVENT_PAYMENT_DETAILS}}<br /><br />{% for p in preorders %}Reference: <strong>{{settings.EVENT_PAYMENT_PREFIX}}-{{p.get_reference_hash}}</strong><br />{% endfor %}</pre>
+            <p>{% trans "Thanks for your preorder. Please transfer the total amount to:"%}</p>
+            <pre>{% spaceless %}
+              {{settings.EVENT_PAYMENT_DETAILS}}<br /><br />
+              {% for p in preorders %}
+                <div>Reference: <ref>{{settings.EVENT_PAYMENT_PREFIX}}-{{p.get_reference_hash}}</ref></div>
+                <div>Amount: {{p.get_sale_amount.0.total|floatformat:2}} {{p.get_sale_amount.0.currency}}</div>
+              {% endfor %}{% endspaceless %}</pre>
             {% if bezahlcode %}
             <div id="bezahlcode-container">
               <div id="bezahlcode-offer" style="font-size: small;">
@@ -20,123 +28,141 @@
               </div>
             </div>
             {% endif %}
-	    {% if settings.EVENT_CC_ENABLE %}
-	    <p>{% blocktrans with cc_fee_percentage=settings.EVENT_CC_FEE_PERCENTAGE cc_fee_fixed=settings.EVENT_CC_FEE_FIXED%} please pay via bank transfer if possible. if you need to use your credit card, we'll charge additional fees of {{cc_fee_percentage}}% + {{cc_fee_fixed}}€ per transaction. {% endblocktrans %}</p>
-	    {% url "saferpay-pay" as cc_payment_url %}
-	    <a href="{{cc_payment_url}}" class="btn"><i class="icon-ok icon-shopping-cart"></i> {% trans "Pay via credit card" %}</a>
-	    {% endif %}
-	  {% else %}
+      	    {% if settings.EVENT_CC_ENABLE %}
+      	    <p>{% blocktrans with cc_fee_percentage=settings.EVENT_CC_FEE_PERCENTAGE cc_fee_fixed=settings.EVENT_CC_FEE_FIXED%} please pay via bank transfer if possible. if you need to use your credit card, we'll charge additional fees of {{cc_fee_percentage}}% + {{cc_fee_fixed}}€ per transaction. {% endblocktrans %}</p>
+      	    {% url "saferpay-pay" as cc_payment_url %}
+      	    <a href="{{cc_payment_url}}" class="btn"><i class="icon-ok icon-shopping-cart"></i> {% trans "Pay via credit card" %}</a>
+      	    {% endif %}
+      	  {% else %}
             {% trans "Here be payment information after you preordered tickets."%}
           {% endif %}
+            </div>
+          </div>
         </div>
 
         <div class="col-md-7">
-          <h2>{% trans "Your preorders"%}</h2>
-            <table class="table table-striped table-bordered">
-               <tr>
-                <th style="width:100px">#</th>
-                <th>{% trans "Payment required"%}</th>
-                <th style="width:50px">{% trans "Paid?"%}</th>
-              </tr>
-              {% for p in preorders %}
-                <tr>
-                  <td>
-                    {{p}}
-                  </td>
-                  <td style="vertical-align:middle;">
-                  {% if p.paid %}<s>{% endif %}
-                  {{p.payment_required_until|date:"d/m/Y"}} ({{p.payment_required_until|timedelta}})</s>
-                  {% if p.paid %}</s>{% endif %}
-                  </td>
-                  <td style="vertical-align:middle;">{% if p.paid %}<i style="margin-top:1px" class="icon-ok"></i> {% trans "Yes"%}{% else %}<i style="margin-top:1px" class="icon-remove"></i> {% trans "No"%}{% endif %}</td>
+          <div class="panel panel-default" style="min-height:350px;">
+            <div class="panel-heading">
+              <h3 class="panel-title">{% trans "Your preorders" %}</h3>
+            </div>
+            <div class="panel-body">
+              <table class="table table-striped table-bordered">
+                 <tr>
+                  <th style="width:100px">#</th>
+                  <th>{% trans "Payment required by" %}</th>
+                  <th style="width:50px">{% trans "Paid?" %}</th>
                 </tr>
-                <tr>
-                  <td colspan="3" style="text-align:right">
-                    {% if p.paid %}
-                      {% if settings.EVENT_PASSBOOK_ENABLE %}
-                      <a class="btn btn-primary" href="{% url "passbook" p.pk p.unique_secret %}">{% trans "Download Passbook files"%}</a>
+                {% for p in preorders %}
+                  <tr>
+                    <td>
+                      {{p}}
+                    </td>
+                    <td style="vertical-align:middle;">
+                    {% if p.paid %}<s>{% endif %}
+                    {{p.payment_required_until|date:"d/m/Y"}} ({{p.payment_required_until|timedelta}})</s>
+                    {% if p.paid %}</s>{% endif %}
+                    </td>
+                    <td style="vertical-align:middle;">
+                      {% if p.paid %}
+                      <div class="text-success">
+                        <span style="margin-top:1px" class="glyphicon glyphicon-ok"></span> {% trans "Yes" %}
+                      </div>
+                      {% else %}
+                      <div class="text-danger">
+                        <span style="margin-top:1px" class="glyphicon glyphicon-remove"></span> {% trans "No" %}
+                      </div>
                       {% endif %}
-                      <a class="btn btn-primary" href="{% url "print-tickets" p.pk p.unique_secret %}">{% trans "Download tickets / invoice"%}</a>
-                    {% else %}
-                      {% trans "You'll be able to download your ticket here as soon as it is marked as paid." %}
-                    {% endif %}
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="3">
-                    <table class="table table-condensed" style="margin:0">
-                      <tr>
-                        <th style="width:50px">{% trans "Amount"%}</th>
-                        <th>{% trans "Ticket type"%}</th>
-                        <th style="width:130px">{% trans "Price per ticket"%}</th>
-                        <th style="width:155px">{% trans "Price"%}</th>
-                      </tr>
-                      {% for t in p.get_tickets %}
-                      <tr>
-                        <td style="vertical-align:middle;">{{t.amount}}x</td>
-                        <td style="vertical-align:middle;">{{t.t.name}}</td>
-                        <td style="vertical-align:middle;">
-                          {% if p.paid and p.paid_via == 'goldentoken' %}
-                            Golden token
-                          {% else %}
-                            {{t.t.price|floatformat:2}} {{t.t.currency}} (incl. tax)
-                          {% endif %}
-                        </td>
-                        <td style="vertical-align:middle;">
-                          {% if p.paid and p.paid_via == 'goldentoken' %}
-                            Golden token
-                          {% else %}
-                            {{t.t.price|multiply:t.amount|floatformat:2}} {{t.t.currency}} (incl. tax)
-                          {% endif %}
-                        </td>
-                      </tr>
-                      {% endfor %}
-                      {% for t in p.get_sale_amount %}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3" style="text-align:right">
+                      {% if p.paid %}
+                        {% if settings.EVENT_PASSBOOK_ENABLE %}
+                        <a class="btn btn-primary" href="{% url "passbook" p.pk p.unique_secret %}">{% trans "Download Passbook files"%}</a>
+                        {% endif %}
+                        <a class="btn btn-primary" href="{% url "print-tickets" p.pk p.unique_secret %}">{% trans "Download tickets / invoice"%}</a>
+                      {% else %}
+                        {% trans "You'll be able to download your ticket here as soon as it is marked as paid." %}
+                      {% endif %}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3">
+                      <table class="table table-condensed" style="margin:0">
                         <tr>
-                          <th colspan="3" style="vertical-align:top;text-align:right">{% trans "Total"%}</th>
-                          <th>
-                            {% if p.paid and p.paid_via == 'goldentoken' %}
-                            Golden token
-                            {% else %}
-                              <span style="border-bottom: 3px double;">{{t.total|floatformat:2}} {{t.currency}}</span> (incl. tax)
-                              <div style="margin-top:5px;line-height:0.9em;">
-                              {% for tax in t.taxes %}
-                                <span style="font-size:x-small;">incl. {{tax.rate}}% taxes: {{tax.amount|floatformat:2}} {{t.currency}}</span><br />
-                              {% endfor %}
-                              </div>
-                            {% endif %}
-                          </th>
+                          <th style="width:50px">{% trans "Amount"%}</th>
+                          <th>{% trans "Ticket type"%}</th>
+                          <th style="width:130px">{% trans "Unit price"%}</th>
+                          <th style="width:155px">{% trans "Total"%}</th>
                         </tr>
-                      {% endfor %}
-                    </table>
-                  </td>
-                </tr>
+                        {% for t in p.get_tickets %}
+                        <tr>
+                          <td style="vertical-align:middle;">{{t.amount}}x</td>
+                          <td style="vertical-align:middle;">{{t.t.name}}</td>
+                          <td style="vertical-align:middle;">
+                            {% if p.paid and p.paid_via == 'goldentoken' %}
+                              Golden token
+                            {% else %}
+                              {{t.t.price|floatformat:2}} {{t.t.currency}}<br/><small>(incl. tax)</small>
+                            {% endif %}
+                          </td>
+                          <td style="vertical-align:middle;">
+                            {% if p.paid and p.paid_via == 'goldentoken' %}
+                              Golden token
+                            {% else %}
+                              {{t.t.price|multiply:t.amount|floatformat:2}} {{t.t.currency}}<br/><small>(incl. tax)</small>
+                            {% endif %}
+                          </td>
+                        </tr>
+                        {% endfor %}
+                        {% for t in p.get_sale_amount %}
+                          <tr>
+                            <th colspan="3" style="vertical-align:top;text-align:right">{% trans "Total"%}</th>
+                            <th>
+                              {% if p.paid and p.paid_via == 'goldentoken' %}
+                              Golden token
+                              {% else %}
+                                <span style="border-bottom: 3px double;">{{t.total|floatformat:2}} {{t.currency}}</span>
+                                <div style="margin-top:5px;line-height:0.9em;">
+                                {% for tax in t.taxes %}
+                                  <span style="font-size:x-small;">incl. {{tax.rate}}% taxes: {{tax.amount|floatformat:2}} {{t.currency}}</span><br />
+                                {% endfor %}
+                                </div>
+                              {% endif %}
+                            </th>
+                          </tr>
+                        {% endfor %}
+                      </table>
+                    </td>
+                  </tr>
 
-                {% if p.get_billing_address %}
-                <tr>
-                  <th colspan="1" style="vertical-align:top;">{% trans "Billing address" %}</th>
-                  <td colspan="4" style="background-color:#fff">
-                    {% if p.get_billing_address.company %}
-                    {{p.get_billing_address.company}} <br />
-                    {% endif %}
-                    {{p.get_billing_address.firstname}} {{p.get_billing_address.lastname}} <br />
-                    {{p.get_billing_address.address1}} {% if p.get_billing_address.address2 %}<br />
-                    {{p.get_billing_address.address2}} {% endif %} <br />
-                    {{p.get_billing_address.zip}} {{p.get_billing_address.city}} <br />
-                    {{p.get_billing_address.country}}<br/>
-                    <span style="font-size: 85%">If your billing address is incorrect, please <a href="mailto:{{settings.EVENT_CONTACT_MAILTO}}?subject=Billing+address+incorrect">contact us</a>.</span>
-                  </td>
-                </tr>
-                {% endif %}
+                  {% if p.get_billing_address %}
+                  <tr>
+                    <th colspan="1" style="vertical-align:top;">{% trans "Billing address" %}</th>
+                    <td colspan="4" style="background-color:#fff">
+                      {% if p.get_billing_address.company %}
+                      {{p.get_billing_address.company}} <br />
+                      {% endif %}
+                      {{p.get_billing_address.firstname}} {{p.get_billing_address.lastname}} <br />
+                      {{p.get_billing_address.address1}} {% if p.get_billing_address.address2 %}<br />
+                      {{p.get_billing_address.address2}} {% endif %} <br />
+                      {{p.get_billing_address.zip}} {{p.get_billing_address.city}} <br />
+                      {{p.get_billing_address.country}}<br/>
+                      <span style="font-size: 85%">If your billing address is incorrect, please <a href="mailto:{{settings.EVENT_CONTACT_MAILTO}}?subject=Billing+address+incorrect">contact us</a>.</span>
+                    </td>
+                  </tr>
+                  {% endif %}
 
-              {% empty %}
-                <tr>
-                  <td colspan="3">
-                    {% trans "You have no preorders yet."%}
-                  </td>
-                </tr>
-              {% endfor %}
-            </table>
-         </div>
+                {% empty %}
+                  <tr>
+                    <td colspan="3">
+                      {% trans "You have no preorders yet."%}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
 {% endblock %}

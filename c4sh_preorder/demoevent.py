@@ -52,15 +52,15 @@ EVENT_VENUE_PAYLOAD = 3000
 EVENT_CONTACT_MAILTO = "orga@tld"
 
 # Prefix for bank transfer references
-EVENT_PAYMENT_PREFIX = "SIGINT13"
+EVENT_PAYMENT_PREFIX = "30C3"
 
 # Bank details for payment
 EVENT_PAYMENT_DETAILS =  "Chaos Computer Club Ossendorf ltd.\n" + \
- "Institut: Ehrenfelder Bank AG\n" + \
+ "Bank: Ehrenfelder Bank AG\n" + \
  "BLZ: 10000000\n" + \
- "Kto: 1\n" + \
- "IBAN: DEFoo\n" + \
- "SWIFT/BIC: Bar"
+ "Kto: 1234567890\n" + \
+ "IBAN: DE23100000001234567890\n" + \
+ "SWIFT/BIC: DEH3RPD"
 
 # Bezahlcode integration, see http://bezahlcode.de for more information
 EVENT_BEZAHLCODE_ENABLE = True
