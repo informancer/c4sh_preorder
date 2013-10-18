@@ -108,6 +108,7 @@ USE_L10N = True
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
+AUTH_PROFILE_MODULE = 'preorder.UserProfile'
 
 STATICFILES_FINDERS = (
 	'django.contrib.staticfiles.finders.FileSystemFinder',
