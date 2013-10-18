@@ -17,89 +17,86 @@
       </div>
       <div class="row">
         <div class="col-md-12">
-            <table class="table table-striped table-bordered">
+          <table class="table table-striped table-bordered">
+            <tr>
+              <th style="width:50px">{% trans "Amount"%}</th>
+              <th>{% trans "Ticket type"%}</th>
+              <th style="width:200px">{% trans "Price per ticket"%}</th>
+              <th style="width:200px">{% trans "Price"%}</th>
+            </tr>
+
+            {% for c in cart %}
               <tr>
-                <th style="width:50px">{% trans "Amount"%}</th>
-                <th>{% trans "Ticket type"%}</th>
-                <th style="width:200px">{% trans "Price per ticket"%}</th>
-                <th style="width:200px">{% trans "Price"%}</th>
+                <td style="vertical-align:middle;">{{c.amount}}x</td>
+                <td style="vertical-align:middle;">{{c.quota.ticket.name}}</td>
+                <td style="vertical-align:middle;">{{c.quota.ticket.price|floatformat:2}} {{c.quota.ticket.currency}} (incl. {{c.quota.ticket.tax_rate}}% tax)<br />
+                <span style="font-size:x-small">{{c.quota.ticket.price|tax_calc:c.quota.ticket.tax_rate|floatformat:2}} {{c.quota.ticket.currency}} (excl. {{c.quota.ticket.tax_rate}}% tax)</span></td>
+                <td style="vertical-align:middle;">{{c.quota.ticket.price|multiply:c.amount|floatformat:2}} {{c.quota.ticket.currency}} (incl. {{c.quota.ticket.tax_rate}}% tax)<br />
+                <span style="font-size:x-small">{{c.quota.ticket.price|multiply:c.amount|tax_calc:c.quota.ticket.tax_rate|floatformat:2}} {{c.quota.ticket.currency}} (excl. {{c.quota.ticket.tax_rate}}% tax)</span></td>
               </tr>
+            {% empty %}
+              <tr>
+                <td colspan="3">
+                  {% trans "Your cart is empty."%}"
+                </td>
+              </tr>
+            {% endfor %}
 
-              {% for c in cart %}
-                <tr>
-                  <td style="vertical-align:middle;">{{c.amount}}x</td>
-                  <td style="vertical-align:middle;">{{c.quota.ticket.name}}</td>
-                  <td style="vertical-align:middle;">{{c.quota.ticket.price|floatformat:2}} {{c.quota.ticket.currency}} (incl. {{c.quota.ticket.tax_rate}}% tax)<br />
-                  <span style="font-size:x-small">{{c.quota.ticket.price|tax_calc:c.quota.ticket.tax_rate|floatformat:2}} {{c.quota.ticket.currency}} (excl. {{c.quota.ticket.tax_rate}}% tax)</span></td>
-                  <td style="vertical-align:middle;">{{c.quota.ticket.price|multiply:c.amount|floatformat:2}} {{c.quota.ticket.currency}} (incl. {{c.quota.ticket.tax_rate}}% tax)<br />
-                  <span style="font-size:x-small">{{c.quota.ticket.price|multiply:c.amount|tax_calc:c.quota.ticket.tax_rate|floatformat:2}} {{c.quota.ticket.currency}} (excl. {{c.quota.ticket.tax_rate}}% tax)</span></td>
-                </tr>
-              {% empty %}
-                <tr>
-                  <td colspan="3">
-                    {% trans "Your cart is empty. :-("%}"
-                  </td>
-                </tr>
-              {% endfor %}
+            {% for t in totals %}
+              <tr>
+                <th colspan="3" style="vertical-align:top;text-align:right">Total</th>
+                <th>
+                  {{t.total|floatformat:2}} {{t.currency}}<br />
+                  {% for tax in t.taxes %}
+                    <span style="font-size:x-small">{% blocktrans with tax_rate=tax.rate%}incl. {{tax_rate}}% taxes:{%endblocktrans%} {{tax.amount|floatformat:2}} {{t.currency}}</span><br />
+                  {% endfor %}
 
-              {% for t in totals %}
-                <tr>
-                  <th colspan="3" style="vertical-align:top;text-align:right">Total</th>
-                  <th>
-                    {{t.total|floatformat:2}} {{t.currency}}<br />
-                    {% for tax in t.taxes %}
-                      <span style="font-size:x-small">{% blocktrans with tax_rate=tax.rate%}incl. {{tax_rate}}% taxes:{%endblocktrans%} {{tax.amount|floatformat:2}} {{t.currency}}</span><br />
-                    {% endfor %}
-
-                  </th>
-                </tr>
-              {% endfor %}
-            </table>
-          </div>
+                </th>
+              </tr>
+            {% endfor %}
+          </table>
         </div>
-        <div class="row">
-          <div class="col-md-12" style="text-align: right;">
-            <form action="{% url "order" %}" method="POST" role="form">
-              {% if single_ticket_over_limit %}
-                {% include "billingaddress_form.html" %}
-                <br style="clear:both;" />
-              {% endif %}
-              {% csrf_token %}
-                {% if single_ticket_over_limit %}
-                <div style="float:left;margin-right: 30px;margin-top:0px;">
-                  <label class="checkbox">
-                    <input name="without_billingaddress" value="yes" type="checkbox"> {% trans "Proceed without billing address" %}<br />
-                    <small style="font-size:11px;">{% trans "You will still be able to provide your billing address when printing your tickets." %}</small>
-                  </label>
+      </div>
+      <form action="{% url "order" %}" method="POST" role="form">
+      {% csrf_token %}
+      <div class="row">
+      {% if single_ticket_over_limit %}
+        <div class="col-md-9">
+          {% include "billingaddress_form.html" %}
+        </div>
+      {% else %}
+        <div class="col-md-9"></div>
+      {% endif %}
+        <div class="col-xs-3" style="text-align: right;">
+          <button type="submit" class="btn btn-success btn-lg"><span class="glyphicon glyphicon-ok glyphicon-white"></span> {% trans "Place binding order"%}</button>
+        </div>
+      </div>
+      </form>
+      {% else %}
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+              <div class="panel panel-danger">
+                <div class="panel-heading">
+                  <h3 class="panel-title">{% trans "Your cart is empty."%}</h3>
                 </div>
-                {% endif %}
-                <button type="submit" class="btn btn-success btn-lg"><span class="glyphicon glyphicon-ok glyphicon-white"></span> {% trans "Place binding order"%}</button>
-
-            </form>
-          {% else %}
-          <div class="col-md-12">
-            <div class="row">
-              <div class="col-md-3"></div>
-              <div class="col-md-6">
-                <div class="panel panel-danger">
-                  <div class="panel-heading">
-                    <h3 class="panel-title">{% trans "Your cart is empty."%}</h3>
-                  </div>
-                  <div class="panel-body">
-                    <p class="text-danger">
-                      {% trans "You do not have any items in your cart." %}
-                    </p>
-                    <a href="{% url "default" %}" class="btn btn-primary btn-lg btn-block">
-                      <span class="glyphicon glyphicon-white glyphicon-road"></span>
-                      Proceed to Ticket Store
-                    </a>
-                  </div>
+                <div class="panel-body">
+                  <p class="text-danger">
+                    {% trans "You do not have any items in your cart." %}
+                  </p>
+                  <a href="{% url "default" %}" class="btn btn-primary btn-lg btn-block">
+                    <span class="glyphicon glyphicon-white glyphicon-road"></span>
+                    Proceed to Ticket Store
+                  </a>
                 </div>
               </div>
-              <div class="col-md-3"></div>
             </div>
-          {% endif %}
-         </div>
+            <div class="col-md-3"></div>
+          </div>
+        </div>
       </div>
+      {% endif %}
       <div class="clearfix hide-sm" style="height: 20px;"></div>
 {% endblock %}
