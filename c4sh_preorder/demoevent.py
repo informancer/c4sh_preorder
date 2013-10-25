@@ -150,3 +150,7 @@ background@2x.png -- 360x440px, gets blurred automatically
 logo.png -- 160x50px
 logo@2x.png -- 320x100px
 """
+
+# Friends settings
+EVENT_FRIENDS_ENABLED = True
+EVENT_FRIENDS_TICKET_PREFIX = "Friends_"

@@ -1,0 +1,80 @@
+{% extends "base/base.html" %}
+{% load get_index multiply i18n %}
+
+{% block content %}
+      <div class="row">
+        <div class="col-md-6">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">{% trans "Application" %}</h3>
+            </div>
+            <div class="panel-body">
+              <p>
+                <pre style="text-align:left;">{{ application.text }}</pre>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="row">
+
+            <div class="col-md-12">
+              <div class="panel panel-success">
+                <div class="panel-heading">
+                  <h3 class="panel-title">{% trans "Approve application" %}</h3>
+                </div>
+                <div class="panel-body">
+                  <p>
+                    {% trans "The applicant will be informed that his application has been approved. He also will have a preorder with the selected ticket added." %}
+                  </p>
+
+                  <form class="form-token form-horizontal" method="POST" action="{% url "friends-review" application.token %}" role="form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                      <div class="col-xs-12">
+                        <select name="ticket" class="form-control">
+                          {% for ticket in tickets %}
+                            <option value="{{ticket.pk}}">{{ticket.name}} ({{ticket.price}} {{ticket.currency}})</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-xs-12">
+                        <input type="hidden" name="option" value="approve" />
+                        <button type="submit" class="btn btn-success btn-block">{% trans "Approve"%}</button>
+                      </div>
+                    </div>
+                 </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="panel panel-danger">
+                <div class="panel-heading">
+                  <h3 class="panel-title">{% trans "Reject application" %}</h3>
+                </div>
+                <div class="panel-body">
+                  <p>
+                    {% trans "The applicant will be informed that his application has been rejected." %}
+                  </p>
+
+                  <form class="form-token form-horizontal" method="POST" action="{% url "friends-review" application.token %}" role="form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                      <div class="col-xs-12">
+                        <input type="hidden" name="option" value="reject" />
+                        <button type="submit" class="btn btn-danger btn-block">{% trans "Reject"%}</button>
+                      </div>
+                    </div>
+                 </form>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+{% endblock %}

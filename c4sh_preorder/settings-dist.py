@@ -135,6 +135,7 @@ MIDDLEWARE_CLASSES = (
 	'django.middleware.transaction.TransactionMiddleware', # <- important
 	'django.middleware.csrf.CsrfViewMiddleware',
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'django.contrib.messages.middleware.MessageMiddleware',
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
@@ -154,6 +155,7 @@ INSTALLED_APPS = (
 	'django.contrib.admindocs',
 	'c4sh_preorder.preorder',
 	'c4sh_preorder.backend',
+	'c4sh_preorder.friends',
 	'captcha',
 	'south',
 )
