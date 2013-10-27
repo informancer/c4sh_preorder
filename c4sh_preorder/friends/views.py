@@ -13,6 +13,7 @@ from django.utils import simplejson
 from django.utils.translation import ugettext as _
 from django.template import Context
 from django.db.models import Q, F
+from django.core.mail import send_mail
 from preorder.models import *
 from preorder.forms import *
 from friends.models import *
@@ -48,11 +49,11 @@ def friends_review(request, secret):
 			application.status = 'rejected'
 			application.save()
 
+			send_mail('Friends application rejected', "Dear %s\n\nyour friends ticket application has been rejected." % (application.user.username), EVENT_C4SH_SUPPORT_CONTACT, [application.user.email], fail_silently=False)
+
 			messages.success(request, _('The application has been successfully rejected.'))
 			return HttpResponseRedirect(reverse("default"))
 		elif request.POST.get('option') == 'approve':
-			# TODO: set state
-
 			# create preorder with given ticket
 			try:
 				ticket = PreorderTicket.objects.get(pk=int(request.POST.get('ticket')), name__istartswith=settings.EVENT_FRIENDS_TICKET_PREFIX)
@@ -90,7 +91,7 @@ def friends_review(request, secret):
 			application.status = 'approved'
 			application.save()
 
-			# TODO: send email
+			send_mail('Friends application approved', "Dear %s\n\nyour friends ticket application has been approved.\n\nA preorder with the appropriate ticket has been automatically created for you - please find it in the preorder system." % (application.user.username), EVENT_C4SH_SUPPORT_CONTACT, [application.user.email], fail_silently=False)
 
 			messages.success(request, _('The application has been successfully approved.'))
 			return HttpResponseRedirect(reverse("default"))
@@ -111,24 +112,29 @@ def friends_apply(request):
 
 	if not request.user.email:
 		messages.error(request, _('In order to apply for a Friends ticket, you need to set up an email address so we can contact you in case of further questions and inform you about the status of your application.'))
-		return HttpResponseRedirect(reverse("account"))
+		return HttpResponseRedirect(reverse('account'))
 
 	try:
 		has_application = FriendsApplication.objects.get(user=request.user)
 	except FriendsApplication.DoesNotExist:
 		has_application = False
 
-	if request.POST.get("application"):
+	if request.POST.get('application'):
 			form = FriendsApplicationForm(request.POST)
 			if form.is_valid():
 				# do something
 				if not has_application:
 					application = FriendsApplication(user=request.user, datetime=datetime.datetime.now(), text=form.cleaned_data['application'], token=hashlib.sha1(str(random.random())).hexdigest())
 					application.save()
-					has_application = True
+					has_application = application
+
+					if request.is_secure():
+						protocol = 'https://'
+					else:
+						protocol = 'http://'
+
+					send_mail('Friends application received', "Dear friends ticket  review team,\na new application has been received.\n\nPlease proceed with approving or declining it at the following URL:\n\n%s%s%s" % (protocol, request.get_host(), reverse('friends-review', args=[application.token])), EVENT_C4SH_SUPPORT_CONTACT, [settings.EVENT_FRIENDS_EMAIL], fail_silently=False)
 
 					messages.success(request, _('We have received your application and will inform you about status changes via email. Thanks.'))
-
-					# TODO: send email to $reviewer
 
 	return render_to_response('friends/apply.html', locals(), context_instance=RequestContext(request))
