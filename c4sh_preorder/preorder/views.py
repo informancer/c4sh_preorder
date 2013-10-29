@@ -50,7 +50,6 @@ def default_view(request):
 @login_required
 @payload_check
 def buy_view(request):
-
 	try:
 		has_application = FriendsApplication.objects.get(user=request.user)
 	except FriendsApplication.DoesNotExist:

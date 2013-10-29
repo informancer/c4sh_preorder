@@ -3,7 +3,7 @@ import datetime, os, socket, re, datetime, random, hashlib, StringIO
 from PIL import Image
 from django.core import serializers
 from django.shortcuts import render_to_response, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import authenticate, login, logout
 from django.http import Http404, HttpResponseServerError, HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.template import RequestContext
@@ -26,9 +26,9 @@ import random
 if not settings.EVENT_FRIENDS_ENABLED:
 	raise Exception("Friends application is not for this event enabled!")
 
-
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def friends_review(request, secret):
-
 	application = get_object_or_404(FriendsApplication, token=secret)
 
 	if application.status != "waiting":
@@ -44,15 +44,13 @@ def friends_review(request, secret):
 
 	if request.POST:
 		if request.POST.get('option') == 'reject':
-			# TODO: send email
-
 			application.status = 'rejected'
 			application.save()
 
-			send_mail('Friends application rejected', "Dear %s\n\nyour friends ticket application has been rejected." % (application.user.username), EVENT_C4SH_SUPPORT_CONTACT, [application.user.email], fail_silently=False)
+			send_mail('[%s] Friends application rejected' % settings.EVENT_NAME_SHORT, "Hello %s,\n\nyour friends ticket application has been rejected. Sorry!\n\nThe event orga" % (application.user.username), EVENT_C4SH_SUPPORT_CONTACT, [application.user.email], fail_silently=False)
 
 			messages.success(request, _('The application has been successfully rejected.'))
-			return HttpResponseRedirect(reverse("default"))
+			return redirect("default")
 		elif request.POST.get('option') == 'approve':
 			# create preorder with given ticket
 			try:
@@ -65,7 +63,7 @@ def friends_review(request, secret):
 			preorder_count = CustomPreorder.objects.filter(user_id=application.user.pk)
 			if len(preorder_count) != 0:
 				messages.error(request, _('The user already has a preorder, therefore the request has been cancelled.'))
-				return HttpResponseRedirect(request.META['HTTP_REFERER'])
+				return redirect("default")
 
 			# create Preorder
 			preorder = CustomPreorder(
@@ -80,10 +78,11 @@ def friends_review(request, secret):
 			)
 			preorder.save()
 
-			position = PreorderPosition(preorder=preorder, ticket=ticket)
 			from uuid import uuid4
-			position.uuid = str(uuid4())
-			position.save()
+			for i in range(int(request.POST.get('amount', 1))):
+				position = PreorderPosition(preorder=preorder, ticket=ticket)
+				position.uuid = str(uuid4())
+				position.save()
 
 			preorder.cached_sum = simplejson.dumps(preorder.get_sale_amount())
 			preorder.save()
@@ -91,10 +90,10 @@ def friends_review(request, secret):
 			application.status = 'approved'
 			application.save()
 
-			send_mail('Friends application approved', "Dear %s\n\nyour friends ticket application has been approved.\n\nA preorder with the appropriate ticket has been automatically created for you - please find it in the preorder system." % (application.user.username), EVENT_C4SH_SUPPORT_CONTACT, [application.user.email], fail_silently=False)
+			send_mail('[%s] Friends application approved' % settings.EVENT_NAME_SHORT, "Hello %s,\n\nyour friends ticket application has been approved.\n\nA preorder with the appropriate ticket has been automatically created for you -- please find it in the preorder system.\n\nThe event orga" % (application.user.username), EVENT_C4SH_SUPPORT_CONTACT, [application.user.email], fail_silently=False)
 
 			messages.success(request, _('The application has been successfully approved.'))
-			return HttpResponseRedirect(reverse("default"))
+			return redirect("default")
 
 
 	return render_to_response('friends/review.html', locals(), context_instance=RequestContext(request))
@@ -107,12 +106,12 @@ def friends_apply(request):
 	# check if user already has a preorder
 	preorder_count = CustomPreorder.objects.filter(user_id=request.user.pk)
 	if len(preorder_count) != 0:
-		messages.error(request, _('You cannot apply for a Friends ticket because you already set up a preorder.'))
-		return HttpResponseRedirect(reverse('default'))
+		messages.error(request, _('You cannot apply for a Friends ticket because you already have a preorder.'))
+		return redirect("default")
 
 	if not request.user.email:
 		messages.error(request, _('In order to apply for a Friends ticket, you need to set up an email address so we can contact you in case of further questions and inform you about the status of your application.'))
-		return HttpResponseRedirect(reverse('account'))
+		return redirect("account")
 
 	try:
 		has_application = FriendsApplication.objects.get(user=request.user)
@@ -133,7 +132,8 @@ def friends_apply(request):
 					else:
 						protocol = 'http://'
 
-					send_mail('Friends application received', "Dear friends ticket  review team,\na new application has been received.\n\nPlease proceed with approving or declining it at the following URL:\n\n%s%s%s" % (protocol, request.get_host(), reverse('friends-review', args=[application.token])), EVENT_C4SH_SUPPORT_CONTACT, [settings.EVENT_FRIENDS_EMAIL], fail_silently=False)
+					send_mail('[%s] Friends application received' % settings.EVENT_NAME_SHORT, "Dear friends ticket review team,\na new application has been received.\n\nPlease proceed using the following URL:\n\n%s%s%s" % (protocol, request.get_host(), reverse('friends-review', args=[application.token])), EVENT_C4SH_SUPPORT_CONTACT, [settings.EVENT_FRIENDS_EMAIL], fail_silently=False)
+					# TODO: userinfo
 
 					messages.success(request, _('We have received your application and will inform you about status changes via email. Thanks.'))
 

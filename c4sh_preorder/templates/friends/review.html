@@ -10,6 +10,9 @@
             </div>
             <div class="panel-body">
               <p>
+                <strong>From:</strong> {{application.user.username}} &lt;{{application.user.email}}&gt;
+              </p>
+              <p>
                 <pre style="text-align:left;">{{ application.text }}</pre>
               </p>
             </div>
@@ -26,13 +29,16 @@
                 </div>
                 <div class="panel-body">
                   <p>
-                    {% trans "The applicant will be informed that his application has been approved. He also will have a preorder with the selected ticket added." %}
+                    {% trans "The applicant will be informed that their application has been approved. We will automatically create a preorder with the selected ticket for them." %}
                   </p>
 
                   <form class="form-token form-horizontal" method="POST" action="{% url "friends-review" application.token %}" role="form">
                     {% csrf_token %}
                     <div class="form-group">
-                      <div class="col-xs-12">
+                      <div class="col-xs-3">
+                        <input type="number" name="amount" class="form-control" value="1" style="width:100%"/>
+                      </div>
+                      <div class="col-xs-9">
                         <select name="ticket" class="form-control">
                           {% for ticket in tickets %}
                             <option value="{{ticket.pk}}">{{ticket.name}} ({{ticket.price}} {{ticket.currency}})</option>

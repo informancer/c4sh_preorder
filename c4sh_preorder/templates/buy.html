@@ -230,7 +230,7 @@
                 </div>
                 <div class="form-group">
                   <div class="col-xs-12">
-                    <button type="submit" class="btn btn-primary btn-block">{% trans "Redeem"%}</button>
+                    <button type="submit" class="btn btn-default btn-block">{% trans "Redeem"%}</button>
                   </div>
                 </div>
              </form>
@@ -258,11 +258,10 @@
               <p>
                 {% trans "If you are 18 or older, but for some reason you have trouble paying the full entrance fee, apply for a Friends ticket here." %}
               </p>
-              <form class="form-token form-horizontal" method="POST" action="{% url "friends-apply" %}" role="form">
-                {% csrf_token %}
+              <form class="form-token form-horizontal">
                 <div class="form-group">
                   <div class="col-xs-12">
-                    <button type="submit" class="btn btn-primary btn-block">{% trans "Apply"%}</button>
+                    <a href="{% url "friends-apply" %}" class="btn btn-default btn-block">{% trans "Apply"%}</a>
                   </div>
                 </div>
              </form>

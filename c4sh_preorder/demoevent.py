@@ -153,5 +153,5 @@ logo@2x.png -- 320x100px
 
 # Friends settings
 EVENT_FRIENDS_ENABLED = True # enable friends tickets applications?
-EVENT_FRIENDS_TICKET_PREFIX = "Friends_" # prefix of the friends tickets
+EVENT_FRIENDS_TICKET_PREFIX = "Friends " # prefix of the friends tickets
 EVENT_FRIENDS_EMAIL = "you@email" # email address of the application review team
