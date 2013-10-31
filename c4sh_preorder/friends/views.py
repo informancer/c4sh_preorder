@@ -23,12 +23,11 @@ from settings import *
 from c4sh.preorder.models import PreorderTicket
 import random
 
-if not settings.EVENT_FRIENDS_ENABLED:
-	raise Exception("Friends application is not for this event enabled!")
-
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def friends_review(request, secret):
+	if not settings.EVENT_FRIENDS_ENABLED:
+		raise Exception(_("Friends application is not enabled for this event!"))
 	application = get_object_or_404(FriendsApplication, token=secret)
 
 	if application.status != "waiting":
@@ -101,6 +100,8 @@ def friends_review(request, secret):
 @login_required
 @payload_check
 def friends_apply(request):
+	if not settings.EVENT_FRIENDS_ENABLED:
+		raise Exception(_("Friends application is not enabled for this event!"))
 	nav = 'buy'
 
 	# check if user already has a preorder
