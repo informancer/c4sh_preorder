@@ -20,3 +20,8 @@ class FriendsApplication(models.Model):
 
 	def __unicode__(self):
 		return "Applicant: %s (%s), Status: %s" % (self.user, self.datetime, self.status)
+
+	class Meta:
+		permissions = (
+			('review', 'Can review Friends Applications'),
+		)

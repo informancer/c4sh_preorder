@@ -24,7 +24,8 @@ from c4sh.preorder.models import PreorderTicket
 import random
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(lambda u: u.is_staff)
+@user_passes_test(lambda u: u.has_perm('friends.review'))
 def friends_review(request, secret):
 	if not settings.EVENT_FRIENDS_ENABLED:
 		raise Exception(_("Friends application is not enabled for this event!"))
