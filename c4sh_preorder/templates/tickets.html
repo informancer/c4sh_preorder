@@ -5,43 +5,43 @@
 {% block content %}
       <div class="row">
         <div class="col-md-5">
-          <div class="panel panel-primary" style="min-height:350px;">
+          <div class="panel {% if preorders.0.paid %}panel-default{% else %}panel-primary{% endif %}" style="min-height:320px;">
             <div class="panel-heading">
               <h3 class="panel-title">{% trans "Payment information" %}</h3>
             </div>
             <div class="panel-body">
-          {% if preorders %}
-            <p>{% trans "Thanks for your preorder. Please transfer the total amount to:"%}</p>
-            <pre>{% spaceless %}
-              {{settings.EVENT_PAYMENT_DETAILS}}<br /><br />
-              {% for p in preorders %}
-                <div>Reference: <ref>{{settings.EVENT_PAYMENT_PREFIX}}-{{p.get_reference_hash}}</ref></div>
-                <div>Amount: {{p.get_sale_amount.0.total|floatformat:2}} {{p.get_sale_amount.0.currency}}</div>
+            {% if preorders %}
+              <p>{% trans "Thanks for your preorder. Please transfer the total amount to:"%}</p>
+              <pre>{% spaceless %}
+                {{settings.EVENT_PAYMENT_DETAILS}}<br /><br />
+                {% for p in preorders %}
+                  <div>Reference: <ref>{{settings.EVENT_PAYMENT_PREFIX}}-{{p.get_reference_hash}}</ref></div>
+                  <div>Amount: {{p.get_sale_amount.0.total|floatformat:2}} {{p.get_sale_amount.0.currency}}</div>
               {% endfor %}{% endspaceless %}</pre>
-            {% if bezahlcode %}
-            <div id="bezahlcode-container">
-              <div id="bezahlcode-offer" style="font-size: small;">
-                <a href="bezahlcode.png" onClick="document.getElementById('bezahlcode').style.display='block';document.getElementById('bezahlcode-offer').style.display='none';return false;">BezahlCode</a>
-              </div>
-              <div id="bezahlcode" style="display:none;">
-                <a href="{{bezahlcode}}"><img src="bezahlcode.png" /></a>
-              </div>
-            </div>
+              {% if bezahlcode %}
+                <div id="bezahlcode-container">
+                  <div id="bezahlcode-offer" style="font-size: small;">
+                    <a href="bezahlcode.png" onClick="document.getElementById('bezahlcode').style.display='block';document.getElementById('bezahlcode-offer').style.display='none';return false;">BezahlCode</a>
+                  </div>
+                  <div id="bezahlcode" style="display:none;">
+                    <a href="{{bezahlcode}}"><img src="bezahlcode.png" /></a>
+                  </div>
+                </div>
+              {% endif %}
+              {% if settings.EVENT_CC_ENABLE %}
+                <p>{% blocktrans with cc_fee_percentage=settings.EVENT_CC_FEE_PERCENTAGE cc_fee_fixed=settings.EVENT_CC_FEE_FIXED%} please pay via bank transfer if possible. if you need to use your credit card, we'll charge additional fees of {{cc_fee_percentage}}% + {{cc_fee_fixed}}€ per transaction. {% endblocktrans %}</p>
+                {% url "saferpay-pay" as cc_payment_url %}
+                <a href="{{cc_payment_url}}" class="btn"><i class="icon-ok icon-shopping-cart"></i> {% trans "Pay via credit card" %}</a>
+              {% endif %}
+        	  {% else %}
+              {% trans "Here be payment information after you preordered tickets."%}
             {% endif %}
-      	    {% if settings.EVENT_CC_ENABLE %}
-      	    <p>{% blocktrans with cc_fee_percentage=settings.EVENT_CC_FEE_PERCENTAGE cc_fee_fixed=settings.EVENT_CC_FEE_FIXED%} please pay via bank transfer if possible. if you need to use your credit card, we'll charge additional fees of {{cc_fee_percentage}}% + {{cc_fee_fixed}}€ per transaction. {% endblocktrans %}</p>
-      	    {% url "saferpay-pay" as cc_payment_url %}
-      	    <a href="{{cc_payment_url}}" class="btn"><i class="icon-ok icon-shopping-cart"></i> {% trans "Pay via credit card" %}</a>
-      	    {% endif %}
-      	  {% else %}
-            {% trans "Here be payment information after you preordered tickets."%}
-          {% endif %}
             </div>
           </div>
         </div>
 
         <div class="col-md-7">
-          <div class="panel panel-default" style="min-height:350px;">
+          <div class="panel {% if preorders.0.paid %}panel-primary{% else %}panel-default{% endif %}" style="min-height:350px;">
             <div class="panel-heading">
               <h3 class="panel-title">{% trans "Your preorders" %}</h3>
             </div>

@@ -15,6 +15,7 @@ from django.template import Context
 from django.db.models import Q, F
 from preorder.models import *
 from preorder.forms import *
+from friends.models import *
 from preorder.decorators import preorder_check, payload_check
 from preorder.bezahlcode_helper import make_bezahlcode_uri
 from settings import *
@@ -49,6 +50,14 @@ def default_view(request):
 @login_required
 @payload_check
 def buy_view(request):
+	try:
+		has_application = FriendsApplication.objects.get(user=request.user)
+	except FriendsApplication.DoesNotExist:
+		has_application = False
+
+	if has_application:
+		return HttpResponseRedirect(reverse('friends-apply'))
+
 	nav = 'buy'
 	quota_raw = PreorderQuota.objects.filter(Q(sold__lt=F('quota')), Q(ticket__active=True), Q(ticket__deleted=False),
 		# check if we only sell this ticket in a certain time span

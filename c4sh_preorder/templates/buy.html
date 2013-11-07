@@ -209,11 +209,13 @@
 
       <div class="row">
         {% if not cart %}
-        <div class="col-md-3"></div>
+        {% if not settings.EVENT_FRIENDS_ENABLED %}
+          <div class="col-md-3"></div>
+        {% endif %}
         <div class="col-md-6">
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title">Golden Token</h3>
+              <h3 class="panel-title">{% trans "Golden Token" %}</h3>
             </div>
             <div class="panel-body">
               <p>
@@ -228,20 +230,44 @@
                 </div>
                 <div class="form-group">
                   <div class="col-xs-12">
-                    <button type="submit" class="btn btn-primary btn-block">{% trans "Redeem"%}</button>
+                    <button type="submit" class="btn btn-default btn-block">{% trans "Redeem"%}</button>
                   </div>
                 </div>
              </form>
             </div>
           </div>
         </div>
-        <div class="col-md-3"></div>
+        {% if not settings.EVENT_FRIENDS_ENABLED %}
+          <div class="col-md-3"></div>
+        {% endif %}
         {% else %}
         <div class="col-md-12" style="text-align: center;">
           <p>
-            <em>{% trans "Clear your cart in order to redeem a <strong>Golden Token</strong>. Any account can either redeem a token or place a regular preorder."%}</em>
+            <em>{% trans "Clear your cart in order to redeem a <strong>Golden Token</strong> or apply for a <strong>Friends ticket</strong>.<br />Any account can either redeem a token or place a regular preorder."%}</em>
           </p>
         </div>
         {% endif %}
+
+      {% if settings.EVENT_FRIENDS_ENABLED and not cart %}
+        <div class="col-md-6">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">{% trans "Friends" %}</h3>
+            </div>
+            <div class="panel-body">
+              <p>
+                {% trans "If you are 18 or older, but for some reason you have trouble paying the full entrance fee, apply for a Friends ticket here." %}
+              </p>
+              <form class="form-token form-horizontal">
+                <div class="form-group">
+                  <div class="col-xs-12">
+                    <a href="{% url "friends-apply" %}" class="btn btn-default btn-block">{% trans "Apply"%}</a>
+                  </div>
+                </div>
+             </form>
+            </div>
+          </div>
+        </div>
+      {% endif %}
       </div>
 {% endblock %}

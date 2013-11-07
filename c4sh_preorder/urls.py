@@ -37,6 +37,7 @@ if EVENT_BEZAHLCODE_ENABLE:
 
 urlpatterns += patterns('',
     url(r'^captcha/', include('captcha.urls')),
+    url(r'^friends/', include('c4sh_preorder.friends.urls')),
     url(r'^cc/', include('saferpay.urls')),
     url(r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain"))
 )

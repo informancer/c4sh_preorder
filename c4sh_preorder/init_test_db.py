@@ -143,3 +143,34 @@ q2 = PreorderQuota(
 	ticket = t2,
 	quota = 10
 	).save()
+
+
+# Friends tickets (won't show up in frontend)
+t1 = CustomPreorderTicket(
+	name = "Friends 20",
+	backend_id = 6661,
+	price = 20.00,
+	currency = "EUR",
+	tax_rate = 19,
+	limit_timespan = False,
+	limit_amount = 20,
+	limit_amount_user = 1,
+	is_ticket = True,
+	sortorder = 6661,
+	active = True
+	)
+t1.save()
+t1 = CustomPreorderTicket(
+	name = "Friends 40",
+	backend_id = 6662,
+	price = 40.00,
+	currency = "EUR",
+	tax_rate = 19,
+	limit_timespan = False,
+	limit_amount = 20,
+	limit_amount_user = 1,
+	is_ticket = True,
+	sortorder = 6662,
+	active = True
+	)
+t1.save()

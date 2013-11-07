@@ -1,4 +1,4 @@
-Django>=1.5.1
+Django>=1.5.0,<1.6
 https://pypi.python.org/packages/source/P/Pillow/Pillow-2.2.1.zip#md5=d1d20d3db5d1ab312da0951ff061e6bf
 South>=0.8
 Werkzeug>=0.8.3
@@ -14,3 +14,4 @@ wsgiref==0.1.2
 # piston nightly
 # passbook
 passbook
+django-model-utils==1.5.0
