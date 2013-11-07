@@ -4,10 +4,12 @@
 
 {% block content %}
       <div class="row">
-        <div class="span8">
+        <div class="col-xs-12">
             <h1>{% trans "Passbook" %}</h1>
-            <h2>{% trans "Your preorder"%} {{preorder.get_reference_hash}}</h2>
-            <table class="table table-striped table-bordered" style="margin:0">
+            <p>
+                {% trans "You may download your tickets in Passbook format here."%}
+            </p>
+            <table class="table table-striped table-bordered">
                 <tr>
                     <th>{% trans "Ticket type"%}</th>
                     <th>{% trans "Price"%}</th>
