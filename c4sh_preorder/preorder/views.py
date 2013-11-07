@@ -462,15 +462,17 @@ def account_view(request):
 		if request.GET.get('form') == 'email':
 			form = EmailForm(request.POST)
 			if form.is_valid():
-				success = _("Your email address has been changed to <tt>%s</tt>!") % form.cleaned_data['email']
+				messages.success(request, _("Your email address has been changed to <tt>%s</tt>!") % form.cleaned_data['email'])
 				request.user.email = form.cleaned_data['email']
 				request.user.save()
+				return redirect("account")
 		elif request.GET.get('form') == 'password':
 			form = PasswordForm(request.user, request.POST)
 			if form.is_valid():
 				request.user.set_password(form.cleaned_data['new_password1'])
 				request.user.save()
-				success = _("Your password has been changed!")
+				messages.success(request, _("Your password has been changed!"))
+				return redirect("account")
 
 	return render_to_response('account.html', locals(), context_instance=RequestContext(request))
 
