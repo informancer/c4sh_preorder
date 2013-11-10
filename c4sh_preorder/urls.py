@@ -23,6 +23,11 @@ if (sys.argv[1] in ['runserver', 'runserver_plus'] or os.environ.get('ENABLE_ADM
 		url(r'^admin/statistics/charts/$', 'statistics_view', {'section': 'charts'}, name='admin-statistics-charts'),
 		url(r'^admin/api/get-preorder\.json$', 'api_get_preorder_view', name='admin-api-get-preorder')
 	)
+else:
+	# Provide dummy view for template URL generation
+	urlpatterns += patterns('c4sh_preorder.preorder.views',
+		url(r'^admin/$', 'default_view', name='admin'),
+	)
 
 urlpatterns += patterns('c4sh_preorder.preorder.views',
 	url(r'^$', 'default_view', name='default'),
