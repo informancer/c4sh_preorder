@@ -37,6 +37,7 @@ if EVENT_BEZAHLCODE_ENABLE:
 
 urlpatterns += patterns('',
     url(r'^captcha/', include('captcha.urls')),
+    url(r'^friends/', include('c4sh_preorder.friends.urls')),
     url(r'^cc/', include('saferpay.urls')),
     url(r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain"))
 )
@@ -47,7 +48,7 @@ urlpatterns += patterns('c4sh_preorder.backend.views',
     url(r'^admin/statistics/$', 'statistics_view', {'section': False}, name='admin-statistics'),
     url(r'^admin/statistics/charts/$', 'statistics_view', {'section': 'charts'}, name='admin-statistics-charts'),
 
-    url(r'^admin/api/get-preorder.json$', 'api_get_preorder_view', name='admin-api-get-preorder')
+    url(r'^admin/api/get-preorder\.json$', 'api_get_preorder_view', name='admin-api-get-preorder')
 )
 
 urlpatterns += patterns('django.contrib.auth.views',

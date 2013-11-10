@@ -1,67 +1,34 @@
 {% load i18n %}
-<form class="form-horizontal" method="POST" action="{% url "signup" %}">
-{% csrf_token %}
-<div class="control-group {% if signup_page and signupform.username.errors %}error{% endif %}">
-<label class="control-label" for="id_username">{% trans "Username"%}</label>
- <div class="controls">
-   <div class="input-prepend">
-   <span class="add-on"><i class="icon-user"></i></span>
-   <input value="{% if signup_page %}{{signupform.username.value}}{% endif %}" type="text" name="username" class="input-large" id="id_username">
-   </div>
-   {% if signup_page %}
-   {% for e in signupform.username.errors %}
-		<span class="help-inline">{{e}}</span>
-   {% endfor %}
-   {% endif %}
-</div>
-</div>
 
-<div class="control-group {% if signup_page and signupform.password.errors %}error{% endif %}">
-<label class="control-label" for="id_password">{% trans "Password"%}</label>
- <div class="controls">
-   <div class="input-prepend">
-   <span class="add-on"><i class="icon-lock"></i></span>
-   <input type="password" name="password" class="input-large" id="id_password">
-   </div>
-   {% if signup_page %}
-   {% for e in signupform.password.errors %}
-		<span class="help-inline">{{e}}</span>
-   {% endfor %}
-   {% endif %}
-</div>
-</div>
+<form class="form-signin" role="form" method="POST" action="{% url "signup" %}">
+	{% csrf_token %}
+	<div style="min-height: 145px">
+		<div class="control-group {% if signup_page and signupform.username.errors %}has-error{% endif %}">
+			{% if signup_page %}
+			{% for e in signupform.username.errors %}
+				<label class="control-label" for="inputError">{{e}}</label>
+			{% endfor %}
+			{% endif %}
+			<input type="text" class="form-control" placeholder="{% trans "Username" %}" name="username" value="{% if signup_page %}{{signupform.username.value}}{% endif %}">
+		</div>
+		<div class="control-group {% if signup_page and signupform.password.errors %}has-error{% endif %}">
+			{% if signup_page %}
+			{% for e in signupform.password.errors %}
+				<label class="control-label" for="inputError">{{e}}</label>
+			{% endfor %}
+			{% endif %}
+		<input type="password" class="form-control" placeholder="{% trans "Password" %}" name="password">
+		</div>
 
-<div class="control-group {% if signup_page and signupform.email.errors %}error{% endif %}">
- <label class="control-label" for="id_email">{% trans "Email"%}</label>
- <div class="controls">
-   <div class="input-prepend">
-   <span class="add-on"><i class="icon-envelope"></i></span>
-   <input value="{% if signup_page %}{{signupform.email.value}}{% endif %}" type="text" name="email" class="input-large" id="id_email">
-   </div>
-   {% if signup_page %}
-   {% for e in signupform.email.errors %}
-		<span class="help-inline">{{e}}</span>
-   {% endfor %}
-   {% endif %}
-   <p class="help-block">{% trans "Optional. Required for status notifications."%}</p>
-</div>
-</div>
+		<div class="control-group {% if signup_page and signupform.email.errors %}has-error{% endif %}">
+			{% if signup_page %}
+			{% for e in signupform.email.errors %}
+				<label class="control-label" for="inputError">{{e}}</label>
+			{% endfor %}
+			{% endif %}
+		<input type="text" class="form-control" placeholder="{% trans "E-Mail (optional)" %}" value="{% if signup_page %}{{signupform.email.value}}{% endif %}" name="email">
+		</div>
+	</div>
 
-<div class="control-group {% if signup_page and signupform.captcha.errors %}error{% endif %}">
- <label class="control-label" for="id_captcha">{% trans "Captcha"%}</label>
- <div class="controls">
-   {{signupform.captcha}}
-   {% if signup_page %}
-   <br />
-   {% for e in signupform.captcha.errors %}
-      <span class="help-inline">{{e}}</span>
-   {% endfor %}
-   {% endif %}
-</div>
-</div>
-
-<div class="form-actions">
-<button type="submit" class="btn btn-primary">{% trans "Signup"%}</button> <span class="help-inline"><!-- Whoohoo. --></span>
-</div>
-</fieldset>
+	<button class="btn btn-lg btn-success btn-block" type="submit">{% trans "Create your account" %}</button>
 </form>

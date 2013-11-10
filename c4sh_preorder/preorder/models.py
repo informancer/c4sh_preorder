@@ -1,9 +1,43 @@
 from django.db import models
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 from c4sh.preorder.models import PreorderTicket, PreorderPosition, Preorder
 from django.db.models import Q
 from django.conf import settings
 import datetime
+
+class UserProfile(models.Model):
+	user = models.OneToOneField(User, primary_key=True, related_name='user_profile')
+
+	# Hack to avoid IntegrityErrors while using Django forms to create users
+	def save(self, *args, **kwargs):
+		if not self.pk:
+			try:
+				p = UserProfile.objects.get(user=self.user)
+				self.pk = p.pk
+			except UserProfile.DoesNotExist:
+				pass
+		super(UserProfile, self).save(*args, **kwargs)
+
+	@property
+	def has_preorders(self):
+		return (CustomPreorder.objects.filter(user_id=self.user.pk).count() >= 1)
+
+	def get_preorders(self):
+		try:
+			return CustomPreorder.objects.filter(user_id=request.user.pk)
+		except CustomPreorder.DoesNotExist:
+			return []
+
+	def __unicode__(self):
+		return "Profile of %s" % self.user.username
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+	""" Automatically create UserProfile object for new users """
+	if created:
+		UserProfile.objects.get_or_create(user=instance)
 
 class GoldenToken(models.Model):
 	token = models.CharField(max_length=50, null=False, blank=False, verbose_name="Token", unique=True)
@@ -41,6 +75,7 @@ class CustomPreorderTicket(PreorderTicket):
 
 	class Meta:
 		ordering = ['sortorder']
+		verbose_name = "Ticket"
 
 	def stats_preordered(self):
 		return CustomPreorder.objects.filter(Q(preorderposition__ticket=self)).count()
@@ -60,9 +95,26 @@ class CustomPreorderTicket(PreorderTicket):
 		except ZeroDivisionError:
 			return 0
 
+class Merchandise(models.Model):
+	name = models.CharField(verbose_name="Product Name", max_length=255)
+	preview_image = models.URLField(verbose_name="URL to preview image", blank=True, null=True)
+	detail_url = models.URLField(verbose_name="Link to detail page", blank=True, null=True)
+	detail_text = models.CharField(verbose_name="Short detail text (will be linked if detail URL is set", max_length=200, blank=True, null=True)
+	active = models.BooleanField(verbose_name="On Sale?", default=True)
+
+	def __unicode__(self):
+		return self.name
+
+	class Meta:
+		verbose_name = "Merchandise type"
+
 class Tshirt(CustomPreorderTicket):
+	merchandise = models.ForeignKey(Merchandise)
 	size = models.CharField(verbose_name="T-Shirt Size", max_length=10)
 	type = models.CharField(verbose_name="T-Shirt Type (girly, etc.)", max_length=255)
+
+	class Meta:
+		verbose_name = "Merchandise object"
 
 class PreorderPosition(PreorderPosition):
 	pass
@@ -142,6 +194,9 @@ class CustomPreorder(Preorder):
 			return PreorderBillingAddress.objects.get(preorder=self)
 		except PreorderBillingAddress.DoesNotExist:
 			return False
+
+	class Meta:
+		verbose_name = "Preorder"
 
 class PreorderBillingAddress(models.Model):
 	preorder = models.ForeignKey('CustomPreorder', verbose_name="Preorder")

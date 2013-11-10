@@ -7,3 +7,4 @@ c4sh_preorder/event_*.py
 c4sh_preorder/settings.py
 .vagrant
 *.json
+.DS_Store

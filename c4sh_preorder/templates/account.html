@@ -1,84 +1,108 @@
 {% extends "base/base.html" %}
 {% load i18n %}
 
+{% block css %}
+.form-changepw {
+  max-width: 350px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-changepw .form-control {
+  position: relative;
+  font-size: 16px;
+  height: auto;
+  padding: 10px;
+  -webkit-box-sizing: border-box;
+	 -moz-box-sizing: border-box;
+		  box-sizing: border-box;
+}
+.form-changepw .form-control:focus {
+  z-index: 2;
+}
+.form-changepw input#inputPassword1 {
+  margin-bottom: -1px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.form-changepw input#inputPassword2 {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.form-changepw input#inputOldPassword {
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+{% endblock %}
+
 {% block content %}
-
-	{% if success %}
-		<div class="alert alert-success">
-		{{success|safe}}
-		</div>
-	{% endif %}
-
-	<div style="margin-bottom:20px">
-		<h1>{% trans "Hello, "%}{{request.user}}!</h1>
-	</div>
-
 	<div class="row">
-    	<div class="span6">
-			<h2>{% trans "Email address"%}</h2>
-			<p>{% trans "An email address is required for preorder status update notifications."%}</p>
-			<form action="{% url "account" %}?form=email" method="post">
-				{% csrf_token %}
-				<div style="float:right">
-					<button type="submit" class="btn btn-primary">{% trans "Save email address"%}</button> <span class="help-inline"><!-- Whoohoo. --></span>
+		<div class="col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+				  <h3 class="panel-title">{% trans "Email address" %}</h3>
 				</div>
-				<div class="control-group {% if form.email.errors %}error{% endif %}">
-					<div class="input-prepend">
-					   <span class="add-on"><i class="icon-envelope"></i></span>
-					   <input value="{% if not form.email.value %}{% if request.user.email %}{{request.user.email}}{% endif %}{% else %}{{form.email.value}}{% endif %}" type="text" name="email" class="input-large" id="id_email">
-					</div>
-					{% for e in form.email.errors %}
-						<span class="help-inline">{{e}}</span>
-					{% endfor %}
+				<div class="panel-body">
+					<p>{% trans "An email address is required if you'd like to receive preorder status update notifications."%}</p>
+					<form action="{% url "account" %}?form=email" method="post" role="form" class="form-inline">
+						{% csrf_token %}
+						<div class="form-group">
+							<label for="inputEmail" class="sr-only">{% trans "Email address" %}</label>
+							<div class="col-md-12 {% if form.email.errors %}has-error{% endif %}">
+								<input type="text" class="form-control" id="inputEmail" name="email" placeholder="{% trans "Email address" %}" value="{{request.user.email}}">
+								{% for e in form.email.errors %}
+								<span class="help-block">{{e}}</span>
+								{% endfor %}
+							</div>
+						</div>
+						<button type="submit" class="btn btn-warning">{% trans "Save email address"%}</button>
+					</form>
 				</div>
-			</form>
+			</div>
 		</div>
-    	<div class="span6">
+		<div class="col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+				  <h3 class="panel-title">{% trans "Password" %}</h3>
+				</div>
+				<div class="panel-body">
+					<p>{% trans "Change your login password using this form."%}</p>
+					{% if form.non_field_errors %}
+						<div class="alert alert-danger">
+							{%for e in form.non_field_errors%}
+								{{e}}
+							{% endfor %}
+						</div>
+					{% endif %}
+					<form class="form-changepw" action="{% url "account" %}?form=password" method="post" role="form">
+						{% csrf_token %}
+						<div class="control-group {% if form.old_password.errors %}has-error{% endif %}">
+							<label for="inputOldPassword" class="sr-only">{% trans "Current password" %}</label>
+								<input type="password" class="form-control" id="inputOldPassword" name="old_password" placeholder="{% trans "Current password" %}">
+								{% for e in form.old_password.errors %}
+								<span class="help-block">{{e}}</span>
+								{% endfor %}
+						</div>
+						<div class="control-group {% if form.new_password1.errors %}has-error{% endif %}">
+							<label for="inputPassword1" class="sr-only">{% trans "New password" %}</label>
+								<input type="password" class="form-control" id="inputPassword1" name="new_password1" placeholder="{% trans "New password" %}">
+								{% for e in form.new_password1.errors %}
+								<span class="help-block">{{e}}</span>
+								{% endfor %}
+						</div>
+						<div class="control-group {% if form.new_password2.errors %}has-error{% endif %}">
+							<label for="inputPassword2" class="sr-only">{% trans "New password" %}</label>
 
-    		{% if form.non_field_errors %}
-    			<div class="alert alert-error">
-    				{%for e in form.non_field_errors%}
-    					{{e}}
-    				{% endfor %}
-    			</div>
-    		{% endif %}
-
-			<h2>{% trans "Password"%}</h2>
-			<p>{% trans "Change your login password using this form."%}</p>
-			<form action="{% url "account" %}?form=password" method="post">
-				{% csrf_token %}
-				<div style="float:right">
-					<button type="submit" class="btn btn-primary">{% trans "Save new password"%}</button> <span class="help-inline"><!-- Whoohoo. --></span>
+								<input type="password" class="form-control" id="inputPassword2" name="new_password2" placeholder="{% trans "New password (again)" %}">
+								{% for e in form.new_password2.errors %}
+								<span class="help-block">{{e}}</span>
+								{% endfor %}
+						</div>
+						<button class="btn btn-lg btn-warning btn-block" type="submit">{% trans "Change password" %}</button>
+					</form>
 				</div>
-				<div class="control-group {% if form.old_password.errors %}error{% endif %}" style="margin-bottom:5px">
-					<div class="input-prepend" style="margin-bottom:0px">
-					   <span class="add-on"><i class="icon-lock"></i></span>
-					   <input value="" type="password" name="old_password" class="input-large" id="id_old_password" style="margin-bottom:0px" placeholder="Current password">
-					</div>
-					{% for e in form.old_password.errors %}
-						<span class="help-inline" style="margin-bottom:0px">{{e}}</span>
-					{% endfor %}
-				</div>
-				<div class="control-group {% if form.new_password1.errors %}error{% endif %}"  style="margin-bottom:5px">
-					<div class="input-prepend" style="margin-bottom:0px">
-					   <span class="add-on"><i class="icon-lock"></i></span>
-					   <input value="" type="password" name="new_password1" class="input-large" id="id_newpassword1" style="margin-bottom:0px" placeholder="New password">
-					</div>
-					{% for e in form.new_password1.errors %}
-						<span class="help-inline" style="margin-bottom:0px">{{e}}</span>
-					{% endfor %}
-				</div>
-				<div class="control-group {% if form.new_password2.errors %}error{% endif %}" style="margin-bottom:5px">
-					<div class="input-prepend" style="margin-bottom:0px">
-					   <span class="add-on"><i class="icon-lock"></i></span>
-					   <input value="" type="password" name="new_password2" class="input-large" id="id_new_password2" style="margin-bottom:0px" placeholder="..repeat">
-					</div>
-					{% for e in form.new_password2.errors %}
-						<span class="help-inline" style="margin-bottom:0px">{{e}}</span>
-					{% endfor %}
-				</div>
-			</form>
+			</div>
 		</div>
 	</div>
-
 {% endblock %}

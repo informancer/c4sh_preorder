@@ -1,22 +1,78 @@
 {% extends "base/base.html" %}
 {% load i18n %}
 
-{% block content %}
-      <div class="row">
-      {% if not request.user.is_authenticated %}
-        <div class="span6">
-           <h2>{% trans "Login" %}</h2>
-           <p>{% trans "Already got an account? Please login to preorder tickets or view your ticket's payment status."%}</p>
+{% block css %}
+.form-signin {
+  max-width: 350px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  font-size: 16px;
+  height: auto;
+  padding: 10px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="text"] {
+  margin-bottom: -1px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.form-signin input[name="email"] {
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
 
-           {% include "base/form_login.html" %}
-         </div>
-         <div class="span6">
-           <h2>{% trans "Sign up"%}</h2>
-           <p>{% blocktrans with event=settings.EVENT_NAME_SHORT%}In order to preorder tickets for {{event}}, you need to signup.{% endblocktrans %}</p>
-           
-           {% include "base/form_signup.html" %}
-         </div>        
-        {% else %}
+{% endblock %}
+
+{% block content %}
+      {% if not request.user.is_authenticated %}
+      <div>
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="panel panel-primary" style="min-height:350px;">
+              <div class="panel-heading">
+                <h3 class="panel-title">Log in</h3>
+              </div>
+              <div class="panel-body">
+                <div style="min-height: 40px;">
+                  <p>{% trans "Already registered? Login here to preorder tickets or download paid tickets."%}</p>
+                </div>
+                {% include "base/form_login.html" %}
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="panel panel-success" style="min-height:350px;">
+              <div class="panel-heading">
+                <h3 class="panel-title">Sign up</h3>
+              </div>
+              <div class="panel-body">
+                <div style="min-height: 40px;">
+                  <p>{% blocktrans with event=settings.EVENT_NAME_SHORT%}New here? Want to preorder tickets for {{event}}? Sign up here.{% endblocktrans %}</p>
+                </div>
+                {% include "base/form_signup.html" %}
+              </div>
+            </div>
+          </div>
         {% endif %}
+        </div>
       </div>
 {% endblock %}

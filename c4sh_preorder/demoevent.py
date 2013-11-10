@@ -16,16 +16,16 @@ ALLOWED_HOSTS = [
 ]
 
 # Short name of your event
-EVENT_NAME_SHORT = 'SIGINT12'
+EVENT_NAME_SHORT = '30C3'
 
 # Unix-friendly name of your event (lowercase, a-z0-9)
-EVENT_NAME_UNIX = 'sigint12'
+EVENT_NAME_UNIX = '30c3'
 
 # Official name of your event
-EVENT_NAME = 'SIGINT12'
+EVENT_NAME = '30th Chaos Communication Congress'
 
 #Official logo for your event, located inside STATIC_ROOT. Will be used for PDF output of tickets and stuff
-EVENT_LOGO = 'sigint13.png'
+EVENT_LOGO = '30c3.png'
 
 
 # Postal address of host (for invoices)
@@ -52,15 +52,15 @@ EVENT_VENUE_PAYLOAD = 3000
 EVENT_CONTACT_MAILTO = "orga@tld"
 
 # Prefix for bank transfer references
-EVENT_PAYMENT_PREFIX = "SIGINT13"
+EVENT_PAYMENT_PREFIX = "30C3"
 
 # Bank details for payment
 EVENT_PAYMENT_DETAILS =  "Chaos Computer Club Ossendorf ltd.\n" + \
- "Institut: Ehrenfelder Bank AG\n" + \
+ "Bank: Ehrenfelder Bank AG\n" + \
  "BLZ: 10000000\n" + \
- "Kto: 1\n" + \
- "IBAN: DEFoo\n" + \
- "SWIFT/BIC: Bar"
+ "Kto: 1234567890\n" + \
+ "IBAN: DE23100000001234567890\n" + \
+ "SWIFT/BIC: DEH3RPD"
 
 # Bezahlcode integration, see http://bezahlcode.de for more information
 EVENT_BEZAHLCODE_ENABLE = True
@@ -72,7 +72,10 @@ EVENT_BEZAHLCODE_BIC = "COKSDE33" # No spaces
 EVENT_DASHBOARD_TEXT = "Here be important event-related supervisor information.<br />" + \
                        "You can define this text in EVENT_DASHBOARD_TEXT."
 # Event description
-EVENT_DESCRIPTION_TEXT = "SIGINT is an international hacker conference.\n"
+EVENT_DESCRIPTION_TEXT = "December 27<sup>th</sup>-30<sup>th</sup>, 2013 – Hamburg, Germany\n"
+
+# Additional information about tickets, to be shown below the ticket selection
+EVENT_TICKET_INFO = "Hackers under the age of 18 years qualify for the <em>Up-and-coming</em> ticket. Hackers under the age of 12 years get in for free while accompanied by an adult."
 
 # Text for payment ack notification email
 EVENT_PAYMENT_ACK_MAIL_TEXT = 	"English version below" + \
@@ -90,7 +93,7 @@ EVENT_PAYMENT_ACK_MAIL_TEXT = 	"English version below" + \
  "\n\nSee you on SIGINT12!\nSIGINT Orga"
 
 # Footer note visible on all pages
-EVENT_FOOTER_NOTE = "If you experience any difficulties with our presale, please contact the <a href='mailto:"+EVENT_CONTACT_MAILTO+"'>SIGINT Orga</a>."
+EVENT_FOOTER_NOTE = "If you experience any difficulties with our presale, please contact the <a href='mailto:"+EVENT_CONTACT_MAILTO+"'>30C3 Orga</a>."
 
 # do not allow downloads before this date, YYYY-mm-dd HH:MM:SS
 EVENT_DOWNLOAD_DATE = "2012-09-28 00:00:00"
@@ -147,3 +150,8 @@ background@2x.png -- 360x440px, gets blurred automatically
 logo.png -- 160x50px
 logo@2x.png -- 320x100px
 """
+
+# Friends settings
+EVENT_FRIENDS_ENABLED = True # enable friends tickets applications?
+EVENT_FRIENDS_TICKET_PREFIX = "Friends " # prefix of the friends tickets
+EVENT_FRIENDS_EMAIL = "you@email" # email address of the application review team

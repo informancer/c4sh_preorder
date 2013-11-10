@@ -1,5 +1,6 @@
 from preorder.models import *
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 
 class BillingAddressInline(admin.StackedInline):
 	model = PreorderBillingAddress
@@ -15,9 +16,21 @@ class CustomPreorderAdmin(admin.ModelAdmin):
 	search_fields = ['username', 'unique_secret']
 	list_filter = ['username', 'time']
 
-
 admin.site.register(PreorderQuota)
 admin.site.register(CustomPreorderTicket)
+admin.site.register(Merchandise)
 admin.site.register(Tshirt)
 admin.site.register(CustomPreorder, CustomPreorderAdmin)
 admin.site.register(GoldenToken)
+
+# User admin changes
+class UserProfileInline(admin.StackedInline):
+	model = UserProfile
+	extra = 1
+
+class UserAdminExtended(UserAdmin):
+	list_display = ('username', 'email', 'is_active', 'is_staff')
+	inlines = [UserProfileInline]
+
+admin.site.unregister(User)
+admin.site.register(User, UserAdminExtended)

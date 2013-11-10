@@ -3,7 +3,6 @@ from preorder.models import *
 from django.contrib.auth.forms import SetPasswordForm
 import re
 from django.utils.translation import ugettext as _
-from captcha.fields import CaptchaField
 
 class UsernameField(forms.CharField):
 	def validate(self, value):
@@ -33,7 +32,6 @@ class SignupForm(forms.Form):
 	username = UsernameField(max_length=100, required=True)
 	password = forms.CharField(min_length=8, max_length=255, required=True)
 	email = forms.EmailField(required=False)
-	captcha = CaptchaField()
 
 	class Meta:
 		model = User

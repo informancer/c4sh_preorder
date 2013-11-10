@@ -108,6 +108,7 @@ USE_L10N = True
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
+AUTH_PROFILE_MODULE = 'preorder.UserProfile'
 
 STATICFILES_FINDERS = (
 	'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -135,7 +136,10 @@ MIDDLEWARE_CLASSES = (
 	'django.middleware.csrf.CsrfViewMiddleware',
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
 	'django.contrib.messages.middleware.MessageMiddleware',
+	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+X_FRAME_OPTIONS = 'DENY'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 ROOT_URLCONF = 'c4sh_preorder.urls'
@@ -151,6 +155,7 @@ INSTALLED_APPS = (
 	'django.contrib.admindocs',
 	'c4sh_preorder.preorder',
 	'c4sh_preorder.backend',
+	'c4sh_preorder.friends',
 	'captcha',
 	'south',
 )

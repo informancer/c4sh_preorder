@@ -4,7 +4,7 @@ from PIL import Image
 from django.core import serializers
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, logout
+from django.contrib.auth import authenticate, login, logout
 from django.http import Http404, HttpResponseServerError, HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.template import RequestContext
 from django.contrib import messages
@@ -15,6 +15,7 @@ from django.template import Context
 from django.db.models import Q, F
 from preorder.models import *
 from preorder.forms import *
+from friends.models import *
 from preorder.decorators import preorder_check, payload_check
 from preorder.bezahlcode_helper import make_bezahlcode_uri
 from settings import *
@@ -41,38 +42,54 @@ def get_cart(session_cart):
 @payload_check
 def default_view(request):
 	if request.user.is_authenticated():
-		nav = 'buy'
-		quota_raw = PreorderQuota.objects.filter(Q(sold__lt=F('quota')), Q(ticket__active=True), Q(ticket__deleted=False),
-			# check if we only sell this ticket in a certain time span
-			(
-				# nope, just sell it
-				Q(ticket__limit_timespan=False)
-				| # or..
-				(
-					Q(ticket__valid_from__lte=datetime.datetime.now(),
-					ticket__valid_until__gte=datetime.datetime.now())
-				)
-			)).order_by('ticket__sortorder')
-		quota = []
-		tshirt_quota = []
-
-		for q in quota_raw:
-			if len([item for item in quota if item['ticket'] == q.ticket]) == 0:
-
-				try:
-					tshirt = Tshirt.objects.get(pk=q.ticket.pk)
-					tshirt_quota.append({'quota': q, 'tshirt': tshirt})
-					continue
-				except Tshirt.DoesNotExist:
-					ticket = q.ticket
-
-				quota.append({'quota': q, 'ticket': ticket})
-
-		cart = get_cart(request.session.get('cart', False))
-		return render_to_response('buy.html', locals(), context_instance=RequestContext(request))
+		return buy_view(request)
 
 	signupform = SignupForm()
 	return render_to_response('default.html', locals(), context_instance=RequestContext(request))
+
+@login_required
+@payload_check
+def buy_view(request):
+	try:
+		has_application = FriendsApplication.objects.get(user=request.user)
+	except FriendsApplication.DoesNotExist:
+		has_application = False
+
+	if has_application:
+		return HttpResponseRedirect(reverse('friends-apply'))
+
+	nav = 'buy'
+	quota_raw = PreorderQuota.objects.filter(Q(sold__lt=F('quota')), Q(ticket__active=True), Q(ticket__deleted=False),
+		# check if we only sell this ticket in a certain time span
+		(
+			# nope, just sell it
+			Q(ticket__limit_timespan=False)
+			| # or..
+			(
+				Q(ticket__valid_from__lte=datetime.datetime.now(),
+				ticket__valid_until__gte=datetime.datetime.now())
+			)
+		)).order_by('ticket__sortorder')
+	quota = []
+	tshirt_quota = {}
+
+	for q in quota_raw:
+		if len([item for item in quota if item['ticket'] == q.ticket]) == 0:
+
+			try:
+				tshirt = Tshirt.objects.get(pk=q.ticket.pk)
+				tshirt_quota[tshirt.pk] = q.pk
+				continue
+			except Tshirt.DoesNotExist:
+				ticket = q.ticket
+
+			quota.append({'quota': q, 'ticket': ticket})
+
+	# we don't give a shit about merchandize quotas.
+	merchandise = Merchandise.objects.filter(active=True)
+
+	cart = get_cart(request.session.get('cart', False))
+	return render_to_response('buy.html', locals(), context_instance=RequestContext(request))
 
 @login_required
 @preorder_check
@@ -381,6 +398,10 @@ def tickets_view(request):
 	except CustomPreorder.DoesNotExist:
 		preorders = []
 
+	if len(preorders) < 1:
+		messages.error(request, _("You need to buy something first."))
+		return redirect("default")
+
 	if settings.EVENT_BEZAHLCODE_ENABLE and len(preorders) > 0:
 		bezahlcode = make_bezahlcode_uri(preorders[0].get_reference_hash(), \
 			preorders[0].get_sale_amount()[0]['total'])
@@ -425,9 +446,15 @@ def signup_view(request):
 			except:
 				signup_success = False
 				messages.error(request, _("Something went wrong, please try again."))
-				return render_to_response('signup.html', locals(), context_instance=RequestContext(request))
+				return render_to_response('default.html', locals(), context_instance=RequestContext(request))
 
-	return render_to_response('signup.html', locals(), context_instance=RequestContext(request))
+			# This might look redundant, but this avoids us having to do user.backend hacks.
+			user = authenticate(username=signupform.cleaned_data['username'], password=signupform.cleaned_data['password'])
+			login(request, user)
+			messages.success(request, _("Welcome! You are now registered and ready to order tickets."))
+			return redirect("default")
+
+	return render_to_response('default.html', locals(), context_instance=RequestContext(request))
 
 @login_required
 def account_view(request):
@@ -435,15 +462,17 @@ def account_view(request):
 		if request.GET.get('form') == 'email':
 			form = EmailForm(request.POST)
 			if form.is_valid():
-				success = _("Your email address has been changed to <tt>%s</tt>!") % form.cleaned_data['email']
+				messages.success(request, _("Your email address has been changed to <tt>%s</tt>!") % form.cleaned_data['email'])
 				request.user.email = form.cleaned_data['email']
 				request.user.save()
+				return redirect("account")
 		elif request.GET.get('form') == 'password':
 			form = PasswordForm(request.user, request.POST)
 			if form.is_valid():
 				request.user.set_password(form.cleaned_data['new_password1'])
 				request.user.save()
-				success = _("Your password has been changed!")
+				messages.success(request, _("Your password has been changed!"))
+				return redirect("account")
 
 	return render_to_response('account.html', locals(), context_instance=RequestContext(request))
 
