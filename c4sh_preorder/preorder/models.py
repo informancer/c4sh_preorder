@@ -117,7 +117,21 @@ class Tshirt(CustomPreorderTicket):
 		verbose_name = "Merchandise object"
 
 class PreorderPosition(PreorderPosition):
-	pass
+	@property
+	def custom_preorder(self):
+		return CustomPreorder.objects.get(pk=self.preorder.pk)
+
+	@property
+	def is_billing_document(self):
+		"""
+		checks if this ticket may also function as a legal proof of
+		purchase/payment, aka invoice
+		"""
+		if self.ticket.price == 0:
+			return True
+		if self.custom_preorder.get_billing_address():
+			return True
+		return False
 
 class CustomPreorder(Preorder):
 
@@ -200,6 +214,7 @@ class CustomPreorder(Preorder):
 
 class PreorderBillingAddress(models.Model):
 	preorder = models.ForeignKey('CustomPreorder', verbose_name="Preorder")
+	invoice_id = models.PositiveIntegerField(verbose_name="Invoice ID (\"Rechnungsnummer\")")
 	company = models.CharField(verbose_name="Company", blank=True, null=True, max_length=255)
 	firstname = models.CharField(verbose_name="First name", blank=False, null=False, max_length=255)
 	lastname = models.CharField(verbose_name="Last name", blank=False, null=False, max_length=255)
@@ -208,3 +223,7 @@ class PreorderBillingAddress(models.Model):
 	city = models.CharField(verbose_name="City", blank=False, null=False, max_length=255)
 	zip = models.CharField(verbose_name="ZIP", blank=False, null=False, max_length=255)
 	country = models.CharField(verbose_name="Country", blank=False, null=False, max_length=255)
+
+	@property
+	def invoice_number(self):
+		return settings.EVENT_DAAS_INVOICE_NUMBER_FORMAT % ({'invoice_id': self.invoice_id})

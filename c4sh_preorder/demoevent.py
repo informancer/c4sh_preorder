@@ -117,6 +117,11 @@ EVENT_CC_FEE_FIXED = 7.5 # 7.50 EUR per transaction
 # We'd then deduct $fee + 7.5 EUR * 1.075
 
 
+# DaaS settings
+EVENT_DAAS_ENABLE = True
+
+EVENT_DAAS_INVOICE_NUMBER_FORMAT = "30C3-VVK-%(invoice_id)06d"
+
 # Passbook settings
 
 # Enables Passbook download when set to True
