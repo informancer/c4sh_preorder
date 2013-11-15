@@ -214,7 +214,6 @@ class CustomPreorder(Preorder):
 
 class PreorderBillingAddress(models.Model):
 	preorder = models.ForeignKey('CustomPreorder', verbose_name="Preorder")
-	invoice_id = models.PositiveIntegerField(verbose_name="Invoice ID (\"Rechnungsnummer\")")
 	company = models.CharField(verbose_name="Company", blank=True, null=True, max_length=255)
 	firstname = models.CharField(verbose_name="First name", blank=False, null=False, max_length=255)
 	lastname = models.CharField(verbose_name="Last name", blank=False, null=False, max_length=255)
@@ -226,4 +225,4 @@ class PreorderBillingAddress(models.Model):
 
 	@property
 	def invoice_number(self):
-		return settings.EVENT_DAAS_INVOICE_NUMBER_FORMAT % ({'invoice_id': self.invoice_id})
+		return settings.EVENT_DAAS_INVOICE_NUMBER_FORMAT % ({'invoice_id': self.pk})
