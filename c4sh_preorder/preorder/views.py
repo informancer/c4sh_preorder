@@ -120,7 +120,7 @@ def order_view(request):
 
 		form = BillingAddressForm(request.POST)
 
-		if not request.POST.get('without_billingaddress') == 'yes':
+		if request.session['billing_address']:
 			if form.is_valid():
 				billing_address = PreorderBillingAddress()
 				billing_address.company = form.cleaned_data['company']

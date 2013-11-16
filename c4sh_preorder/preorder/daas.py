@@ -13,7 +13,6 @@ def request(func, *args):
 	headers = {'content-type': 'application/json'}
 	url = settings.EVENT_DAAS_API_BASE+settings.EVENT_DAAS_API_ENDPOINT
 	r = requests.post(url, data=payload, headers=headers)
-	print r.json()
 	return r.json().get("result", r.json().get("error"))
 
 def download(url, target):
@@ -39,13 +38,13 @@ def generate_invoice(preorder):
 		"city": billingaddress.city,
 		"country": billingaddress.country,
 		"cart": [],
+		"sum": preorder.get_sale_amount(),
 	}
-	print preorder.get_tickets()
 	for item in preorder.get_tickets():
 		payload["cart"].append({
 			"amount": item['amount'],
 			"name": item['t'].name,
-			"value": str(item['t'].price).replace(".", ",")
+			"value": float(item['t'].price),
 			})
 	result = request("generate", "rechnung", payload)
 	if not result or type(result) == str:
