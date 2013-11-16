@@ -63,7 +63,7 @@ EVENT_PAYMENT_DETAILS =  "Chaos Computer Club Ossendorf ltd.\n" + \
  "SWIFT/BIC: DEH3RPD"
 
 # Bezahlcode integration, see http://bezahlcode.de for more information
-EVENT_BEZAHLCODE_ENABLE = True
+EVENT_BEZAHLCODE_ENABLE = False
 EVENT_BEZAHLCODE_NAME = "CCCO ltd."
 EVENT_BEZAHLCODE_IBAN = "DE00000000000000000000000" # No spaces
 EVENT_BEZAHLCODE_BIC = "COKSDE33" # No spaces
