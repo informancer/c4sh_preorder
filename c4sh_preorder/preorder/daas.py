@@ -38,12 +38,13 @@ def generate_invoice(preorder):
 		"city": billingaddress.city,
 		"country": billingaddress.country,
 		"cart": [],
+		"sum": preorder.get_sale_amount(),
 	}
 	for item in preorder.get_tickets():
 		payload["cart"].append({
 			"amount": item['amount'],
 			"name": item['t'].name,
-			"value": str(item['t'].price).replace(".", ",")
+			"value": float(item['t'].price),
 			})
 	result = request("generate", "rechnung", payload)
 	if not result or type(result) == str:
