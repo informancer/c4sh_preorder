@@ -8,4 +8,3 @@ c4sh_preorder/settings.py
 .vagrant
 *.json
 .DS_Store
-c4sh_preorder/output/*
