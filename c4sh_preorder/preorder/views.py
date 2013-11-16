@@ -20,8 +20,6 @@ from preorder.decorators import preorder_check, payload_check
 from preorder.bezahlcode_helper import make_bezahlcode_uri
 from settings import *
 
-if settings.EVENT_DAAS_ENABLE:
-	import preorder.daas as daas
 ###### TOOLS #######
 
 def get_cart(session_cart):
@@ -177,6 +175,13 @@ def order_view(request):
 
 		request.session['cart'] = {}
 		del request.session['billing_address']
+
+		# Generate an invoice if neccessary. Fail silently.
+		try:
+			if billing_address:
+				billing_address.generate_invoice_pdf()
+		except:
+			pass
 
 		# sending out success notification via email -- if email is set
 		if request.user.email:
@@ -850,23 +855,15 @@ def print_invoice_view(request, preorder_id, secret):
 	billingaddress = preorder.get_billing_address()
 	if not billingaddress:
 		messages.error(request, "Your preorder is not eligible for an invoice.")
-		return redirect("tickets")
+		return redirect("my-tickets")
 
-	# check if invoice is saved; if not, generate one
-	filename = "%s%s-%s.pdf" % (settings.DAAS_ROOT, \
-		settings.EVENT_PAYMENT_PREFIX, preorder.get_reference_hash())
-	if not os.path.exists(filename) or not os.path.isfile(filename):
-		# generate invoice
-		result = daas.generate_invoice(preorder)
-		if not result:
-			messages.error(request, "An error occured while generating your invoice. Please contact us.")
-			redirect("tickets")
-
-	with open(filename, 'rb') as f:
-		pdf = f.read()
+	pdf = billingaddress.get_invoice_pdf()
+	if not pdf:
+		messages.error(request, "An error occured while generating your invoice. Please contact us.")
+		return redirect("my-tickets")
 
 	response = HttpResponse(mimetype="application/pdf")
-	response['Content-Disposition'] = 'inline; filename=invoice-%s-%s.pdf' % (settings.EVENT_PAYMENT_PREFIX, preorder.unique_secret[:10])
+	response['Content-Disposition'] = 'inline; filename=invoice-%s.pdf' % (billingaddress.invoice_number)
 	response['Content-Length'] = len(pdf)
 	response.write(pdf)
 

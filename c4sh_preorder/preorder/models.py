@@ -8,6 +8,9 @@ from django.db.models import Q
 from django.conf import settings
 from c4sh.preorder.models import PreorderTicket, PreorderPosition, Preorder
 
+if settings.EVENT_DAAS_ENABLE:
+	import preorder.daas as daas
+
 class UserProfile(models.Model):
 	user = models.OneToOneField(User, primary_key=True, related_name='user_profile')
 
@@ -216,24 +219,48 @@ class CustomPreorder(Preorder):
 class PreorderBillingAddress(models.Model):
 	preorder = models.ForeignKey('CustomPreorder', verbose_name="Preorder")
 	company = models.CharField(verbose_name="Company", blank=True, null=True, max_length=255)
-	firstname = models.CharField(verbose_name="First name", blank=False, null=False, max_length=255)
-	lastname = models.CharField(verbose_name="Last name", blank=False, null=False, max_length=255)
-	address1 = models.CharField(verbose_name="Address 1", blank=False, null=False, max_length=255)
+	firstname = models.CharField(verbose_name="First name", blank=True, null=True, max_length=255)
+	lastname = models.CharField(verbose_name="Last name", blank=True, null=True, max_length=255)
+	address1 = models.CharField(verbose_name="Address 1", blank=True, null=True, max_length=255)
 	address2 = models.CharField(verbose_name="Address 2", blank=True, null=True, max_length=255)
-	city = models.CharField(verbose_name="City", blank=False, null=False, max_length=255)
-	zip = models.CharField(verbose_name="ZIP", blank=False, null=False, max_length=255)
-	country = models.CharField(verbose_name="Country", blank=False, null=False, max_length=255)
+	city = models.CharField(verbose_name="City", blank=True, null=True, max_length=255)
+	zip = models.CharField(verbose_name="ZIP", blank=True, null=True, max_length=255)
+	country = models.CharField(verbose_name="Country", blank=True, null=True, max_length=255)
 
 	def get_invoice_filename(self, check_existence=True):
 		if not settings.EVENT_DAAS_ENABLE:
 			return False
+
 		filename = "%s%s-%s.pdf" % (settings.DAAS_ROOT, \
-							(settings.EVENT_DAAS_INVOICE_NUMBER_FORMAT % {'invoice_id': self.pk}), \
+							self.invoice_number, \
 							self.preorder.get_reference_hash())
 		if check_existence:
 			if not os.path.exists(filename) or not os.path.isfile(filename):
 				return False
 		return filename
+
+	def generate_invoice_pdf(self):
+		if not settings.EVENT_DAAS_ENABLE:
+			return False
+
+		filename = self.get_invoice_filename(check_existence=True)
+		if not filename:
+			filename = daas.generate_invoice(self.preorder)
+			if not filename:
+				# something went wrong
+				return False
+		return filename
+
+	def get_invoice_pdf(self):
+		if not settings.EVENT_DAAS_ENABLE:
+			return False
+
+		filename = self.generate_invoice_pdf()
+		if not filename:
+			return False
+		with open(filename, 'rb') as f:
+			pdf = f.read()
+		return pdf
 
 	@property
 	def invoice_number(self):

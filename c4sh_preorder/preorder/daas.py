@@ -48,7 +48,7 @@ def generate_invoice(preorder):
 			"value": str(item['t'].price).replace(".", ",")
 			})
 	result = request("generate", "rechnung", payload)
-	if type(result) == str:
+	if not result or type(result) == str:
 		return False
 	filename = download(result.get("url"), billingaddress.get_invoice_filename(check_existence=False))
 	return filename
