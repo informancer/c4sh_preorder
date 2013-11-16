@@ -19,6 +19,9 @@ from friends.models import *
 from preorder.decorators import preorder_check, payload_check
 from preorder.bezahlcode_helper import make_bezahlcode_uri
 from settings import *
+
+if settings.EVENT_DAAS_ENABLE:
+	import preorder.daas as daas
 ###### TOOLS #######
 
 def get_cart(session_cart):
@@ -836,3 +839,35 @@ def passbook_view(request, preorder_id, secret):
 		return response
 
 	return render_to_response('passbook.html', locals(), context_instance=RequestContext(request))
+
+@login_required
+def print_invoice_view(request, preorder_id, secret):
+	if not settings.EVENT_DAAS_ENABLE:
+		return HttpResponseNotFound()
+
+	preorder = get_object_or_404(CustomPreorder, Q(pk=preorder_id), Q(user_id=request.user.pk), Q(unique_secret=secret))
+
+	billingaddress = preorder.get_billing_address()
+	if not billingaddress:
+		messages.error(request, "Your preorder is not eligible for an invoice.")
+		return redirect("tickets")
+
+	# check if invoice is saved; if not, generate one
+	filename = "%s%s-%s.pdf" % (settings.DAAS_ROOT, \
+		settings.EVENT_PAYMENT_PREFIX, preorder.get_reference_hash())
+	if not os.path.exists(filename) or not os.path.isfile(filename):
+		# generate invoice
+		result = daas.generate_invoice(preorder)
+		if not result:
+			messages.error(request, "An error occured while generating your invoice. Please contact us.")
+			redirect("tickets")
+
+	with open(filename, 'rb') as f:
+		pdf = f.read()
+
+	response = HttpResponse(mimetype="application/pdf")
+	response['Content-Disposition'] = 'inline; filename=invoice-%s-%s.pdf' % (settings.EVENT_PAYMENT_PREFIX, preorder.unique_secret[:10])
+	response['Content-Length'] = len(pdf)
+	response.write(pdf)
+
+	return response

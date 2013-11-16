@@ -1,11 +1,12 @@
+import datetime
+import os
 from django.db import models
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.contrib.auth.models import User
-from c4sh.preorder.models import PreorderTicket, PreorderPosition, Preorder
 from django.db.models import Q
 from django.conf import settings
-import datetime
+from c4sh.preorder.models import PreorderTicket, PreorderPosition, Preorder
 
 class UserProfile(models.Model):
 	user = models.OneToOneField(User, primary_key=True, related_name='user_profile')
@@ -222,6 +223,17 @@ class PreorderBillingAddress(models.Model):
 	city = models.CharField(verbose_name="City", blank=False, null=False, max_length=255)
 	zip = models.CharField(verbose_name="ZIP", blank=False, null=False, max_length=255)
 	country = models.CharField(verbose_name="Country", blank=False, null=False, max_length=255)
+
+	def get_invoice_filename(self, check_existence=True):
+		if not settings.EVENT_DAAS_ENABLE:
+			return False
+		filename = "%s%s-%s.pdf" % (settings.DAAS_ROOT, \
+							(settings.EVENT_DAAS_INVOICE_NUMBER_FORMAT % {'invoice_id': self.pk}), \
+							self.preorder.get_reference_hash())
+		if check_existence:
+			if not os.path.exists(filename) or not os.path.isfile(filename):
+				return False
+		return filename
 
 	@property
 	def invoice_number(self):

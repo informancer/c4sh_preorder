@@ -18,6 +18,13 @@
                   <div>Reference: <ref>{{settings.EVENT_PAYMENT_PREFIX}}-{{p.get_reference_hash}}</ref></div>
                   <div>Amount: {{p.get_sale_amount.0.total|floatformat:2}} {{p.get_sale_amount.0.currency}}</div>
               {% endfor %}{% endspaceless %}</pre>
+
+              {% for p in preorders %}
+              {% if p.get_billing_address and settings.EVENT_DAAS_ENABLE %}
+                    <a class="btn {%if p.paid%}btn-default{%else%}btn-success{%endif%} btn-block" href="{% url "print-invoice" p.pk p.unique_secret %}">{% trans "Download invoice" %}</a>
+              {% endif %}
+              {% endfor %}
+
               {% if bezahlcode %}
                 <div id="bezahlcode-container">
                   <div id="bezahlcode-offer" style="font-size: small;">
@@ -80,7 +87,7 @@
                         {% if settings.EVENT_PASSBOOK_ENABLE %}
                         <a class="btn btn-primary" href="{% url "passbook" p.pk p.unique_secret %}">{% trans "Download Passbook files"%}</a>
                         {% endif %}
-                        <a class="btn btn-primary" href="{% url "print-tickets" p.pk p.unique_secret %}">{% trans "Download tickets / invoice"%}</a>
+                        <a class="btn btn-primary" href="{% url "print-tickets" p.pk p.unique_secret %}">{% trans "Download tickets"%}</a>
                       {% else %}
                         {% trans "You'll be able to download your ticket here as soon as it is marked as paid." %}
                       {% endif %}

@@ -121,7 +121,7 @@ EVENT_CC_FEE_FIXED = 7.5 # 7.50 EUR per transaction
 # not available under our open source license. please
 # contact zakx@koeln.ccc.de if you're interested.
 EVENT_DAAS_ENABLE = True
-EVENT_DAAS_API_BASE = "http://10.0.2.15:8001"
+EVENT_DAAS_API_BASE = "http://192.168.50.3:8001"
 EVENT_DAAS_API_ENDPOINT = "/api/v1/"
 EVENT_DAAS_FEATURES = [
 	"invoice",
