@@ -63,7 +63,7 @@ EVENT_PAYMENT_DETAILS =  "Chaos Computer Club Ossendorf ltd.\n" + \
  "SWIFT/BIC: DEH3RPD"
 
 # Bezahlcode integration, see http://bezahlcode.de for more information
-EVENT_BEZAHLCODE_ENABLE = True
+EVENT_BEZAHLCODE_ENABLE = False
 EVENT_BEZAHLCODE_NAME = "CCCO ltd."
 EVENT_BEZAHLCODE_IBAN = "DE00000000000000000000000" # No spaces
 EVENT_BEZAHLCODE_BIC = "COKSDE33" # No spaces
@@ -116,6 +116,17 @@ EVENT_CC_FEE_PERCENTAGE = 7.5 # 7.5% of the sale amount
 EVENT_CC_FEE_FIXED = 7.5 # 7.50 EUR per transaction
 # We'd then deduct $fee + 7.5 EUR * 1.075
 
+# DaaS settings
+# this is required for invoice generation and currently
+# not available under our open source license. please
+# contact zakx@koeln.ccc.de if you're interested.
+EVENT_DAAS_ENABLE = True
+EVENT_DAAS_API_BASE = "http://192.168.50.3:8001"
+EVENT_DAAS_API_ENDPOINT = "/api/v1/"
+EVENT_DAAS_FEATURES = [
+	"invoice",
+]
+EVENT_DAAS_INVOICE_NUMBER_FORMAT = "30C3-VVK-%(invoice_id)06d"
 
 # Passbook settings
 

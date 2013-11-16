@@ -19,6 +19,7 @@ from friends.models import *
 from preorder.decorators import preorder_check, payload_check
 from preorder.bezahlcode_helper import make_bezahlcode_uri
 from settings import *
+
 ###### TOOLS #######
 
 def get_cart(session_cart):
@@ -174,6 +175,13 @@ def order_view(request):
 
 		request.session['cart'] = {}
 		del request.session['billing_address']
+
+		# Generate an invoice if neccessary. Fail silently.
+		try:
+			if billing_address:
+				billing_address.generate_invoice_pdf()
+		except:
+			pass
 
 		# sending out success notification via email -- if email is set
 		if request.user.email:
@@ -692,71 +700,6 @@ def print_tickets_view(request, preorder_id, secret):
 			pdf.write(10, "Bis zu einem Ticketpreis von 150,00 EUR gilt das Ticket gleichzeitig als Kleinbetragsrechnung im Sinne von § 33 UStDV. Umtausch und Rückgabe ausgeschlossen.")
 		elif ticket.price >= 150:
 			pdf.write(10, "Umtausch und Rückgabe ausgeschlossen.")
-	#are Credit Card payments enabled? If yes, is this a preorder paid by CC?
-	""" commented out for sigint13
-	if settings.EVENT_CC_ENABLE and preorder.paid_via=="creditcard":
-		total = preorder.get_sale_amount()[0]['total']
-		total_with_fees = (total + settings.EVENT_CC_FEE_FIXED) * (settings.EVENT_CC_FEE_PERCENTAGE/100+1)
-		cc_fees = total_with_fees - total
-
-		# 2 decimal places for the cc_fees. Todo: fix rounding for the saferpay foo
-		slen = len('%.*f' % (2, cc_fees))
-		cc_fees = str(cc_fees)[:slen]
-
-		#Maybe Todo, see saferpay/views: dont hardcode currency
-		cc_currency = "EUR"
-		#check against the stored cc confirmation!!
-
-		#create new page for creditcard receipt
-		pdf.add_page()
-		pdf.set_right_margin(0)
-		pdf.set_font(font,'I',37)
-		pdf.text(20,50,"%s" % 'N.O-T/M.Y-DE/PA.R-TM/EN.T')
-		pdf.set_font(font,'B',37)
-		pdf.text(20,85,"%s" % '2.9-C/3')
-		pdf.set_font(font,'I',20)
-		pdf.text(20,150,"%s" % '29th CHAOS COMMUNICATION CONGRESS')
-		pdf.text(20,185,"%s" % 'DECEMBER 27th TO 30TH 2012')
-		pdf.text(20,220,"%s" % 'CONGRESS CENTER HAMBURG, GERMANY')
-
-		# this is an invoice for the cc fees
-		pdf.set_font(font,'I',40)
-		pdf.text(20,325,"RECEIPT")
-		pdf.set_font(font,'B',40)
-		pdf.text(20,290,"CREDIT CARD FEES")
-
-		# print modified ticket table for credit card statement
-		pdf.set_font(font,'I',15)
-		pdf.text(20,420,"Type")
-		pdf.text(350,420,"Price")
-		pdf.set_font(font,'',25)
-		pdf.set_font(font,'B',20)
-		pdf.set_y(418)
-		pdf.set_x(20)
-		pdf.set_right_margin(250)
-		pdf.set_left_margin(17)
-		pdf.write(17, "\n%s"% "Credit Card Fee")
-		pdf.set_left_margin(20)
-		pdf.set_font(font,'B',20)
-
-		pdf.set_left_margin(20)
-		pdf.text(350, 450, "%s %s" % (str(floatformat(cc_fees, 2)), cc_currency))
-
-		# print invoice information
-		pdf.set_font(font, '', 15)
-		pdf.set_y(550)
-		pdf.write(20, '%s' % settings.EVENT_INVOICE_ADDRESS)
-		pdf.set_font(font, '', 10)
-		pdf.set_y(640)
-		#Computer says no
-		#pdf.write(15, '%s' % settings.EVENT_INVOICE_LEGAL)
-		pdf.set_font(font, '', 10)
-		pdf.set_y(680)
-		pdf.write(15, 'Issued: %s' % time.strftime('%Y-%m-%d %H:%M', time.gmtime()))
-		pdf.set_font(font, '', 8)
-		pdf.set_y(720)
-		pdf.set_right_margin(300)
-	"""
 
 
 	response = HttpResponse(mimetype="application/pdf")
@@ -836,3 +779,27 @@ def passbook_view(request, preorder_id, secret):
 		return response
 
 	return render_to_response('passbook.html', locals(), context_instance=RequestContext(request))
+
+@login_required
+def print_invoice_view(request, preorder_id, secret):
+	if not settings.EVENT_DAAS_ENABLE:
+		return HttpResponseNotFound()
+
+	preorder = get_object_or_404(CustomPreorder, Q(pk=preorder_id), Q(user_id=request.user.pk), Q(unique_secret=secret))
+
+	billingaddress = preorder.get_billing_address()
+	if not billingaddress:
+		messages.error(request, "Your preorder is not eligible for an invoice.")
+		return redirect("my-tickets")
+
+	pdf = billingaddress.get_invoice_pdf()
+	if not pdf:
+		messages.error(request, "An error occured while generating your invoice. Please contact us.")
+		return redirect("my-tickets")
+
+	response = HttpResponse(mimetype="application/pdf")
+	response['Content-Disposition'] = 'inline; filename=invoice-%s.pdf' % (billingaddress.invoice_number)
+	response['Content-Length'] = len(pdf)
+	response.write(pdf)
+
+	return response

@@ -11,6 +11,7 @@ if socket.gethostname() == "$YOUR_DEPLOYMENT_HOST":
 	MEDIA_URL = '/media/'
 	STATIC_ROOT = '/home/www/presale/c4sh_preorder/static/'
 	STATIC_URL = '/static/'
+	DAAS_ROOT = '/home/www/presale/c4sh_preorder/daas/'
 	TEMPLATE_DIRS = (
 		"/home/www/presale/c4sh_preorder/templates",
 	)
@@ -60,6 +61,7 @@ elif socket.gethostname() == "preorderdev":
 	MEDIA_URL = '/media/'
 	STATIC_ROOT = '/home/vagrant/c4sh_preorder/static/'
 	STATIC_URL = '/static/'
+	DAAS_ROOT = '/home/vagrant/c4sh_preorder/daas/'
 	TEMPLATE_DIRS = (
 		"/home/vagrant/c4sh_preorder/templates",
 	)

@@ -42,6 +42,7 @@ urlpatterns += patterns('c4sh_preorder.preorder.views',
 	url(r'^redeem-token/$', 'redeem_token_view', name='redeem-token'),
 	url(r'^whoops/$', 'no_view', name='no-more-preorder'),
 	url(r'^print/(?P<preorder_id>(\d+))/(?P<secret>(\w+))/$', 'print_tickets_view', name='print-tickets'),
+	url(r'^invoice/(?P<preorder_id>(\d+))/(?P<secret>(\w+))/$', 'print_invoice_view', name='print-invoice'),
 	url(r'^passbook/(?P<preorder_id>(\d+))/(?P<secret>(\w+))/$', 'passbook_view', name='passbook'),
 )
 

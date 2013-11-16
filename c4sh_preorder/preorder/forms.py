@@ -73,11 +73,10 @@ class PasswordForm(forms.Form):
 
 class BillingAddressForm(forms.Form):
 	company = forms.CharField(required=False)
-	firstname = forms.CharField(required=True)
-	firstname = forms.CharField(required=True)
-	lastname = forms.CharField(required=True)
-	address1 = forms.CharField(required=True)
+	firstname = forms.CharField(required=False)
+	lastname = forms.CharField(required=False)
+	address1 = forms.CharField(required=False)
 	address2 = forms.CharField(required=False)
-	city = forms.CharField(required=True)
-	zip = forms.CharField(required=True)
-	country = forms.CharField(required=True)
+	city = forms.CharField(required=False)
+	zip = forms.CharField(required=False)
+	country = forms.CharField(required=False)
