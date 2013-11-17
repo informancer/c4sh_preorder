@@ -19,7 +19,7 @@
 
               {% if has_application %}
                 <p>
-                  {% trans "We've already received an application from your account. We will inform you about status changes via email." %}
+                  {% trans "We have received your application. We will inform you about status changes via email." %}
                   {% blocktrans with settings.EVENT_FRIENDS_EMAIL as mail %}
                   If you have any questions, you can contact us via {{ mail }}.
                   {% endblocktrans %}
@@ -29,7 +29,7 @@
                 </p>
               {% else %}
                 <p>
-                  {% trans "If you are 18 or older, but for some reason you have trouble paying the full entrance fee, apply for a Friends ticket here." %}
+                  {% trans "If for some reason you have trouble paying the full entrance fee, apply for a Friends ticket here." %}
                   {% blocktrans with settings.EVENT_FRIENDS_EMAIL as mail %}
                   If you have any questions, you can contact us via {{ mail }}.
                   {% endblocktrans %}
