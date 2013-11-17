@@ -47,7 +47,7 @@ def friends_review(request, secret):
 			application.status = 'rejected'
 			application.save()
 
-			send_mail('[%s] Friends application rejected' % settings.EVENT_NAME_SHORT, "Hello %s,\n\nyour friends ticket application has been rejected. Sorry!\n\nThe event orga" % (application.user.username), EVENT_C4SH_SUPPORT_CONTACT, [application.user.email], fail_silently=False)
+			send_mail('[%s] Friends application rejected' % settings.EVENT_NAME_SHORT, "Hello %s,\n\nyour friends ticket application has been rejected. Sorry!\n\nThe event orga" % (application.user.username), EVENT_FRIENDS_EMAIL, [application.user.email], fail_silently=False)
 
 			messages.success(request, _('The application has been successfully rejected.'))
 			return redirect("default")
@@ -90,7 +90,7 @@ def friends_review(request, secret):
 			application.status = 'approved'
 			application.save()
 
-			send_mail('[%s] Friends application approved' % settings.EVENT_NAME_SHORT, "Hello %s,\n\nyour friends ticket application has been approved.\n\nA preorder with the appropriate ticket has been automatically created for you -- please find it in the preorder system.\n\nThe event orga" % (application.user.username), EVENT_C4SH_SUPPORT_CONTACT, [application.user.email], fail_silently=False)
+			send_mail('[%s] Friends application approved' % settings.EVENT_NAME_SHORT, "Hello %s,\n\nyour friends ticket application has been approved.\n\nA preorder with the appropriate ticket has been automatically created for you -- please find it in the preorder system.\n\nThe event orga" % (application.user.username), EVENT_FRIENDS_EMAIL, [application.user.email], fail_silently=False)
 
 			messages.success(request, _('The application has been successfully approved.'))
 			return redirect("default")
@@ -134,7 +134,7 @@ def friends_apply(request):
 					else:
 						protocol = 'http://'
 
-					send_mail('[%s] Friends application received' % settings.EVENT_NAME_SHORT, "Dear friends ticket review team,\na new application has been received.\n\nPlease proceed using the following URL:\n\n%s%s%s" % (protocol, request.get_host(), reverse('friends-review', args=[application.token])), EVENT_C4SH_SUPPORT_CONTACT, [settings.EVENT_FRIENDS_EMAIL], fail_silently=False)
+					send_mail('[%s] Friends application received' % settings.EVENT_NAME_SHORT, "Dear friends ticket review team,\na new application has been received.\n\nPlease proceed using the following URL:\n\n%s%s%s" % (protocol, request.get_host(), reverse('friends-review', args=[application.token])), request.user.email, [settings.EVENT_FRIENDS_EMAIL], fail_silently=False)
 					# TODO: userinfo
 
 					messages.success(request, _('We have received your application and will inform you about status changes via email. Thanks.'))
