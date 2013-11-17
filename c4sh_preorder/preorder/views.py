@@ -205,7 +205,7 @@ def checkout_view(request):
 			amount = float(q['quota'].ticket.price)*int(q['amount'])
 			taxes = float(amount) - (float(amount) / (float(q['quota'].ticket.tax_rate)/float(100)+float(1)))
 
-			if amount >= EVENT_BILLING_ADDRESS_LIMIT:
+			if q['quota'].ticket.price >= EVENT_BILLING_ADDRESS_LIMIT:
 				single_ticket_over_limit = True
 
 			try:
