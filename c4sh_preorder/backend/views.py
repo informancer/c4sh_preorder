@@ -3,7 +3,7 @@ import datetime, os, socket, re, datetime, random, hashlib, csv
 from decimal import Decimal, getcontext, ROUND_HALF_UP
 from django.core import serializers
 from django.shortcuts import render_to_response, get_object_or_404
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 from django.contrib.auth import login, logout
 from django.http import Http404, HttpResponseServerError, HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.template import RequestContext
@@ -35,14 +35,16 @@ def api_get_preorder_view(request):
 ###### VIEWS #######
 
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@user_passes_test((lambda user: user.has_perm('preorder.view_stats') \
+			   or user.has_perm('preorder.change_paid_status')))
 def default_view(request):
 	nav = 'admin'
 	subnav = 'default'
 	return render_to_response('admin/default.html', locals(), context_instance=RequestContext(request))
 
+
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@permission_required('preorder.view_stats')
 def statistics_view(request, section):
 	nav = 'admin'
 	subnav = 'statistics'
@@ -57,13 +59,15 @@ def statistics_view(request, section):
 	else:
 		subnav_statistics = 'overview'
 
+
 		# stats querysets
 		tickets = CustomPreorderTicket.objects.all()
 
 		return render_to_response('admin/statistics.html', locals(), context_instance=RequestContext(request))
 
+
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
+@permission_required('preorder.change_paid_status')
 def import_csv_view(request):
 	nav = 'admin'
 	subnav = 'import_csv'

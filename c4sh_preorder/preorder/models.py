@@ -80,6 +80,10 @@ class CustomPreorderTicket(PreorderTicket):
 	class Meta:
 		ordering = ['sortorder']
 		verbose_name = "Ticket"
+		permissions = (
+			("view_stats", "Can view sales statistics"),
+			("change_paid_status", "Can change a preoder paid status"),
+			)
 
 	def stats_preordered(self):
 		return CustomPreorder.objects.filter(Q(preorderposition__ticket=self)).count()
