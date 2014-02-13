@@ -40,7 +40,7 @@ def api_get_preorder_view(request):
 def default_view(request):
 	nav = 'admin'
 	subnav = 'default'
-	return render_to_response('admin/default.html', locals(), context_instance=RequestContext(request))
+	return render_to_response('staff/default.html', locals(), context_instance=RequestContext(request))
 
 
 @login_required
@@ -55,7 +55,7 @@ def statistics_view(request, section):
 		# stats querysets
 		tickets = CustomPreorderTicket.objects.all()
 
-		return render_to_response('admin/statistics_charts.html', locals(), context_instance=RequestContext(request))
+		return render_to_response('staff/statistics_charts.html', locals(), context_instance=RequestContext(request))
 	else:
 		subnav_statistics = 'overview'
 
@@ -63,7 +63,7 @@ def statistics_view(request, section):
 		# stats querysets
 		tickets = CustomPreorderTicket.objects.all()
 
-		return render_to_response('admin/statistics.html', locals(), context_instance=RequestContext(request))
+		return render_to_response('staff/statistics.html', locals(), context_instance=RequestContext(request))
 
 
 @login_required
@@ -139,4 +139,4 @@ def import_csv_view(request):
 
 				csv_data = True
 
-	return render_to_response('admin/import_csv.html', locals(), context_instance=RequestContext(request))
+	return render_to_response('staff/import_csv.html', locals(), context_instance=RequestContext(request))

@@ -3,13 +3,13 @@
 
 {% block content %}
 
-      {% include "base/admin_subnav.html" %}
+      {% include "base/staff_subnav.html" %}
 
       <div class="row">
 
         {% if review_preorders %}
         	<div class="col-md-12">
-        		<form method="post" action="{% url "admin-import-csv" %}">
+        		<form method="post" action="{% url "staff-import-csv" %}">
 	        	{% csrf_token %}
         		<table class="table table-striped table-bordered table-condensed">
         			<tr>
@@ -58,7 +58,7 @@
         {% else %}
 	        {% if not csv_data %}
 	        <div class="col-md-6">
-	        		<form class="well" enctype="multipart/form-data" method="post" action="{% url "admin-import-csv" %}">
+	        		<form class="well" enctype="multipart/form-data" method="post" action="{% url "staff-import-csv" %}">
 	        			{% csrf_token %}
 
 						<div class="control-group {% if form.csv_file.errors %}error{% endif %}">
@@ -90,7 +90,7 @@
 
 	        <div class="col-md-6">
 	        	<h3>{% trans "Successful matches"%}</h3>
-				<form enctype="multipart/form-data" method="post" action="{% url "admin-import-csv" %}">
+				<form enctype="multipart/form-data" method="post" action="{% url "staff-import-csv" %}">
 	        	{% csrf_token %}
 				<table class="table table-striped table-bordered table-condensed" id="successful_matches">
 					<tr>

@@ -16,19 +16,14 @@ if (sys.argv[1] in ['runserver', 'runserver_plus'] or os.environ.get('ENABLE_ADM
 		url(r'^admin42/', include(admin.site.urls)),
 		(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': STATIC_ROOT, 'show_indexes': False}),
 	)
-	urlpatterns += patterns('c4sh_preorder.backend.views',
-		url(r'^admin/$', 'default_view', name='admin'),
-		url(r'^admin/import-csv/$', 'import_csv_view', name='admin-import-csv'),
-		url(r'^admin/statistics/$', 'statistics_view', {'section': False}, name='admin-statistics'),
-		url(r'^admin/statistics/charts/$', 'statistics_view', {'section': 'charts'}, name='admin-statistics-charts'),
-		url(r'^admin/api/get-preorder\.json$', 'api_get_preorder_view', name='admin-api-get-preorder')
-	)
-else:
-	# Provide dummy view for template URL generation
-	urlpatterns += patterns('c4sh_preorder.preorder.views',
-		url(r'^admin/$', 'default_view', name='admin'),
-	)
 
+urlpatterns += patterns('c4sh_preorder.backend.views',
+			url(r'^staff/$', 'default_view', name='staff'),
+			url(r'^staff/import-csv/$', 'import_csv_view', name='staff-import-csv'),
+			url(r'^staff/statistics/$', 'statistics_view', {'section': False}, name='staff-statistics'),
+			url(r'^staff/statistics/charts/$', 'statistics_view', {'section': 'charts'}, name='staff-statistics-charts'),
+			url(r'^staff/api/get-preorder\.json$', 'api_get_preorder_view', name='staff-api-get-preorder')
+	)
 urlpatterns += patterns('c4sh_preorder.preorder.views',
 	url(r'^$', 'default_view', name='default'),
 	url(r'^signup/$', 'signup_view', name='signup'),

@@ -65,7 +65,7 @@
             {% endif %}
               <li {% if nav == "contact" %}class="active"{% endif %}><a href="mailto:{{settings.EVENT_CONTACT_MAILTO}}">{% trans "Contact"%}</a></li>
               {% if request.user.is_superuser %}
-              <li {% if nav == "admin" %}class="active"{% endif %}><a href="{% url "admin" %}"><i class="glyphicon glyphicon-star glyphicon-white" style="margin-right:5px"></i>{% trans "Admin"%}</a></li>
+              <li {% if nav == "staff" %}class="active"{% endif %}><a href="{% url "staff" %}"><i class="glyphicon glyphicon-star glyphicon-white" style="margin-right:5px"></i>{% trans "Staff"%}</a></li>
               {% endif %}
           </ul>
           {% endif %}
