@@ -20,7 +20,7 @@ class StaffDefaultViewTestCase(TestCase):
         user = User.objects.get(username='csvuser')
         perm = Permission.objects.get(codename='change_paid_status')
         user.user_permissions.add(perm)
-    
+
     def test_unauthenticated_user(self):
         response = self.client.get(reverse('staff'), follow=False)
         self.assertRedirects(response, '{}?next={}'.format(reverse('login'),
@@ -30,7 +30,7 @@ class StaffDefaultViewTestCase(TestCase):
                                                            reverse('staff')))
 
     def test_authenticated_user(self):
-        response = self.client.login(username='normaluser', 
+        response = self.client.login(username='normaluser',
                                      password='test')
         response = self.client.get(reverse('staff'), follow=False)
         self.assertRedirects(response, '{}?next={}'.format(reverse('login'),
@@ -40,7 +40,7 @@ class StaffDefaultViewTestCase(TestCase):
                                                            reverse('staff')))
 
     def test_authenticated_staffuser(self):
-        response = self.client.login(username='staffuser', 
+        response = self.client.login(username='staffuser',
                                      password='test')
         response = self.client.get(reverse('staff'), follow=False)
         self.assertRedirects(response, '{}?next={}'.format(reverse('login'),
@@ -50,7 +50,7 @@ class StaffDefaultViewTestCase(TestCase):
                                                            reverse('staff')))
 
     def test_authenticated_statsuser(self):
-        response = self.client.login(username='statsuser', 
+        response = self.client.login(username='statsuser',
                                      password='test')
         response = self.client.get(reverse('staff'), follow=False)
         self.assertEquals(response.status_code, 200)
@@ -60,7 +60,7 @@ class StaffDefaultViewTestCase(TestCase):
         self.assertTemplateUsed('staff/default.html')
 
     def test_authenticated_csvuser(self):
-        response = self.client.login(username='csvuser', 
+        response = self.client.login(username='csvuser',
                                      password='test')
         response = self.client.get(reverse('staff'), follow=False)
         self.assertEquals(response.status_code, 200)
@@ -70,7 +70,7 @@ class StaffDefaultViewTestCase(TestCase):
         self.assertTemplateUsed('staff/default.html')
 
     def test_authenticated_superuser(self):
-        response = self.client.login(username='superuser', 
+        response = self.client.login(username='superuser',
                                      password='test')
         response = self.client.get(reverse('staff'), follow=False)
         self.assertEquals(response.status_code, 200)
@@ -82,7 +82,7 @@ class StaffDefaultViewTestCase(TestCase):
 
 class StaffStatsViewTestCase(TestCase):
     fixtures = ['users.json']
-    
+
     def setUp(self):
         # Because the fixture might screw up permissions:
         user = User.objects.get(username='statsuser')
@@ -103,7 +103,7 @@ class StaffStatsViewTestCase(TestCase):
                                                            reverse('staff-statistics')))
 
     def test_authenticated_user(self):
-        response = self.client.login(username='normaluser', 
+        response = self.client.login(username='normaluser',
                                      password='test')
         response = self.client.get(reverse('staff-statistics'), follow=False)
         self.assertRedirects(response, '{}?next={}'.format(reverse('login'),
@@ -113,7 +113,7 @@ class StaffStatsViewTestCase(TestCase):
                                                            reverse('staff-statistics')))
 
     def test_authenticated_staffuser(self):
-        response = self.client.login(username='staffuser', 
+        response = self.client.login(username='staffuser',
                                      password='test')
         response = self.client.get(reverse('staff-statistics'), follow=False)
         self.assertRedirects(response, '{}?next={}'.format(reverse('login'),
@@ -123,7 +123,7 @@ class StaffStatsViewTestCase(TestCase):
                                                            reverse('staff-statistics')))
 
     def test_authenticated_statsuser(self):
-        response = self.client.login(username='statsuser', 
+        response = self.client.login(username='statsuser',
                                      password='test')
         response = self.client.get(reverse('staff-statistics'), follow=False)
         self.assertEquals(response.status_code, 200)
@@ -133,7 +133,7 @@ class StaffStatsViewTestCase(TestCase):
         self.assertTemplateUsed('staff/statistics.html')
 
     def test_authenticated_csvuser(self):
-        response = self.client.login(username='csvuser', 
+        response = self.client.login(username='csvuser',
                                      password='test')
         response = self.client.get(reverse('staff-statistics'), follow=False)
         self.assertRedirects(response, '{}?next={}'.format(reverse('login'),
@@ -143,7 +143,7 @@ class StaffStatsViewTestCase(TestCase):
                                                            reverse('staff-statistics')))
 
     def test_authenticated_superuser(self):
-        response = self.client.login(username='superuser', 
+        response = self.client.login(username='superuser',
                                      password='test')
         response = self.client.get(reverse('staff-statistics'), follow=False)
         self.assertEquals(response.status_code, 200)
@@ -152,7 +152,7 @@ class StaffStatsViewTestCase(TestCase):
 
 class StaffStatsChartsViewTestCase(TestCase):
     fixtures = ['users.json']
-    
+
     def setUp(self):
         # Because the fixture might screw up permissions:
         user = User.objects.get(username='statsuser')
@@ -173,7 +173,7 @@ class StaffStatsChartsViewTestCase(TestCase):
                                                            reverse('staff-statistics-charts')))
 
     def test_authenticated_user(self):
-        response = self.client.login(username='normaluser', 
+        response = self.client.login(username='normaluser',
                                      password='test')
         response = self.client.get(reverse('staff-statistics-charts'), follow=False)
         self.assertRedirects(response, '{}?next={}'.format(reverse('login'),
@@ -183,7 +183,7 @@ class StaffStatsChartsViewTestCase(TestCase):
                                                            reverse('staff-statistics-charts')))
 
     def test_authenticated_staffuser(self):
-        response = self.client.login(username='staffuser', 
+        response = self.client.login(username='staffuser',
                                      password='test')
         response = self.client.get(reverse('staff-statistics-charts'), follow=False)
         self.assertRedirects(response, '{}?next={}'.format(reverse('login'),
@@ -193,7 +193,7 @@ class StaffStatsChartsViewTestCase(TestCase):
                                                            reverse('staff-statistics-charts')))
 
     def test_authenticated_statsuser(self):
-        response = self.client.login(username='statsuser', 
+        response = self.client.login(username='statsuser',
                                      password='test')
         response = self.client.get(reverse('staff'), follow=False)
         response = self.client.get(reverse('staff-statistics-charts'), follow=False)
@@ -204,7 +204,7 @@ class StaffStatsChartsViewTestCase(TestCase):
         self.assertTemplateUsed('staff/statistics_charts.html')
 
     def test_authenticated_csvuser(self):
-        response = self.client.login(username='csvuser', 
+        response = self.client.login(username='csvuser',
                                      password='test')
         response = self.client.get(reverse('staff-statistics-charts'), follow=False)
         self.assertRedirects(response, '{}?next={}'.format(reverse('login'),
@@ -214,7 +214,7 @@ class StaffStatsChartsViewTestCase(TestCase):
                                                            reverse('staff-statistics-charts')))
 
     def test_authenticated_superuser(self):
-        response = self.client.login(username='superuser', 
+        response = self.client.login(username='superuser',
                                      password='test')
         response = self.client.get(reverse('staff-statistics-charts'), follow=False)
         self.assertEquals(response.status_code, 200)
@@ -226,7 +226,7 @@ class StaffStatsChartsViewTestCase(TestCase):
 
 class StaffCsvImportViewTestCase(TestCase):
     fixtures = ['users.json']
-    
+
     def setUp(self):
         # Because the fixture might screw up permissions:
         user = User.objects.get(username='statsuser')
@@ -247,7 +247,7 @@ class StaffCsvImportViewTestCase(TestCase):
                                                            reverse('staff-import-csv')))
 
     def test_authenticated_user(self):
-        response = self.client.login(username='normaluser', 
+        response = self.client.login(username='normaluser',
                                      password='test')
         response = self.client.get(reverse('staff-import-csv'), follow=False)
         self.assertRedirects(response, '{}?next={}'.format(reverse('login'),
@@ -257,7 +257,7 @@ class StaffCsvImportViewTestCase(TestCase):
                                                            reverse('staff-import-csv')))
 
     def test_authenticated_staffuser(self):
-        response = self.client.login(username='staffuser', 
+        response = self.client.login(username='staffuser',
                                      password='test')
         response = self.client.get(reverse('staff-import-csv'), follow=False)
         self.assertRedirects(response, '{}?next={}'.format(reverse('login'),
@@ -267,7 +267,7 @@ class StaffCsvImportViewTestCase(TestCase):
                                                            reverse('staff-import-csv')))
 
     def test_authenticated_statsuser(self):
-        response = self.client.login(username='statsuser', 
+        response = self.client.login(username='statsuser',
                                      password='test')
         response = self.client.get(reverse('staff-import-csv'), follow=False)
         self.assertRedirects(response, '{}?next={}'.format(reverse('login'),
@@ -277,7 +277,7 @@ class StaffCsvImportViewTestCase(TestCase):
                                                            reverse('staff-import-csv')))
 
     def test_authenticated_csvuser(self):
-        response = self.client.login(username='csvuser', 
+        response = self.client.login(username='csvuser',
                                      password='test')
         response = self.client.get(reverse('staff-import-csv'), follow=False)
         self.assertEquals(response.status_code, 200)
@@ -287,7 +287,7 @@ class StaffCsvImportViewTestCase(TestCase):
         self.assertTemplateUsed('staff/import_csv.html')
 
     def test_authenticated_superuser(self):
-        response = self.client.login(username='superuser', 
+        response = self.client.login(username='superuser',
                                      password='test')
         response = self.client.get(reverse('staff-import-csv'), follow=False)
         self.assertEquals(response.status_code, 200)
