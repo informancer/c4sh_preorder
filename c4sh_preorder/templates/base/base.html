@@ -64,7 +64,7 @@
               <li {% if nav == "my" %}class="active"{% endif %}><a href="{% url "my-tickets" %}">{% trans "My Tickets"%}</a></li>
             {% endif %}
               <li {% if nav == "contact" %}class="active"{% endif %}><a href="mailto:{{settings.EVENT_CONTACT_MAILTO}}">{% trans "Contact"%}</a></li>
-              {% if request.user.is_superuser %}
+              {% if perms.preorder.view_stats or perms.preorder.change_paid_status %}
               <li {% if nav == "staff" %}class="active"{% endif %}><a href="{% url "staff" %}"><i class="glyphicon glyphicon-star glyphicon-white" style="margin-right:5px"></i>{% trans "Staff"%}</a></li>
               {% endif %}
           </ul>
