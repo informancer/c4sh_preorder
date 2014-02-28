@@ -4,7 +4,9 @@
 		<div class="tabbable tabs-left">
 			<ul class="nav nav-tabs">
 				<li {% if subnav == "default" %}class="active"{% endif %}><a href="{% url "staff" %}">{% trans "Overview" %}</a></li>
+				{% if perms.preorder.view_stats %}
 				<li {% if subnav == "statistics" %}class="active"{% endif %}><a href="{% url "staff-statistics" %}">{% trans "Statistics" %}</a></li>
+				{% endif %}
 				{% if perms.preorder.change_paid_status %}
 				<li {% if subnav == "import_csv" %}class="active"{% endif %}><a href="{% url "staff-import-csv" %}">{% trans "Import CSV"%}</a></li>
 				{% endif %}
