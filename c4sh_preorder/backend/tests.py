@@ -8,6 +8,95 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+class DefaultViewTestCase(TestCase):
+    """Series of tests to see if a user is presented with a link to the staff pages"""
+    fixtures = ['users.json']
+
+    def setUp(self):
+        # Because the fixture might screw up permissions:
+        user = User.objects.get(username='statsuser')
+        perm = Permission.objects.get(codename='view_stats')
+        user.user_permissions.add(perm)
+
+        user = User.objects.get(username='csvuser')
+        perm = Permission.objects.get(codename='change_paid_status')
+        user.user_permissions.add(perm)
+
+
+    def test_authenticated_user(self):
+        response = self.client.get(reverse('default'), follow=False)
+        self.assertNotContains(response,reverse('staff'), html=True)
+        self.assertNotContains(response,reverse('staff-import-csv'), html=True)
+        self.assertNotContains(response,reverse('staff-statistics'), html=True)
+        self.assertNotContains(response,reverse('staff-statistics-charts'), html=True)
+        response = self.client.post(reverse('default'), follow=True)
+        self.assertNotContains(response,reverse('staff'), html=True)
+        self.assertNotContains(response,reverse('staff-import-csv'), html=True)
+        self.assertNotContains(response,reverse('staff-statistics'), html=True)
+        self.assertNotContains(response,reverse('staff-statistics-charts'), html=True)
+
+
+    def test_authenticated_user(self):
+        response = self.client.login(username='normaluser',
+                                     password='test')
+        response = self.client.get(reverse('default'), follow=False)
+        self.assertNotContains(response,reverse('staff'), html=True)
+        self.assertNotContains(response,reverse('staff-import-csv'), html=True)
+        self.assertNotContains(response,reverse('staff-statistics'), html=True)
+        self.assertNotContains(response,reverse('staff-statistics-charts'), html=True)
+        response = self.client.post(reverse('default'), follow=True)
+        self.assertNotContains(response,reverse('staff'), html=True)
+        self.assertNotContains(response,reverse('staff-import-csv'), html=True)
+        self.assertNotContains(response,reverse('staff-statistics'), html=True)
+        self.assertNotContains(response,reverse('staff-statistics-charts'), html=True)
+
+
+    def test_authenticated_staffuser(self):
+        response = self.client.login(username='staffuser',
+                                     password='test')
+        response = self.client.get(reverse('default'), follow=False)
+        self.assertContains(response,reverse('staff'), html=True)
+        self.assertNotContains(response,reverse('staff-import-csv'), html=True)
+        self.assertNotContains(response,reverse('staff-statistics'), html=True)
+        self.assertNotContains(response,reverse('staff-statistics-charts'), html=True)
+        response = self.client.post(reverse('default'), follow=True)
+        self.assertContains(response,reverse('staff'), html=True)
+        self.assertNotContains(response,reverse('staff-import-csv'), html=True)
+        self.assertNotContains(response,reverse('staff-statistics'), html=True)
+        self.assertNotContains(response,reverse('staff-statistics-charts'), html=True)
+
+
+    def test_authenticated_statsuser(self):
+        response = self.client.login(username='statsuser',
+                                     password='test')
+        response = self.client.get(reverse('default'), follow=False)
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed('staff/default.html')
+        response = self.client.post(reverse('default'), follow=False)
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed('staff/default.html')
+
+    def test_authenticated_csvuser(self):
+        response = self.client.login(username='csvuser',
+                                     password='test')
+        response = self.client.get(reverse('default'), follow=False)
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed('staff/default.html')
+        response = self.client.post(reverse('default'), follow=False)
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed('staff/default.html')
+
+    def test_authenticated_superuser(self):
+        response = self.client.login(username='superuser',
+                                     password='test')
+        response = self.client.get(reverse('default'), follow=False)
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed('staff/default.html')
+        response = self.client.post(reverse('default'), follow=False)
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed('staff/default.html')
+
+
 class StaffDefaultViewTestCase(TestCase):
     fixtures = ['users.json']
 
@@ -28,6 +117,7 @@ class StaffDefaultViewTestCase(TestCase):
         response = self.client.post(reverse('staff'), follow=True)
         self.assertRedirects(response, '{}?next={}'.format(reverse('login'),
                                                            reverse('staff')))
+
 
     def test_authenticated_user(self):
         response = self.client.login(username='normaluser',
