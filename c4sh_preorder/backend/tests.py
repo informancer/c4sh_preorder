@@ -195,10 +195,16 @@ class StaffDefaultViewTestCase(TestCase):
         response = self.client.login(username='superuser',
                                      password='test')
         response = self.client.get(reverse('staff'), follow=False)
-        self.assertEquals(response.status_code, 200)
+        self.assertContains(response,'<a href="{}">'.format(reverse('staff')))
+        self.assertContains(response,reverse('staff-import-csv'))
+        self.assertContains(response,reverse('staff-statistics'))
+        self.assertNotContains(response,reverse('staff-statistics-charts'))
         self.assertTemplateUsed('staff/default.html')
         response = self.client.post(reverse('staff'), follow=False)
-        self.assertEquals(response.status_code, 200)
+        self.assertContains(response,'<a href="{}">'.format(reverse('staff')))
+        self.assertContains(response,reverse('staff-import-csv'))
+        self.assertContains(response,reverse('staff-statistics'))
+        self.assertNotContains(response,reverse('staff-statistics-charts'))
         self.assertTemplateUsed('staff/default.html')
 
 
